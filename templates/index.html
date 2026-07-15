@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ciclos de Facturación - EDEQ</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>CICLOS DE FACTURACIÓN - Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
     <div class="container">
@@ -23,45 +23,47 @@
             </div>
         </header>
 
-        <!-- SELECTOR DE MES/CICLO -->
-        <div class="controls">
-            <div class="select-group">
-                <label>Mes</label>
-                <select id="monthSelect">
-                    <option value="">-- Seleccionar mes --</option>
-                </select>
+        <!-- SELECTORES Y BOTONES -->
+        <div class="controls-section">
+            <div class="selectors">
+                <div class="selector-group">
+                    <label for="monthSelect">Mes</label>
+                    <select id="monthSelect">
+                        <option value="">-- Seleccionar mes --</option>
+                    </select>
+                </div>
+
+                <div class="selector-group">
+                    <label for="cicloSelect">Ciclo</label>
+                    <select id="cicloSelect">
+                        <option value="">-- Seleccionar ciclo --</option>
+                    </select>
+                </div>
             </div>
-            <div class="select-group">
-                <label>Ciclo</label>
-                <select id="cicloSelect">
-                    <option value="">-- Seleccionar ciclo --</option>
-                </select>
-            </div>
-            <div class="view-toggle">
-                <button class="toggle-btn active" data-page="1">
-                    <i class="fas fa-list"></i> Resumen Mes
-                </button>
-                <button class="toggle-btn" data-page="2">
-                    <i class="fas fa-info-circle"></i> Detalle Ciclo
-                </button>
+
+            <div class="buttons-container">
+                <button class="toggle-btn active" data-page="1">Resumen Mes</button>
+                <button class="toggle-btn" data-page="2">Detalle Ciclo</button>
+                <button class="toggle-btn" data-page="3">📅 Calendario</button>
             </div>
         </div>
 
+        <!-- ============================================================ -->
         <!-- PÁGINA 1: RESUMEN DEL MES -->
+        <!-- ============================================================ -->
         <div id="page1" class="page active">
-            <section class="timeline-section">
-                <h2>LÍNEA DE TIEMPO GENERAL DEL MES</h2>
-                <div id="monthTimeline" class="timeline-container">
-                    <div class="timeline-placeholder">Selecciona un mes para ver la línea de tiempo</div>
-                </div>
-            </section>
+            <div class="page-content">
+                
+                <!-- LÍNEA DE TIEMPO GENERAL DEL MES -->
+                <h2 class="section-title">LÍNEA DE TIEMPO GENERAL DEL MES</h2>
+                <div id="monthTimeline" class="timeline-container"></div>
 
-            <section class="table-section">
-                <h2>CICLOS FACTURADOS EN EL MES SELECCIONADO</h2>
-                <div id="monthTableContainer" class="table-container">
-                    <table id="monthTable" class="data-table">
+                <!-- TABLA DE CICLOS -->
+                <h2 class="section-title">CICLOS FACTURADOS EN EL MES SELECCIONADO</h2>
+                <div class="table-container">
+                    <table class="data-table">
                         <thead>
-                            <tr>
+                            <tr style="background: #2d5016; color: white;">
                                 <th>Ciclo</th>
                                 <th>Municipio</th>
                                 <th>Responsable</th>
@@ -74,86 +76,122 @@
                             </tr>
                         </thead>
                         <tbody id="monthTableBody">
-                            <tr><td colspan="9" class="empty">Carga un archivo y selecciona un mes</td></tr>
+                            <tr>
+                                <td colspan="9" class="empty">Carga un archivo y selecciona un mes</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
-                <div id="totalCiclos" class="total-info"></div>
-            </section>
+                <div id="totalCiclos" style="margin-top: 15px; text-align: right;"></div>
+
+            </div>
         </div>
 
-        <!-- PÁGINA 2: DETALLE CICLO -->
+        <!-- ============================================================ -->
+        <!-- PÁGINA 2: DETALLE DEL CICLO -->
+        <!-- ============================================================ -->
         <div id="page2" class="page">
-            <div id="cicloDetailContainer">
-                <div class="detail-placeholder">Selecciona un ciclo para ver los detalles</div>
+            <div class="page-content">
+                <div id="cicloDetailContainer"></div>
             </div>
         </div>
-    </div>
 
-    <!-- TEMPLATE: Detalle ciclo -->
-    <template id="cicloDetailTemplate">
-        <section class="info-section">
-            <h2>INFORMACIÓN GENERAL DEL CICLO</h2>
-            <div class="info-grid">
-                <div class="info-card">
-                    <i class="fas fa-layer-group"></i>
-                    <div>
-                        <small>Ciclo</small>
-                        <p id="detail-ciclo"></p>
+        <!-- TEMPLATE PARA DETALLE CICLO -->
+        <template id="cicloDetailTemplate">
+            <div class="detail-section">
+                <!-- INFORMACIÓN GENERAL -->
+                <h2 class="section-title">INFORMACIÓN GENERAL DEL CICLO</h2>
+                <div class="info-cards">
+                    <div class="info-card">
+                        <i class="fas fa-list-check"></i>
+                        <div>
+                            <div class="label">Ciclo</div>
+                            <div id="detail-ciclo" class="value">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <div class="label">Municipios</div>
+                            <div id="detail-municipio" class="value">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-user-tie"></i>
+                        <div>
+                            <div class="label">Responsable de Facturación</div>
+                            <div id="detail-analista" class="value">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-calendar-days"></i>
+                        <div>
+                            <div class="label">Días Facturados (Consumo)</div>
+                            <div id="detail-dias" class="value">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-hourglass-end"></i>
+                        <div>
+                            <div class="label">Período del Ciclo</div>
+                            <div id="detail-periodo" class="value">-</div>
+                        </div>
                     </div>
                 </div>
-                <div class="info-card">
-                    <i class="fas fa-map-pin"></i>
-                    <div>
-                        <small>Municipios</small>
-                        <p id="detail-municipio"></p>
-                    </div>
-                </div>
-                <div class="info-card">
-                    <i class="fas fa-user"></i>
-                    <div>
-                        <small>Responsable de Facturación</small>
-                        <p id="detail-analista"></p>
-                    </div>
-                </div>
-                <div class="info-card">
-                    <i class="fas fa-calendar-alt"></i>
-                    <div>
-                        <small>Días Facturados (Consumo)</small>
-                        <p id="detail-dias"></p>
-                    </div>
-                </div>
-                <div class="info-card">
-                    <i class="fas fa-hourglass-start"></i>
-                    <div>
-                        <small>Período del Ciclo</small>
-                        <p id="detail-periodo"></p>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <section class="timeline-section">
-            <h2>LÍNEA DE TIEMPO DEL CICLO SELECCIONADO</h2>
-            <div id="cicloTimeline" class="timeline-container"></div>
-        </section>
+                <!-- LÍNEA DE TIEMPO DEL CICLO -->
+                <h2 class="section-title">LÍNEA DE TIEMPO DEL CICLO SELECCIONADO</h2>
+                <div id="cicloTimeline" class="timeline-container"></div>
 
-        <section class="detail-section">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                <div>
-                    <h3>DETALLE DEL CICLO</h3>
+                <!-- DETALLE DEL CICLO -->
+                <h2 class="section-title">DETALLE DEL CICLO</h2>
+                <div class="table-container">
                     <table class="detail-table">
                         <tbody id="detailTable"></tbody>
                     </table>
                 </div>
-                <div>
-                    <h3>DÍAS FACTURADOS (CONSUMO)</h3>
-                    <div id="cicloCalendar" class="calendar-container"></div>
-                </div>
-            </div>
-        </section>
-    </template>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+                <!-- CALENDARIO DE CONSUMO -->
+                <h2 class="section-title">DÍAS FACTURADOS (CONSUMO)</h2>
+                <div id="cicloCalendar" class="calendar-container"></div>
+            </div>
+        </template>
+
+        <!-- ============================================================ -->
+        <!-- PÁGINA 3: CALENDARIO (NUEVA) -->
+        <!-- ============================================================ -->
+        <div id="page3" class="page">
+            <div class="page-content">
+                <h2 class="section-title">📅 CALENDARIO DE ACTIVIDADES POR DÍA</h2>
+                <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
+                    Selecciona un mes y haz clic en un día para ver los ciclos programados y su estado actual
+                </p>
+                
+                <!-- SELECTOR DE MES PARA CALENDARIO -->
+                <div class="calendar-filters">
+                    <label for="monthSelectCal" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                        <i class="fas fa-calendar-alt"></i> Selecciona un mes:
+                    </label>
+                    <select id="monthSelectCal">
+                        <option value="">-- Seleccionar mes --</option>
+                    </select>
+                </div>
+
+                <!-- CALENDARIO INTERACTIVO -->
+                <div id="calendarView" class="calendar-view"></div>
+
+                <!-- DETALLES DEL DÍA SELECCIONADO -->
+                <div id="dayDetailsContainer" class="day-details">
+                    <p style="color: #999; text-align: center; padding: 40px 20px;">
+                        <i class="fas fa-mouse"></i> Selecciona un día del calendario para ver los ciclos programados
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script src="static/js/main.js"></script>
 </body>
 </html>
