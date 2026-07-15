@@ -85,9 +85,6 @@ async function handleMonthChange() {
 
         // Actualizar página 1
         displayMonthData(data.ciclos);
-        
-        // Actualizar selector de calendario (Página 3)
-        updateCalendarMonthSelector();
     } catch (error) {
         console.error('Error loading month data:', error);
     }
@@ -436,7 +433,7 @@ function buildCalendar(startDate, endDate) {
 }
 
 // ============================================================================
-// PÁGINA 3: CALENDARIO
+// PÁGINA 3: CALENDARIO - NUEVAS FUNCIONES
 // ============================================================================
 
 function setupCalendarPage() {
@@ -462,7 +459,11 @@ function updateCalendarMonthSelector() {
 
 function handleCalendarMonthChange() {
     const month = document.getElementById('monthSelectCal').value;
-    if (!month) return;
+    if (!month) {
+        document.getElementById('daySelector').innerHTML = '';
+        document.getElementById('dayDetailsContainer').innerHTML = '<p style="color: #999; text-align: center; padding: 40px 20px;">Selecciona un mes</p>';
+        return;
+    }
 
     currentCalendarMonth = month;
     displayCalendarMonth(month);
@@ -532,48 +533,8 @@ function displayCalendarMonth(month) {
     }
 }
 
-function generateInteractiveCalendar(minDate, maxDate, ciclos) {
-    const current = new Date(minDate);
-    let html = '<div class="calendar-grid">';
-    
-    // Headers de días
-    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-    dayNames.forEach(day => {
-        html += `<div class="calendar-header">${day}</div>`;
-    });
-
-    // Espacios vacíos al inicio
-    const startDay = new Date(minDate);
-    startDay.setDate(1);
-    for (let i = 0; i < startDay.getDay(); i++) {
-        html += '<div class="calendar-empty"></div>';
-    }
-
-    // Días del mes
-    while (current <= maxDate) {
-        const dateStr = current.toISOString().split('T')[0];
-        const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
-        const hasEvents = ciclosEnDia.length > 0;
-
-        html += `
-            <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''}" 
-                 data-date="${dateStr}"
-                 title="${hasEvents ? ciclosEnDia.length + ' ciclos' : 'Sin eventos'}">
-                <div class="day-number">${current.getDate()}</div>
-                ${hasEvents ? `<div class="event-count">${ciclosEnDia.length}</div>` : ''}
-            </div>
-        `;
-
-        current.setDate(current.getDate() + 1);
-    }
-
-    html += '</div>';
-    return html;
-}
-
 function getCiclosForDate(dateStr, ciclos) {
     return ciclos.filter(ciclo => {
-        // Verificar si la fecha está en algún rango del ciclo
         return isDateInRange(dateStr, ciclo.consumo_inicio, ciclo.consumo_fin) ||
                isDateInRange(dateStr, ciclo.dian_inicio, ciclo.dian_fin) ||
                isDateInRange(dateStr, ciclo.entrega_cliente_inicio, ciclo.entrega_cliente_fin) ||
@@ -619,7 +580,7 @@ function createStateFilter(dateStr, ciclos) {
         statesAvailable.add(stateInfo.state);
     });
 
-    const states = ['todos', 'Lectura', 'Análisis de Consumos', 'Verificado', 'Pago sin Recargo', 'Transmisión DIAN', 'Suspensión'];
+    const states = ['Lectura', 'Análisis de Consumos', 'Verificado', 'Pago sin Recargo', 'Transmisión DIAN', 'Suspensión'];
     
     let html = '<div class="state-filter-container">';
     html += '<label>Filtrar por estado:</label>';
@@ -627,7 +588,7 @@ function createStateFilter(dateStr, ciclos) {
     html += '<option value="todos">Todos los estados</option>';
     
     states.forEach(state => {
-        if (state !== 'todos' && statesAvailable.has(state)) {
+        if (statesAvailable.has(state)) {
             html += `<option value="${state}">${state}</option>`;
         }
     });
@@ -635,20 +596,27 @@ function createStateFilter(dateStr, ciclos) {
     html += '</select>';
     html += '</div>';
 
+    // Buscar si ya existe un contenedor de filtro
+    let filterContainer = document.querySelector('.state-filter-container');
+    if (filterContainer) {
+        filterContainer.remove();
+    }
+
     // Insertar antes del día details
-    const container = document.getElementById('dayDetailsContainer');
-    const filterContainer = document.createElement('div');
-    filterContainer.innerHTML = html;
-    container.parentNode.insertBefore(filterContainer.firstElementChild, container);
+    const dayDetailsContainer = document.getElementById('dayDetailsContainer');
+    const newFilter = document.createElement('div');
+    newFilter.innerHTML = html;
+    dayDetailsContainer.parentNode.insertBefore(newFilter.firstElementChild, dayDetailsContainer);
 
     // Agregar listener
     document.getElementById('stateFilter').addEventListener('change', function() {
         const selectedState = this.value === 'todos' ? null : this.value;
         showDayDetails(dateStr, ciclos, selectedState);
-        // Recrear el selector de estados
         createStateFilter(dateStr, ciclos);
     });
 }
+
+function showDayDetails(dateStr, ciclos, stateFilter = null) {
     let ciclosEnDia = getCiclosForDate(dateStr, ciclos);
     
     // Filtrar por estado si se especifica
