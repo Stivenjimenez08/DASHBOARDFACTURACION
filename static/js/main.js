@@ -37,6 +37,19 @@ async function loadMonths() {
             select.appendChild(option);
         });
         
+        // Cargar todos los meses automáticamente para que Page 3 funcione
+        for (const month of data.months) {
+            try {
+                const res = await fetch(`/api/mes/${month}`);
+                const monthData = await res.json();
+                allData[month] = monthData.ciclos;
+            } catch (e) {
+                console.error(`Error loading month ${month}:`, e);
+            }
+        }
+        
+        // Llenar selector de calendario
+        updateCalendarMonthSelector();
         setupCalendarPage();
     } catch (error) {
         console.error('Error loading months:', error);
@@ -72,6 +85,9 @@ async function handleMonthChange() {
 
         // Actualizar página 1
         displayMonthData(data.ciclos);
+        
+        // Actualizar selector de calendario (Página 3)
+        updateCalendarMonthSelector();
     } catch (error) {
         console.error('Error loading month data:', error);
     }
@@ -427,6 +443,13 @@ function setupCalendarPage() {
     const monthSelect = document.getElementById('monthSelectCal');
     if (!monthSelect) return;
     
+    monthSelect.addEventListener('change', handleCalendarMonthChange);
+}
+
+function updateCalendarMonthSelector() {
+    const monthSelect = document.getElementById('monthSelectCal');
+    if (!monthSelect) return;
+    
     monthSelect.innerHTML = '<option value="">-- Seleccionar mes --</option>';
     
     Object.keys(allData).forEach(month => {
@@ -435,8 +458,6 @@ function setupCalendarPage() {
         option.textContent = month;
         monthSelect.appendChild(option);
     });
-
-    monthSelect.addEventListener('change', handleCalendarMonthChange);
 }
 
 function handleCalendarMonthChange() {
