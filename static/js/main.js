@@ -4,7 +4,6 @@ let currentMonth = null;
 let currentCiclo = null;
 
 // EVENT LISTENERS
-document.getElementById('fileInput').addEventListener('change', handleFileUpload);
 document.getElementById('monthSelect').addEventListener('change', handleMonthChange);
 document.getElementById('cicloSelect').addEventListener('change', handleCicloChange);
 
@@ -16,37 +15,7 @@ document.querySelectorAll('.toggle-btn').forEach(btn => {
 });
 
 // FUNCIONES DE CARGA
-async function handleFileUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const statusDiv = document.getElementById('uploadStatus');
-    statusDiv.textContent = 'Cargando...';
-    statusDiv.className = 'upload-status';
-
-    try {
-        const response = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            statusDiv.textContent = `✓ Archivo cargado: ${result.months.join(', ')}`;
-            statusDiv.className = 'upload-status success';
-            await loadMonths();
-        } else {
-            throw new Error(result.error);
-        }
-    } catch (error) {
-        statusDiv.textContent = `✗ Error: ${error.message}`;
-        statusDiv.className = 'upload-status error';
-    }
-}
+// Los datos se cargan automáticamente desde el servidor
 
 async function loadMonths() {
     try {
@@ -359,5 +328,6 @@ function buildCalendar(startDate, endDate) {
 
 // INICIALIZACIÓN
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Dashboard iniciado. Carga un archivo Excel para comenzar.');
+    console.log('Dashboard iniciado. Cargando datos...');
+    loadMonths();
 });
