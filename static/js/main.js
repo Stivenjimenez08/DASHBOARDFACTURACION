@@ -103,21 +103,18 @@ function updatePage1Timeline() {
             name: 'Transmisión DIAN',
             icon: 'fa-file-text',
             start: cicloData.dian_inicio,
-            end: cicloData.dian_fin,
             color: '#FF9800'
         },
         {
             name: 'Entrega Factura',
             icon: 'fa-envelope',
             start: cicloData.entrega_cliente_inicio,
-            end: cicloData.entrega_cliente_fin,
             color: '#2196F3'
         },
         {
             name: 'Pago sin Recargo',
             icon: 'fa-calendar',
             start: cicloData.pago_inicio,
-            end: cicloData.pago_fin,
             color: '#9C27B0'
         },
         {
@@ -208,9 +205,9 @@ function displayMonthTable(ciclos) {
             <td>${ciclo.analista}</td>
             <td><strong>${ciclo.dias_facturados || '-'}</strong></td>
             <td>${formatDateRange(ciclo.consumo_inicio, ciclo.consumo_fin)}</td>
-            <td>${formatDateRange(ciclo.dian_inicio, ciclo.dian_fin)}</td>
-            <td>${formatDateRange(ciclo.entrega_cliente_inicio, ciclo.entrega_cliente_fin)}</td>
-            <td>${formatDateRange(ciclo.pago_inicio, ciclo.pago_fin)}</td>
+            <td>${formatDateRange(ciclo.dian_inicio)}</td>
+            <td>${formatDateRange(ciclo.entrega_cliente_inicio)}</td>
+            <td>${formatDateRange(ciclo.pago_inicio)}</td>
             <td>${formatDateRange(ciclo.suspension_inicio, ciclo.suspension_fin)}</td>
         `;
         tbody.appendChild(row);
@@ -313,21 +310,18 @@ function buildCicloTimeline(cicloData) {
             name: 'Transmisión DIAN',
             icon: 'fa-file-text',
             start: cicloData.dian_inicio,
-            end: cicloData.dian_fin,
             color: '#FF9800'
         },
         {
             name: 'Entrega Factura',
             icon: 'fa-envelope',
             start: cicloData.entrega_cliente_inicio,
-            end: cicloData.entrega_cliente_fin,
             color: '#2196F3'
         },
         {
             name: 'Pago sin Recargo',
             icon: 'fa-calendar',
             start: cicloData.pago_inicio,
-            end: cicloData.pago_fin,
             color: '#9C27B0'
         },
         {
@@ -366,10 +360,10 @@ function buildDetailTable(cicloData) {
         ['Inicio de Consumo', cicloData.consumo_inicio],
         ['Fin de Consumo', cicloData.consumo_fin],
         ['Días Facturados', cicloData.dias_facturados || '-'],
-        ['Transmisión DIAN', formatCondensedDate(cicloData.dian_inicio, cicloData.dian_fin)],
-        ['Entrega Factura', formatCondensedDate(cicloData.entrega_cliente_inicio, cicloData.entrega_cliente_fin)],
-        ['Pago sin Recargo', formatCondensedDate(cicloData.pago_inicio, cicloData.pago_fin)],
-        ['Suspensión', formatCondensedDate(cicloData.suspension_inicio, cicloData.suspension_fin)]
+        ['Transmisión DIAN', formatCondensedDate(cicloData.dian_inicio)],
+        ['Entrega Factura', formatCondensedDate(cicloData.entrega_cliente_inicio)],
+        ['Pago sin Recargo', formatCondensedDate(cicloData.pago_inicio)],
+        ['Suspensión', formatCondensedDate(cicloData.suspension_inicio)]
     ];
 
     return rows.map(([key, val]) => `<tr><td>${key}</td><td>${val}</td></tr>`).join('');
