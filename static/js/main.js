@@ -254,6 +254,7 @@ function formatDateRange(start, end) {
     if (!start && !end) return '-';
     if (!start) return `hasta ${end}`;
     if (!end) return `desde ${start}`;
+    if (start === end) return start;  // ← AGREGA AQUÍ
     return `${start} a ${end}`;
 }
 
