@@ -85,6 +85,9 @@ async function handleMonthChange() {
 
         // Actualizar página 1
         displayMonthData(data.ciclos);
+        
+        // Actualizar selector de calendario (Página 3)
+        updateCalendarMonthSelector();
     } catch (error) {
         console.error('Error loading month data:', error);
     }
@@ -433,7 +436,7 @@ function buildCalendar(startDate, endDate) {
 }
 
 // ============================================================================
-// PÁGINA 3: CALENDARIO - NUEVAS FUNCIONES
+// PÁGINA 3: CALENDARIO
 // ============================================================================
 
 function setupCalendarPage() {
@@ -459,11 +462,7 @@ function updateCalendarMonthSelector() {
 
 function handleCalendarMonthChange() {
     const month = document.getElementById('monthSelectCal').value;
-    if (!month) {
-        document.getElementById('daySelector').innerHTML = '';
-        document.getElementById('dayDetailsContainer').innerHTML = '<p style="color: #999; text-align: center; padding: 40px 20px;">Selecciona un mes</p>';
-        return;
-    }
+    if (!month) return;
 
     currentCalendarMonth = month;
     displayCalendarMonth(month);
@@ -472,69 +471,70 @@ function handleCalendarMonthChange() {
 function displayCalendarMonth(month) {
     const ciclos = allData[month] || [];
     
-    // Obtener todos los días únicos que tienen actividades
-    const daysWithActivities = new Set();
-    ciclos.forEach(ciclo => {
-        let current = new Date(ciclo.consumo_inicio);
-        const end = new Date(ciclo.consumo_fin);
-        while (current <= end) {
-            const dateStr = current.toISOString().split('T')[0];
-            daysWithActivities.add(dateStr);
-            current.setDate(current.getDate() + 1);
-        }
-    });
+    // Obtener fecha mínima y máxima del mes
+    const allDates = ciclos.flatMap(c => [c.consumo_inicio, c.consumo_fin])
+        .filter(d => d);
+    
+    if (allDates.length === 0) return;
 
-    // Convertir a array y ordenar
-    const sortedDays = Array.from(daysWithActivities).sort();
+    const minDate = new Date(allDates.sort()[0]);
+    const maxDate = new Date(allDates.sort().pop());
 
-    if (sortedDays.length === 0) {
-        document.getElementById('daySelector').innerHTML = '<p style="color: #999;">Sin actividades en este mes</p>';
-        return;
-    }
+    // Generar calendario clicable
+    const html = generateInteractiveCalendar(minDate, maxDate, ciclos);
+    document.getElementById('calendarView').innerHTML = html;
 
-    // Crear selector de días
-    let html = '<div class="days-selector">';
-    sortedDays.forEach(dateStr => {
-        const date = new Date(dateStr);
-        const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
-        const dayName = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][date.getDay()];
-        
-        html += `
-            <button class="day-btn" data-date="${dateStr}">
-                <div class="day-btn-label">${dayName}</div>
-                <div class="day-btn-number">${date.getDate()}</div>
-                <div class="day-btn-count">${ciclosEnDia.length} ciclos</div>
-            </button>
-        `;
-    });
-    html += '</div>';
-
-    document.getElementById('daySelector').innerHTML = html;
-
-    // Agregar listeners
-    document.querySelectorAll('.day-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Remover clase active de otros botones
-            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-            // Agregar a este
-            this.classList.add('active');
-            
+    // Agregar listeners a los días
+    document.querySelectorAll('.calendar-day-clickable').forEach(day => {
+        day.addEventListener('click', function() {
             const dateStr = this.dataset.date;
             showDayDetails(dateStr, ciclos);
-            createStateFilter(dateStr, ciclos);
         });
     });
+}
 
-    // Seleccionar el primer día por defecto
-    if (sortedDays.length > 0) {
-        document.querySelector('.day-btn').classList.add('active');
-        showDayDetails(sortedDays[0], ciclos);
-        createStateFilter(sortedDays[0], ciclos);
+function generateInteractiveCalendar(minDate, maxDate, ciclos) {
+    const current = new Date(minDate);
+    let html = '<div class="calendar-grid">';
+    
+    // Headers de días
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    dayNames.forEach(day => {
+        html += `<div class="calendar-header">${day}</div>`;
+    });
+
+    // Espacios vacíos al inicio
+    const startDay = new Date(minDate);
+    startDay.setDate(1);
+    for (let i = 0; i < startDay.getDay(); i++) {
+        html += '<div class="calendar-empty"></div>';
     }
+
+    // Días del mes
+    while (current <= maxDate) {
+        const dateStr = current.toISOString().split('T')[0];
+        const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
+        const hasEvents = ciclosEnDia.length > 0;
+
+        html += `
+            <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''}" 
+                 data-date="${dateStr}"
+                 title="${hasEvents ? ciclosEnDia.length + ' ciclos' : 'Sin eventos'}">
+                <div class="day-number">${current.getDate()}</div>
+                ${hasEvents ? `<div class="event-count">${ciclosEnDia.length}</div>` : ''}
+            </div>
+        `;
+
+        current.setDate(current.getDate() + 1);
+    }
+
+    html += '</div>';
+    return html;
 }
 
 function getCiclosForDate(dateStr, ciclos) {
     return ciclos.filter(ciclo => {
+        // Verificar si la fecha está en algún rango del ciclo
         return isDateInRange(dateStr, ciclo.consumo_inicio, ciclo.consumo_fin) ||
                isDateInRange(dateStr, ciclo.dian_inicio, ciclo.dian_fin) ||
                isDateInRange(dateStr, ciclo.entrega_cliente_inicio, ciclo.entrega_cliente_fin) ||
@@ -570,94 +570,31 @@ function getStateForDate(dateStr, ciclo) {
     return { state: 'Desconocido', icon: 'fa-question', color: '#999' };
 }
 
-function createStateFilter(dateStr, ciclos) {
-    // Obtener estados únicos disponibles para este día
-    const statesAvailable = new Set();
+function showDayDetails(dateStr, ciclos) {
     const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
-    
-    ciclosEnDia.forEach(ciclo => {
-        const stateInfo = getStateForDate(dateStr, ciclo);
-        statesAvailable.add(stateInfo.state);
-    });
-
-    const states = ['Lectura', 'Análisis de Consumos', 'Verificado', 'Pago sin Recargo', 'Transmisión DIAN', 'Suspensión'];
-    
-    let html = '<div class="state-filter-container">';
-    html += '<label>Filtrar por estado:</label>';
-    html += '<select id="stateFilter" class="state-filter">';
-    html += '<option value="todos">Todos los estados</option>';
-    
-    states.forEach(state => {
-        if (statesAvailable.has(state)) {
-            html += `<option value="${state}">${state}</option>`;
-        }
-    });
-    
-    html += '</select>';
-    html += '</div>';
-
-    // Buscar si ya existe un contenedor de filtro
-    let filterContainer = document.querySelector('.state-filter-container');
-    if (filterContainer) {
-        filterContainer.remove();
-    }
-
-    // Insertar antes del día details
-    const dayDetailsContainer = document.getElementById('dayDetailsContainer');
-    const newFilter = document.createElement('div');
-    newFilter.innerHTML = html;
-    dayDetailsContainer.parentNode.insertBefore(newFilter.firstElementChild, dayDetailsContainer);
-
-    // Agregar listener
-    document.getElementById('stateFilter').addEventListener('change', function() {
-        const selectedState = this.value === 'todos' ? null : this.value;
-        showDayDetails(dateStr, ciclos, selectedState);
-        createStateFilter(dateStr, ciclos);
-    });
-}
-
-function showDayDetails(dateStr, ciclos, stateFilter = null) {
-    let ciclosEnDia = getCiclosForDate(dateStr, ciclos);
-    
-    // Filtrar por estado si se especifica
-    if (stateFilter && stateFilter !== 'todos') {
-        ciclosEnDia = ciclosEnDia.filter(ciclo => {
-            const stateInfo = getStateForDate(dateStr, ciclo);
-            return stateInfo.state === stateFilter;
-        });
-    }
-
     const date = new Date(dateStr);
     const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][date.getDay()];
     
-    let html = `
-        <div class="day-details-header">
-            <h3>${dayName}, ${date.getDate()}</h3>
-            <span class="cycles-count">${ciclosEnDia.length} ciclos</span>
-        </div>
-    `;
+    let html = `<h3>${dayName}, ${date.getDate()} - ${ciclosEnDia.length} ciclos en este día</h3>`;
     
     if (ciclosEnDia.length === 0) {
-        html += '<p style="color: #999; text-align: center; padding: 40px;">Sin ciclos en este estado</p>';
+        html += '<p style="color: #999;">Sin ciclos programados</p>';
     } else {
-        html += '<div class="events-grid">';
+        html += '<div class="events-list">';
         ciclosEnDia.forEach(ciclo => {
             const stateInfo = getStateForDate(dateStr, ciclo);
             html += `
-                <div class="event-card">
-                    <div class="card-header">
-                        <strong>Ciclo ${ciclo.ciclo}</strong>
+                <div class="event-item">
+                    <div class="event-header">
+                        <strong>Ciclo ${ciclo.ciclo}</strong> - ${ciclo.municipio}
                     </div>
-                    <div class="card-location">
-                        ${ciclo.municipio}
-                    </div>
-                    <div class="card-state">
+                    <div class="event-state">
                         <i class="fas ${stateInfo.icon}" style="color: ${stateInfo.color}"></i>
-                        <span style="color: ${stateInfo.color};">${stateInfo.state}</span>
+                        <span style="color: ${stateInfo.color}; font-weight: 600;">${stateInfo.state}</span>
                     </div>
-                    <div class="card-details">
-                        <small><strong>Responsable:</strong> ${ciclo.analista}</small><br>
-                        <small><strong>Zona:</strong> ${ciclo.zona}</small>
+                    <div class="event-details">
+                        <small>Responsable: ${ciclo.analista}</small><br>
+                        <small>Zona: ${ciclo.zona}</small>
                     </div>
                 </div>
             `;
