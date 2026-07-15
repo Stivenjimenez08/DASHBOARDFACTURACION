@@ -229,13 +229,25 @@ function getDateRangeForMonth(ciclos, stepName) {
     };
 
     const [startField, endField] = dateFields[stepName] || ['', ''];
-    const dates = ciclos
+    const startDates = ciclos
         .map(c => c[startField])
         .filter(d => d)
         .sort();
 
-    if (dates.length === 0) return '-';
-    return `${dates[0]} - ${dates[dates.length - 1]}`;
+    if (startDates.length === 0) return '-';
+
+    // Solo Consumo muestra rango, el resto solo fecha inicial
+    if (stepName === 'Consumo') {
+        const endDates = ciclos
+            .map(c => c[endField])
+            .filter(d => d)
+            .sort();
+        if (endDates.length > 0) {
+            return `${startDates[0]} a ${endDates[endDates.length - 1]}`;
+        }
+    }
+    // DIAN, Entrega, Pago, Suspensión: solo fecha inicial
+    return startDates[0];
 }
 
 function formatDateRange(start, end) {
@@ -313,18 +325,21 @@ function buildCicloTimeline(cicloData) {
             name: 'Transmisión DIAN',
             icon: 'fa-file-text',
             start: cicloData.dian_inicio,
+            end: cicloData.dian_inicio,  // ← AGREGA
             color: '#FF9800'
         },
         {
             name: 'Entrega Factura',
             icon: 'fa-envelope',
             start: cicloData.entrega_cliente_inicio,
+            end: cicloData.entrega_cliente_inicio,  // ← AGREGA
             color: '#2196F3'
         },
         {
             name: 'Pago sin Recargo',
             icon: 'fa-calendar',
             start: cicloData.pago_inicio,
+            end: cicloData.pago_inicio,  // ← AGREGA
             color: '#9C27B0'
         },
         {
@@ -364,7 +379,7 @@ function buildDetailTable(cicloData) {
         ['Fin de Consumo', cicloData.consumo_fin],
         ['Días Facturados', cicloData.dias_facturados || '-'],
         ['Transmisión DIAN', formatCondensedDate(cicloData.dian_inicio, cicloData.dian_fin)],
-        ['Entrega Factura', formatCondensedDate(cicloData.entrega_cliente_inicio, cicloData.entrega_cliente_fin)],
+        ['Entrega Factura', cicloData.entrega_cliente_inicio || '-'],
         ['Pago sin Recargo', formatCondensedDate(cicloData.pago_inicio, cicloData.pago_fin)],
         ['Suspensión', formatCondensedDate(cicloData.suspension_inicio, cicloData.suspension_fin)]
     ];
