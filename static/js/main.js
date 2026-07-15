@@ -103,18 +103,21 @@ function updatePage1Timeline() {
             name: 'Transmisión DIAN',
             icon: 'fa-file-text',
             start: cicloData.dian_inicio,
+            end: cicloData.dian_inicio,
             color: '#FF9800'
         },
         {
             name: 'Entrega Factura',
             icon: 'fa-envelope',
             start: cicloData.entrega_cliente_inicio,
+            end: start: cicloData.entrega_cliente_inicio,
             color: '#2196F3'
         },
         {
             name: 'Pago sin Recargo',
             icon: 'fa-calendar',
             start: cicloData.pago_inicio,
+            end: cicloData.pago_inicio,
             color: '#9C27B0'
         },
         {
@@ -205,9 +208,9 @@ function displayMonthTable(ciclos) {
             <td>${ciclo.analista}</td>
             <td><strong>${ciclo.dias_facturados || '-'}</strong></td>
             <td>${formatDateRange(ciclo.consumo_inicio, ciclo.consumo_fin)}</td>
-            <td>${formatDateRange(ciclo.dian_inicio)}</td>
-            <td>${formatDateRange(ciclo.entrega_cliente_inicio)}</td>
-            <td>${formatDateRange(ciclo.pago_inicio)}</td>
+            <td>${ciclo.dian_inicio || '-'}</td>
+            <td>${ciclo.entrega_cliente_inicio || '-'}</td>
+            <td>${ciclo.pago_inicio || '-'}</td>
             <td>${formatDateRange(ciclo.suspension_inicio, ciclo.suspension_fin)}</td>
         `;
         tbody.appendChild(row);
@@ -360,9 +363,9 @@ function buildDetailTable(cicloData) {
         ['Inicio de Consumo', cicloData.consumo_inicio],
         ['Fin de Consumo', cicloData.consumo_fin],
         ['Días Facturados', cicloData.dias_facturados || '-'],
-        ['Transmisión DIAN', formatCondensedDate(cicloData.dian_inicio)],
-        ['Entrega Factura', formatCondensedDate(cicloData.entrega_cliente_inicio)],
-        ['Pago sin Recargo', formatCondensedDate(cicloData.pago_inicio)],
+        ['Transmisión DIAN', cicloData.dian_inicio || '-'],
+        ['Entrega Factura', cicloData.entrega_cliente_inicio || '-'],
+        ['Pago sin Recargo', cicloData.pago_inicio || '-'],
         ['Suspensión', formatCondensedDate(cicloData.suspension_inicio)]
     ];
 
