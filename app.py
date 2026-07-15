@@ -5,7 +5,10 @@ from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
+# Cloud Run: usar /tmp que es writable
+import tempfile
+app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB
 
 # Mapeo de columnas Excel (índices 0-based después de limpiar headers)
