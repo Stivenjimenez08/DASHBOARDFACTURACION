@@ -110,7 +110,7 @@ function updatePage1Timeline() {
             name: 'Entrega Factura',
             icon: 'fa-envelope',
             start: cicloData.entrega_cliente_inicio,
-            end: start: cicloData.entrega_cliente_inicio,
+            end: cicloData.entrega_cliente_inicio,
             color: '#2196F3'
         },
         {
@@ -211,7 +211,7 @@ function displayMonthTable(ciclos) {
             <td>${ciclo.dian_inicio || '-'}</td>
             <td>${ciclo.entrega_cliente_inicio || '-'}</td>
             <td>${ciclo.pago_inicio || '-'}</td>
-            <td>${formatDateRange(ciclo.suspension_inicio, ciclo.suspension_fin)}</td>
+            <td>${ciclo.suspension_inicio || '-'}</td>
         `;
         tbody.appendChild(row);
     });
@@ -363,10 +363,10 @@ function buildDetailTable(cicloData) {
         ['Inicio de Consumo', cicloData.consumo_inicio],
         ['Fin de Consumo', cicloData.consumo_fin],
         ['Días Facturados', cicloData.dias_facturados || '-'],
-        ['Transmisión DIAN', cicloData.dian_inicio || '-'],
-        ['Entrega Factura', cicloData.entrega_cliente_inicio || '-'],
-        ['Pago sin Recargo', cicloData.pago_inicio || '-'],
-        ['Suspensión', formatCondensedDate(cicloData.suspension_inicio)]
+        ['Transmisión DIAN', formatCondensedDate(cicloData.dian_inicio, cicloData.dian_fin)],
+        ['Entrega Factura', formatCondensedDate(cicloData.entrega_cliente_inicio, cicloData.entrega_cliente_fin)],
+        ['Pago sin Recargo', formatCondensedDate(cicloData.pago_inicio, cicloData.pago_fin)],
+        ['Suspensión', formatCondensedDate(cicloData.suspension_inicio, cicloData.suspension_fin)]
     ];
 
     return rows.map(([key, val]) => `<tr><td>${key}</td><td>${val}</td></tr>`).join('');
