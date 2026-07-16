@@ -37,19 +37,6 @@ async function loadMonths() {
             select.appendChild(option);
         });
         
-        // Cargar todos los meses automáticamente para que Page 3 funcione
-        for (const month of data.months) {
-            try {
-                const res = await fetch(`/api/mes/${month}`);
-                const monthData = await res.json();
-                allData[month] = monthData.ciclos;
-            } catch (e) {
-                console.error(`Error loading month ${month}:`, e);
-            }
-        }
-        
-        // Llenar selector de calendario
-        updateCalendarMonthSelector();
         setupCalendarPage();
     } catch (error) {
         console.error('Error loading months:', error);
@@ -85,9 +72,6 @@ async function handleMonthChange() {
 
         // Actualizar página 1
         displayMonthData(data.ciclos);
-        
-        // Actualizar selector de calendario (Página 3)
-        updateCalendarMonthSelector();
     } catch (error) {
         console.error('Error loading month data:', error);
     }
@@ -436,7 +420,7 @@ function buildCalendar(startDate, endDate) {
 }
 
 // ============================================================================
-// PÁGINA 3: CALENDARIO
+// PÁGINA 3: CALENDARIO - VERSIÓN ORIGINAL FUNCIONANDO
 // ============================================================================
 
 function setupCalendarPage() {
@@ -446,23 +430,13 @@ function setupCalendarPage() {
     monthSelect.addEventListener('change', handleCalendarMonthChange);
 }
 
-function updateCalendarMonthSelector() {
-    const monthSelect = document.getElementById('monthSelectCal');
-    if (!monthSelect) return;
-    
-    monthSelect.innerHTML = '<option value="">-- Seleccionar mes --</option>';
-    
-    Object.keys(allData).forEach(month => {
-        const option = document.createElement('option');
-        option.value = month;
-        option.textContent = month;
-        monthSelect.appendChild(option);
-    });
-}
-
 function handleCalendarMonthChange() {
     const month = document.getElementById('monthSelectCal').value;
-    if (!month) return;
+    if (!month) {
+        document.getElementById('calendarView').innerHTML = '';
+        document.getElementById('dayDetailsContainer').innerHTML = '<p style="color: #999; text-align: center; padding: 40px 20px;">Selecciona un mes</p>';
+        return;
+    }
 
     currentCalendarMonth = month;
     displayCalendarMonth(month);
@@ -475,7 +449,10 @@ function displayCalendarMonth(month) {
     const allDates = ciclos.flatMap(c => [c.consumo_inicio, c.consumo_fin])
         .filter(d => d);
     
-    if (allDates.length === 0) return;
+    if (allDates.length === 0) {
+        document.getElementById('calendarView').innerHTML = '<p style="color: #999;">Sin actividades en este mes</p>';
+        return;
+    }
 
     const minDate = new Date(allDates.sort()[0]);
     const maxDate = new Date(allDates.sort().pop());
@@ -534,7 +511,6 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
 
 function getCiclosForDate(dateStr, ciclos) {
     return ciclos.filter(ciclo => {
-        // Verificar si la fecha está en algún rango del ciclo
         return isDateInRange(dateStr, ciclo.consumo_inicio, ciclo.consumo_fin) ||
                isDateInRange(dateStr, ciclo.dian_inicio, ciclo.dian_fin) ||
                isDateInRange(dateStr, ciclo.entrega_cliente_inicio, ciclo.entrega_cliente_fin) ||
