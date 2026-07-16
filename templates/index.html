@@ -158,12 +158,13 @@
         </template>
 
         <!-- ============================================================ -->
-        <!-- PÁGINA 3: CALENDARIO (NUEVA) -->
+        <!-- PÁGINA 3: CALENDARIO (ORIGINAL) -->
+        <!-- ============================================================ -->
         <div id="page3" class="page">
             <div class="page-content">
                 <h2 class="section-title">📅 CALENDARIO DE ACTIVIDADES POR DÍA</h2>
                 <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
-                    Selecciona un mes y luego elige un día para ver los ciclos programados y su estado actual
+                    Selecciona un mes y haz clic en un día para ver los ciclos programados y su estado actual
                 </p>
                 
                 <!-- SELECTOR DE MES PARA CALENDARIO -->
@@ -176,15 +177,21 @@
                     </select>
                 </div>
 
-                <!-- SELECTOR DE DÍAS CON ACTIVIDADES -->
-                <div id="daySelector" class="day-selector-container"></div>
+                <!-- CALENDARIO INTERACTIVO -->
+                <div id="calendarView" class="calendar-view"></div>
 
                 <!-- DETALLES DEL DÍA SELECCIONADO -->
                 <div id="dayDetailsContainer" class="day-details">
                     <p style="color: #999; text-align: center; padding: 40px 20px;">
-                        <i class="fas fa-mouse"></i> Selecciona un mes y luego un día
+                        <i class="fas fa-mouse"></i> Selecciona un día del calendario para ver los ciclos programados
                     </p>
                 </div>
 
             </div>
         </div>
+
+    </div>
+
+    <script src="static/js/main.js"></script>
+</body>
+</html>
