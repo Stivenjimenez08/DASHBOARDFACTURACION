@@ -408,8 +408,14 @@ function displayCicloDetail() {
     const detailTableHtml = buildDetailTable(cicloData);
     clone.querySelector('#detailTable').innerHTML = detailTableHtml;
 
-    // Calendario
-    const calendarHtml = buildCalendar(cicloData.consumo_inicio, cicloData.consumo_fin, cicloData);
+    // Calendario - generar rango completo del mes
+    const monthStart = new Date(cicloData.consumo_inicio);
+    monthStart.setDate(1);
+    const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
+    const monthStartStr = monthStart.toISOString().split('T')[0];
+    const monthEndStr = monthEnd.toISOString().split('T')[0];
+    
+    const calendarHtml = buildCalendar(monthStartStr, monthEndStr, cicloData);
     clone.querySelector('#cicloCalendar').innerHTML = calendarHtml;
 
     const container = document.getElementById('cicloDetailContainer');
@@ -512,9 +518,7 @@ function buildCalendar(startDate, endDate, cicloData) {
     // Definir todas las actividades del ciclo con colores
     const activitiesMap = {
         'Generación': { color: '#FF6B6B', label: 'Generación del Libro' },
-        'Lectura Ant': { color: '#4ECDC4', label: 'Lectura Medidores (Ant)' },
         'Lectura': { color: '#45B7D1', label: 'Lectura Medidores' },
-        'Consumo': { color: '#4CAF50', label: 'Consumo' },
         'Análisis': { color: '#FFA500', label: 'Análisis de Consumos' },
         'Verificado': { color: '#9C27B0', label: 'Verificados' },
         'Ingreso Verif': { color: '#3F51B5', label: 'Ingreso Verificados' },
@@ -537,9 +541,6 @@ function buildCalendar(startDate, endDate, cicloData) {
         // Para cada actividad, verificar si su fecha es HOY
         if (cicloData?.generacion_libro === dateStr) {
             dayActivities.push({ key: 'Generación', ...activitiesMap['Generación'] });
-        }
-        if (cicloData?.lectura_anterior === dateStr) {
-            dayActivities.push({ key: 'Lectura Ant', ...activitiesMap['Lectura Ant'] });
         }
         if (cicloData?.lectura_actual === dateStr) {
             dayActivities.push({ key: 'Lectura', ...activitiesMap['Lectura'] });
@@ -565,13 +566,13 @@ function buildCalendar(startDate, endDate, cicloData) {
         if (cicloData?.entrega_cliente === dateStr) {
             dayActivities.push({ key: 'Entrega', ...activitiesMap['Entrega'] });
         }
-        if (cicloData?.pago_inicio === dateStr) {
+        if (cicloData?.pago === dateStr) {
             dayActivities.push({ key: 'Pago', ...activitiesMap['Pago'] });
         }
-        if (cicloData?.pago_recargo_inicio === dateStr) {
+        if (cicloData?.pago_recargo === dateStr) {
             dayActivities.push({ key: 'Pago Recargo', ...activitiesMap['Pago Recargo'] });
         }
-        if (cicloData?.suspension_inicio === dateStr) {
+        if (cicloData?.suspension === dateStr) {
             dayActivities.push({ key: 'Suspensión', ...activitiesMap['Suspensión'] });
         }
 
