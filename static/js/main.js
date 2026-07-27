@@ -177,6 +177,14 @@ function switchPage(pageNum) {
 
     // Show selected page
     document.getElementById(`page${pageNum}`).classList.add('active');
+    
+    // Mostrar/ocultar selector de ciclo según la página
+    const cicloSelectorGroup = document.querySelector('.selector-group:has(#cicloSelect)');
+    if (pageNum === '1') {
+        cicloSelectorGroup.style.display = 'none';
+    } else if (pageNum === '2') {
+        cicloSelectorGroup.style.display = 'block';
+    }
 }
 
 // PÁGINA 1: RESUMEN DEL MES
@@ -319,26 +327,26 @@ async function displayCicloDetail() {
     const clone = template.content.cloneNode(true);
 
     // Rellenar información general
-    clone.getElementById('detail-ciclo').textContent = cicloData.ciclo;
-    clone.getElementById('detail-municipio').textContent = cicloData.municipio;
-    clone.getElementById('detail-analista').textContent = cicloData.analista;
-    clone.getElementById('detail-dias').textContent = `${cicloData.dias_facturados || '-'} días`;
-    clone.getElementById('detail-periodo').textContent = formatDateRange(
+    clone.querySelector('#detail-ciclo').textContent = cicloData.ciclo;
+    clone.querySelector('#detail-municipio').textContent = cicloData.municipio;
+    clone.querySelector('#detail-analista').textContent = cicloData.analista;
+    clone.querySelector('#detail-dias').textContent = `${cicloData.dias_facturados || '-'} días`;
+    clone.querySelector('#detail-periodo').textContent = formatDateRange(
         cicloData.consumo_inicio,
         cicloData.consumo_fin
     );
 
     // Timeline del ciclo
     const timelineHtml = buildCicloTimeline(cicloData);
-    clone.getElementById('cicloTimeline').innerHTML = timelineHtml;
+    clone.querySelector('#cicloTimeline').innerHTML = timelineHtml;
 
     // Tabla de detalles
     const detailTableHtml = buildDetailTable(cicloData);
-    clone.getElementById('detailTable').innerHTML = detailTableHtml;
+    clone.querySelector('#detailTable').innerHTML = detailTableHtml;
 
     // Calendario
     const calendarHtml = buildCalendar(cicloData.consumo_inicio, cicloData.consumo_fin);
-    clone.getElementById('cicloCalendar').innerHTML = calendarHtml;
+    clone.querySelector('#cicloCalendar').innerHTML = calendarHtml;
 
     const container = document.getElementById('cicloDetailContainer');
     container.innerHTML = '';
