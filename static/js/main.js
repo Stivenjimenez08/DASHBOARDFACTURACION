@@ -4,6 +4,25 @@ let currentMonth = null;
 let currentCiclo = null;
 let currentCalendarMonth = null;
 
+// ============================================================================
+// FUNCIONES PARA MANEJO DE FECHAS (sin problemas de zona horaria)
+// ============================================================================
+
+// Parsear fecha string "YYYY-MM-DD" sin problemas de zona horaria
+function parseLocalDate(dateStr) {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day);
+}
+
+// Convertir Date a string "YYYY-MM-DD"
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 // EVENT LISTENERS
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('monthSelect').addEventListener('change', handleMonthChange);
@@ -516,8 +535,9 @@ function buildCalendar(startDate, endDate, cicloData) {
         return '<p style="grid-column: 1/-1; text-align: center; color: #999;">Fechas no disponibles</p>';
     }
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    // Usar parseLocalDate para evitar problemas de zona horaria
+    const start = parseLocalDate(startDate);
+    const end = parseLocalDate(endDate);
     const current = new Date(start);
 
     let html = '';
@@ -547,7 +567,8 @@ function buildCalendar(startDate, endDate, cicloData) {
     // Días del rango
     let activitiesFound = 0;
     while (current <= end) {
-        const dateStr = current.toISOString().split('T')[0];
+        // Usar formatDate en lugar de toISOString para evitar problemas de zona horaria
+        const dateStr = formatDate(current);
         
         // Buscar todas las actividades que comienzan este día
         let dayActivities = [];
