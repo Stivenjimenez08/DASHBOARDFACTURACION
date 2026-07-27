@@ -7,7 +7,13 @@ let currentCalendarMonth = null;
 // EVENT LISTENERS
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('monthSelect').addEventListener('change', handleMonthChange);
-    document.getElementById('cicloSelect').addEventListener('change', handleCicloChange);
+    
+    // Usar event delegation para cicloSelect (ya que se regenera)
+    document.addEventListener('change', (e) => {
+        if (e.target.id === 'cicloSelect') {
+            handleCicloChange();
+        }
+    });
     
     document.querySelectorAll('.toggle-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -112,9 +118,16 @@ async function handleMonthChange() {
 
 function handleCicloChange() {
     const ciclo = document.getElementById('cicloSelect').value;
-    if (!ciclo || !currentMonth) return;
+    console.log('Ciclo seleccionado:', ciclo, 'Mes actual:', currentMonth);
+    
+    if (!ciclo || !currentMonth) {
+        console.log('Ciclo o mes vacío, retornando');
+        return;
+    }
 
     currentCiclo = ciclo;
+    console.log('Actualizando currentCiclo a:', currentCiclo);
+    
     updatePage1Timeline();
     displayCicloDetail();
 }
@@ -340,10 +353,18 @@ function clearPage1() {
 
 // PÁGINA 2: DETALLE CICLO
 function displayCicloDetail() {
-    if (!currentMonth || !currentCiclo) return;
+    console.log('displayCicloDetail ejecutando. currentMonth:', currentMonth, 'currentCiclo:', currentCiclo);
+    
+    if (!currentMonth || !currentCiclo) {
+        console.log('Sin mes o ciclo para mostrar');
+        return;
+    }
 
     const ciclos = allData[currentMonth] || [];
+    console.log('Ciclos disponibles en', currentMonth, ':', ciclos.length);
+    
     const cicloData = ciclos.find(c => String(c.ciclo) === String(currentCiclo));
+    console.log('Ciclo encontrado:', cicloData);
 
     if (!cicloData) return;
 
