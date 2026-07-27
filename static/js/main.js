@@ -510,40 +510,51 @@ function buildCalendar(startDate, endDate, cicloData) {
     });
 
     // Definir actividades del ciclo
-    const activities = [
-        { name: 'Consumo', start: cicloData?.consumo_inicio, end: cicloData?.consumo_fin, color: '#4CAF50', icon: 'leaf' },
-        { name: 'DIAN', start: cicloData?.dian_inicio, end: cicloData?.dian_fin, color: '#FF9800', icon: 'file' },
-        { name: 'Entrega', start: cicloData?.entrega_cliente_inicio, end: cicloData?.entrega_cliente_fin, color: '#2196F3', icon: 'envelope' },
-        { name: 'Pago', start: cicloData?.pago_inicio, end: cicloData?.pago_fin, color: '#9C27B0', icon: 'calendar' },
-        { name: 'Suspensión', start: cicloData?.suspension_inicio, end: cicloData?.suspension_fin, color: '#F44336', icon: 'ban' }
-    ];
+    const activitiesMap = {
+        'Consumo': { color: '#4CAF50', label: 'Consumo' },
+        'DIAN': { color: '#FF9800', label: 'Transmisión DIAN' },
+        'Entrega': { color: '#2196F3', label: 'Entrega Factura' },
+        'Pago': { color: '#9C27B0', label: 'Pago sin Recargo' },
+        'Suspensión': { color: '#F44336', label: 'Suspensión' }
+    };
 
     // Días del rango
     while (current <= end) {
         const dateStr = current.toISOString().split('T')[0];
         
-        // Buscar actividades para este día
-        let dayActivity = null;
-        let activityColor = '#4CAF50';
-        let activityIcon = 'fa-leaf';
+        // Buscar todas las actividades para este día
+        let dayActivities = [];
         
-        for (const activity of activities) {
-            if (isDateInRange(dateStr, activity.start, activity.end)) {
-                dayActivity = activity.name;
-                activityColor = activity.color;
-                activityIcon = `fa-${activity.icon}`;
-                break; // Tomar la primera actividad encontrada
-            }
+        if (isDateInRange(dateStr, cicloData?.consumo_inicio, cicloData?.consumo_fin)) {
+            dayActivities.push({ key: 'Consumo', ...activitiesMap['Consumo'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.dian_inicio, cicloData?.dian_fin)) {
+            dayActivities.push({ key: 'DIAN', ...activitiesMap['DIAN'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.entrega_cliente_inicio, cicloData?.entrega_cliente_fin)) {
+            dayActivities.push({ key: 'Entrega', ...activitiesMap['Entrega'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.pago_inicio, cicloData?.pago_fin)) {
+            dayActivities.push({ key: 'Pago', ...activitiesMap['Pago'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.suspension_inicio, cicloData?.suspension_fin)) {
+            dayActivities.push({ key: 'Suspensión', ...activitiesMap['Suspensión'] });
         }
 
-        const dayContent = dayActivity 
-            ? `<div style="font-size: 0.7em; font-weight: 600; margin-top: 2px;" title="${dayActivity}"><i class="fas ${activityIcon}" style="color: ${activityColor};"></i></div>`
-            : '';
+        // Construir badges de actividades
+        let badgesHtml = '';
+        dayActivities.forEach(activity => {
+            badgesHtml += `
+                <div class="activity-badge" style="background: ${activity.color}; color: white; font-size: 0.6em; padding: 2px 4px; margin-top: 2px; border-radius: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${activity.label}">
+                    ${activity.label}
+                </div>
+            `;
+        });
 
         html += `
-            <div class="calendar-day in-range" ${dayActivity ? `title="${dayActivity}"` : ''}>
-                <div>${current.getDate()}</div>
-                ${dayContent}
+            <div class="calendar-day in-range" style="position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; align-items: center;">
+                <div style="font-weight: 700; margin-bottom: 2px;">${current.getDate()}</div>
+                ${badgesHtml}
             </div>
         `;
         current.setDate(current.getDate() + 1);
