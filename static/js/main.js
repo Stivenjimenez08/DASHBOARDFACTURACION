@@ -37,6 +37,10 @@ async function loadMonths() {
             select.appendChild(option);
         });
         
+        // Ocultar selector de ciclo por defecto
+        const cicloSelectorGroup = document.getElementById('cicloSelect').closest('.selector-group');
+        cicloSelectorGroup.style.display = 'none';
+        
         // IMPORTANTE: Cargar TODOS los meses en allData para que Página 3 funcione
         for (const month of data.months) {
             try {
@@ -83,6 +87,22 @@ async function handleMonthChange() {
             cicloSelect.appendChild(option);
         });
 
+        // Auto-seleccionar el primer ciclo único
+        const uniqueCiclos = [];
+        const ciclosSeen = new Set();
+        data.ciclos.forEach(ciclo => {
+            if (!ciclosSeen.has(ciclo.ciclo)) {
+                ciclosSeen.add(ciclo.ciclo);
+                uniqueCiclos.push(ciclo);
+            }
+        });
+        
+        if (uniqueCiclos.length > 0) {
+            cicloSelect.value = String(uniqueCiclos[0].ciclo);
+            currentCiclo = String(uniqueCiclos[0].ciclo);
+            displayCicloDetail();
+        }
+
         // Actualizar página 1
         displayMonthData(data.ciclos);
     } catch (error) {
@@ -91,7 +111,7 @@ async function handleMonthChange() {
 }
 
 function handleCicloChange() {
-    const ciclo = parseInt(document.getElementById('cicloSelect').value);
+    const ciclo = document.getElementById('cicloSelect').value;
     if (!ciclo || !currentMonth) return;
 
     currentCiclo = ciclo;
@@ -103,7 +123,7 @@ function updatePage1Timeline() {
     if (!currentMonth || !currentCiclo) return;
 
     const ciclos = allData[currentMonth] || [];
-    const cicloData = ciclos.find(c => c.ciclo === currentCiclo);
+    const cicloData = ciclos.find(c => String(c.ciclo) === String(currentCiclo));
 
     if (!cicloData) return;
 
@@ -179,11 +199,15 @@ function switchPage(pageNum) {
     document.getElementById(`page${pageNum}`).classList.add('active');
     
     // Mostrar/ocultar selector de ciclo según la página
-    const cicloSelectorGroup = document.querySelector('.selector-group:has(#cicloSelect)');
+    const cicloSelect = document.getElementById('cicloSelect');
+    const cicloSelectorGroup = cicloSelect.closest('.selector-group');
+    
     if (pageNum === '1') {
         cicloSelectorGroup.style.display = 'none';
     } else if (pageNum === '2') {
         cicloSelectorGroup.style.display = 'block';
+    } else {
+        cicloSelectorGroup.style.display = 'none';
     }
 }
 
@@ -315,11 +339,11 @@ function clearPage1() {
 }
 
 // PÁGINA 2: DETALLE CICLO
-async function displayCicloDetail() {
+function displayCicloDetail() {
     if (!currentMonth || !currentCiclo) return;
 
     const ciclos = allData[currentMonth] || [];
-    const cicloData = ciclos.find(c => c.ciclo === currentCiclo);
+    const cicloData = ciclos.find(c => String(c.ciclo) === String(currentCiclo));
 
     if (!cicloData) return;
 
