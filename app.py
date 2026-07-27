@@ -9,34 +9,34 @@ app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
 COLUMN_MAP = {
     'CICLO': 1, 'ZONA': 2, 'ANALISTA': 3, 'MUNICIPIO': 4, 'PERIODO': 5,
-    # Generación del Libro
+    # Generación del Libro (Col 7)
     'GENERACION_LIBRO': 6,
-    # Lectura de medidores (Anterior)
-    'LECTURA_ANTERIOR_INICIO': 7, 'LECTURA_ANTERIOR_FIN': 8,
-    # Lectura de medidores (Actual)
-    'LECTURA_ACTUAL_INICIO': 9, 'LECTURA_ACTUAL_FIN': 10,
-    # Días consumo
+    # Lectura de medidores Anterior (Col 8)
+    'LECTURA_ANTERIOR': 7,
+    # Lectura de medidores Actual (Col 10)
+    'LECTURA_ACTUAL': 9,
+    # Días consumo (Col 12) - ya viene calculado
     'DIAS_CONSUMO': 11,
-    # Análisis de consumos
-    'ANALISIS_CONSUMOS_INICIO': 12, 'ANALISIS_CONSUMOS_FIN': 13,
-    # Verificados
-    'VERIFICADOS_INICIO': 14, 'VERIFICADOS_FIN': 15,
-    # Ingreso de verificados
-    'INGRESO_VERIFICADOS_INICIO': 16, 'INGRESO_VERIFICADOS_FIN': 17,
-    # Liquidación
-    'LIQUIDACION_INICIO': 18, 'LIQUIDACION_FIN': 19,
-    # Calidad facturación
-    'CALIDAD_INICIO': 20, 'CALIDAD_FIN': 21,
-    # Entrega al Impresor
-    'ENTREGA_IMPRESOR_INICIO': 22, 'ENTREGA_IMPRESOR_FIN': 23,
-    # Entrega al Cliente
-    'ENTREGA_CLIENTE_INICIO': 24, 'ENTREGA_CLIENTE_FIN': 25,
-    # Pago sin recargo
-    'PAGO_INICIO': 26, 'PAGO_FIN': 27,
-    # Pago con recargo
-    'PAGO_RECARGO_INICIO': 28, 'PAGO_RECARGO_FIN': 29,
-    # Suspensión del servicio
-    'SUSPENSION_INICIO': 30, 'SUSPENSION_FIN': 31,
+    # Análisis de consumos (Col 13)
+    'ANALISIS_CONSUMOS': 12,
+    # Verificados (Col 15)
+    'VERIFICADOS': 14,
+    # Ingreso de verificados (Col 17)
+    'INGRESO_VERIFICADOS': 16,
+    # Liquidación (Col 19)
+    'LIQUIDACION': 18,
+    # Calidad facturación (Col 21)
+    'CALIDAD': 20,
+    # Entrega al Impresor (Col 23)
+    'ENTREGA_IMPRESOR': 22,
+    # Entrega al Cliente (Col 25)
+    'ENTREGA_CLIENTE': 24,
+    # Pago sin recargo (Col 27)
+    'PAGO': 26,
+    # Pago con recargo (Col 29)
+    'PAGO_RECARGO': 28,
+    # Suspensión del servicio (Col 31)
+    'SUSPENSION': 30,
 }
 
 def excel_date_to_python(excel_date):
@@ -89,15 +89,17 @@ def parse_excel_file(filepath):
                         try: ciclo_num = int(float(ciclo_val))
                         except: continue
                         
-                        # Extraer fechas de consumo (Lectura Actual)
-                        consumo_inicio = excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ACTUAL_INICIO']])
-                        consumo_fin = excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ACTUAL_FIN']])
+                        # Extraer fechas
+                        consumo_inicio = excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ACTUAL']])
+                        consumo_fin = excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ACTUAL']])
                         
-                        # Calcular días
-                        dias_facturados = None
-                        if consumo_inicio and consumo_fin:
-                            try: dias_facturados = (pd.to_datetime(consumo_fin) - pd.to_datetime(consumo_inicio)).days
-                            except: pass
+                        # Usar días que ya vienen calculados en el Excel
+                        dias_facturados = row.iloc[COLUMN_MAP['DIAS_CONSUMO']]
+                        if pd.isna(dias_facturados):
+                            dias_facturados = None
+                        else:
+                            try: dias_facturados = int(dias_facturados)
+                            except: dias_facturados = None
                         
                         ciclo = {
                             'ciclo': ciclo_num,
@@ -105,47 +107,34 @@ def parse_excel_file(filepath):
                             'analista': str(row.iloc[COLUMN_MAP['ANALISTA']]).strip() if pd.notna(row.iloc[COLUMN_MAP['ANALISTA']]) else '',
                             'municipio': str(row.iloc[COLUMN_MAP['MUNICIPIO']]).strip() if pd.notna(row.iloc[COLUMN_MAP['MUNICIPIO']]) else '',
                             'periodo': str(row.iloc[COLUMN_MAP['PERIODO']]).strip() if pd.notna(row.iloc[COLUMN_MAP['PERIODO']]) else '',
-                            # Generación del Libro
-                            'generacion_libro': excel_date_to_python(row.iloc[COLUMN_MAP['GENERACION_LIBRO']]),
-                            # Lectura de medidores (Anterior)
-                            'lectura_anterior_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ANTERIOR_INICIO']]),
-                            'lectura_anterior_fin': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ANTERIOR_FIN']]),
-                            # Lectura de medidores (Actual - considerado como consumo)
+                            # Consumo (de Lectura Actual)
                             'consumo_inicio': consumo_inicio,
                             'consumo_fin': consumo_fin,
                             'dias_facturados': dias_facturados,
-                            # Análisis de consumos
-                            'analisis_consumos_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ANALISIS_CONSUMOS_INICIO']]),
-                            'analisis_consumos_fin': excel_date_to_python(row.iloc[COLUMN_MAP['ANALISIS_CONSUMOS_FIN']]),
-                            # Verificados
-                            'verificados_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['VERIFICADOS_INICIO']]),
-                            'verificados_fin': excel_date_to_python(row.iloc[COLUMN_MAP['VERIFICADOS_FIN']]),
-                            # Ingreso de verificados
-                            'ingreso_verificados_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['INGRESO_VERIFICADOS_INICIO']]),
-                            'ingreso_verificados_fin': excel_date_to_python(row.iloc[COLUMN_MAP['INGRESO_VERIFICADOS_FIN']]),
-                            # Liquidación
-                            'liquidacion_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['LIQUIDACION_INICIO']]),
-                            'liquidacion_fin': excel_date_to_python(row.iloc[COLUMN_MAP['LIQUIDACION_FIN']]),
-                            # Calidad facturación
-                            'calidad_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['CALIDAD_INICIO']]),
-                            'calidad_fin': excel_date_to_python(row.iloc[COLUMN_MAP['CALIDAD_FIN']]),
-                            # Entrega al Impresor
-                            'entrega_impresor_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_IMPRESOR_INICIO']]),
-                            'entrega_impresor_fin': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_IMPRESOR_FIN']]),
-                            # Entrega al Cliente (DIAN)
-                            'dian_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_INICIO']]),
-                            'dian_fin': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_FIN']]),
-                            'entrega_cliente_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_INICIO']]),
-                            'entrega_cliente_fin': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_FIN']]),
-                            # Pago sin recargo
-                            'pago_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_INICIO']]),
-                            'pago_fin': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_FIN']]),
-                            # Pago con recargo
-                            'pago_recargo_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_RECARGO_INICIO']]),
-                            'pago_recargo_fin': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_RECARGO_FIN']]),
-                            # Suspensión del servicio
-                            'suspension_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_INICIO']]),
-                            'suspension_fin': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_FIN']]),
+                            # Todas las actividades (solo fecha de inicio)
+                            'generacion_libro': excel_date_to_python(row.iloc[COLUMN_MAP['GENERACION_LIBRO']]),
+                            'lectura_anterior': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ANTERIOR']]),
+                            'lectura_actual': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ACTUAL']]),
+                            'analisis_consumos': excel_date_to_python(row.iloc[COLUMN_MAP['ANALISIS_CONSUMOS']]),
+                            'verificados': excel_date_to_python(row.iloc[COLUMN_MAP['VERIFICADOS']]),
+                            'ingreso_verificados': excel_date_to_python(row.iloc[COLUMN_MAP['INGRESO_VERIFICADOS']]),
+                            'liquidacion': excel_date_to_python(row.iloc[COLUMN_MAP['LIQUIDACION']]),
+                            'calidad': excel_date_to_python(row.iloc[COLUMN_MAP['CALIDAD']]),
+                            'entrega_impresor': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_IMPRESOR']]),
+                            'entrega_cliente': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE']]),
+                            # Mantener para backward compatibility
+                            'dian_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE']]),
+                            'dian_fin': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE']]),
+                            'entrega_cliente_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE']]),
+                            'entrega_cliente_fin': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE']]),
+                            # Pagos
+                            'pago_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO']]),
+                            'pago_fin': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO']]),
+                            'pago_recargo_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_RECARGO']]),
+                            'pago_recargo_fin': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_RECARGO']]),
+                            # Suspensión
+                            'suspension_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION']]),
+                            'suspension_fin': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION']]),
                         }
                         ciclos.append(ciclo)
                     except Exception as e:
