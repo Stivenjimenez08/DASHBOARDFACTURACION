@@ -409,11 +409,15 @@ function displayCicloDetail() {
     clone.querySelector('#detailTable').innerHTML = detailTableHtml;
 
     // Calendario - generar rango completo del mes
-    const monthStart = new Date(cicloData.consumo_inicio);
+    // Usar lectura_actual como referencia (siempre está en el mes del ciclo)
+    const referenceDate = cicloData.lectura_actual || cicloData.generacion_libro || cicloData.consumo_inicio;
+    const monthStart = new Date(referenceDate);
     monthStart.setDate(1);
     const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
     const monthStartStr = monthStart.toISOString().split('T')[0];
     const monthEndStr = monthEnd.toISOString().split('T')[0];
+    
+    console.log('Calendario - Mes del ciclo:', monthStart.toISOString().split('T')[0], 'a', monthEndStr);
     
     const calendarHtml = buildCalendar(monthStartStr, monthEndStr, cicloData);
     clone.querySelector('#cicloCalendar').innerHTML = calendarHtml;
@@ -499,6 +503,15 @@ function buildDetailTable(cicloData) {
 }
 
 function buildCalendar(startDate, endDate, cicloData) {
+    console.log('buildCalendar - startDate:', startDate, 'endDate:', endDate);
+    console.log('buildCalendar - cicloData fields:');
+    console.log('  generacion_libro:', cicloData?.generacion_libro);
+    console.log('  lectura_actual:', cicloData?.lectura_actual);
+    console.log('  analisis_consumos:', cicloData?.analisis_consumos);
+    console.log('  verificados:', cicloData?.verificados);
+    console.log('  pago:', cicloData?.pago);
+    console.log('  suspension:', cicloData?.suspension);
+    
     if (!startDate || !endDate) {
         return '<p style="grid-column: 1/-1; text-align: center; color: #999;">Fechas no disponibles</p>';
     }
@@ -532,6 +545,7 @@ function buildCalendar(startDate, endDate, cicloData) {
     };
 
     // Días del rango
+    let activitiesFound = 0;
     while (current <= end) {
         const dateStr = current.toISOString().split('T')[0];
         
@@ -541,39 +555,51 @@ function buildCalendar(startDate, endDate, cicloData) {
         // Para cada actividad, verificar si su fecha es HOY
         if (cicloData?.generacion_libro === dateStr) {
             dayActivities.push({ key: 'Generación', ...activitiesMap['Generación'] });
+            activitiesFound++;
         }
         if (cicloData?.lectura_actual === dateStr) {
             dayActivities.push({ key: 'Lectura', ...activitiesMap['Lectura'] });
+            activitiesFound++;
         }
         if (cicloData?.analisis_consumos === dateStr) {
             dayActivities.push({ key: 'Análisis', ...activitiesMap['Análisis'] });
+            activitiesFound++;
         }
         if (cicloData?.verificados === dateStr) {
             dayActivities.push({ key: 'Verificado', ...activitiesMap['Verificado'] });
+            activitiesFound++;
         }
         if (cicloData?.ingreso_verificados === dateStr) {
             dayActivities.push({ key: 'Ingreso Verif', ...activitiesMap['Ingreso Verif'] });
+            activitiesFound++;
         }
         if (cicloData?.liquidacion === dateStr) {
             dayActivities.push({ key: 'Liquidación', ...activitiesMap['Liquidación'] });
+            activitiesFound++;
         }
         if (cicloData?.calidad === dateStr) {
             dayActivities.push({ key: 'Calidad', ...activitiesMap['Calidad'] });
+            activitiesFound++;
         }
         if (cicloData?.entrega_impresor === dateStr) {
             dayActivities.push({ key: 'Entrega Impr', ...activitiesMap['Entrega Impr'] });
+            activitiesFound++;
         }
         if (cicloData?.entrega_cliente === dateStr) {
             dayActivities.push({ key: 'Entrega', ...activitiesMap['Entrega'] });
+            activitiesFound++;
         }
         if (cicloData?.pago === dateStr) {
             dayActivities.push({ key: 'Pago', ...activitiesMap['Pago'] });
+            activitiesFound++;
         }
         if (cicloData?.pago_recargo === dateStr) {
             dayActivities.push({ key: 'Pago Recargo', ...activitiesMap['Pago Recargo'] });
+            activitiesFound++;
         }
         if (cicloData?.suspension === dateStr) {
             dayActivities.push({ key: 'Suspensión', ...activitiesMap['Suspensión'] });
+            activitiesFound++;
         }
 
         // Construir badges de actividades
@@ -595,6 +621,7 @@ function buildCalendar(startDate, endDate, cicloData) {
         current.setDate(current.getDate() + 1);
     }
 
+    console.log('buildCalendar - Total actividades encontradas:', activitiesFound);
     return html;
 }
 
