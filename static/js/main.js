@@ -409,7 +409,7 @@ function displayCicloDetail() {
     clone.querySelector('#detailTable').innerHTML = detailTableHtml;
 
     // Calendario
-    const calendarHtml = buildCalendar(cicloData.consumo_inicio, cicloData.consumo_fin);
+    const calendarHtml = buildCalendar(cicloData.consumo_inicio, cicloData.consumo_fin, cicloData);
     clone.querySelector('#cicloCalendar').innerHTML = calendarHtml;
 
     const container = document.getElementById('cicloDetailContainer');
@@ -492,7 +492,7 @@ function buildDetailTable(cicloData) {
     return rows.map(([key, val]) => `<tr><td>${key}</td><td>${val}</td></tr>`).join('');
 }
 
-function buildCalendar(startDate, endDate) {
+function buildCalendar(startDate, endDate, cicloData) {
     if (!startDate || !endDate) {
         return '<p style="grid-column: 1/-1; text-align: center; color: #999;">Fechas no disponibles</p>';
     }
@@ -509,11 +509,41 @@ function buildCalendar(startDate, endDate) {
         html += `<div class="calendar-day header">${day}</div>`;
     });
 
+    // Definir actividades del ciclo
+    const activities = [
+        { name: 'Consumo', start: cicloData?.consumo_inicio, end: cicloData?.consumo_fin, color: '#4CAF50', icon: 'leaf' },
+        { name: 'DIAN', start: cicloData?.dian_inicio, end: cicloData?.dian_fin, color: '#FF9800', icon: 'file' },
+        { name: 'Entrega', start: cicloData?.entrega_cliente_inicio, end: cicloData?.entrega_cliente_fin, color: '#2196F3', icon: 'envelope' },
+        { name: 'Pago', start: cicloData?.pago_inicio, end: cicloData?.pago_fin, color: '#9C27B0', icon: 'calendar' },
+        { name: 'Suspensión', start: cicloData?.suspension_inicio, end: cicloData?.suspension_fin, color: '#F44336', icon: 'ban' }
+    ];
+
     // Días del rango
     while (current <= end) {
+        const dateStr = current.toISOString().split('T')[0];
+        
+        // Buscar actividades para este día
+        let dayActivity = null;
+        let activityColor = '#4CAF50';
+        let activityIcon = 'fa-leaf';
+        
+        for (const activity of activities) {
+            if (isDateInRange(dateStr, activity.start, activity.end)) {
+                dayActivity = activity.name;
+                activityColor = activity.color;
+                activityIcon = `fa-${activity.icon}`;
+                break; // Tomar la primera actividad encontrada
+            }
+        }
+
+        const dayContent = dayActivity 
+            ? `<div style="font-size: 0.7em; font-weight: 600; margin-top: 2px;" title="${dayActivity}"><i class="fas ${activityIcon}" style="color: ${activityColor};"></i></div>`
+            : '';
+
         html += `
-            <div class="calendar-day in-range">
-                ${current.getDate()}
+            <div class="calendar-day in-range" ${dayActivity ? `title="${dayActivity}"` : ''}>
+                <div>${current.getDate()}</div>
+                ${dayContent}
             </div>
         `;
         current.setDate(current.getDate() + 1);
