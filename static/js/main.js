@@ -203,7 +203,10 @@ function updatePage1Timeline() {
         }
     });
 
-    document.getElementById('monthTimeline').innerHTML = html;
+    const timelineEl = document.getElementById('monthTimeline');
+    if (timelineEl) {
+        timelineEl.innerHTML = html;
+    }
 }
 
 function switchPage(pageNum) {
@@ -271,7 +274,10 @@ function displayMonthTimeline(ciclos) {
         }
     });
 
-    document.getElementById('monthTimeline').innerHTML = html;
+    const timelineEl = document.getElementById('monthTimeline');
+    if (timelineEl) {
+        timelineEl.innerHTML = html;
+    }
 }
 
 function displayMonthTable(ciclos) {
@@ -356,7 +362,10 @@ function formatCondensedDate(start, end) {
 }
 
 function clearPage1() {
-    document.getElementById('monthTimeline').innerHTML = '<div class="timeline-placeholder">Selecciona un mes para ver la línea de tiempo</div>';
+    const timelineEl = document.getElementById('monthTimeline');
+    if (timelineEl) {
+        timelineEl.innerHTML = '<div class="timeline-placeholder">Selecciona un mes para ver la línea de tiempo</div>';
+    }
     document.getElementById('monthTableBody').innerHTML = '<tr><td colspan="9" class="empty">Carga un archivo y selecciona un mes</td></tr>';
     document.getElementById('totalCiclos').innerHTML = '';
 }
