@@ -181,8 +181,15 @@ function switchPage(pageNum) {
 
 // PÁGINA 1: RESUMEN DEL MES
 function displayMonthData(ciclos) {
-    displayMonthTimeline(ciclos);
+    updateMonthNameDisplay(currentMonth);
     displayMonthTable(ciclos);
+}
+
+function updateMonthNameDisplay(month) {
+    const monthNameSpan = document.getElementById('selectedMonthName');
+    if (monthNameSpan && month) {
+        monthNameSpan.textContent = month;
+    }
 }
 
 function displayMonthTimeline(ciclos) {
@@ -216,14 +223,25 @@ function displayMonthTable(ciclos) {
     const tbody = document.getElementById('monthTableBody');
     tbody.innerHTML = '';
 
+    // Deduplicar ciclos (mostrar solo una línea por ciclo único)
+    const uniqueCiclos = [];
+    const ciclosSeen = new Set();
+    
     ciclos.forEach(ciclo => {
+        if (!ciclosSeen.has(ciclo.ciclo)) {
+            ciclosSeen.add(ciclo.ciclo);
+            uniqueCiclos.push(ciclo);
+        }
+    });
+
+    uniqueCiclos.forEach(ciclo => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${ciclo.ciclo}</td>
             <td>${ciclo.municipio}</td>
             <td>${ciclo.analista}</td>
             <td><strong>${ciclo.dias_facturados || '-'}</strong></td>
-            <td>${formatDateRange(ciclo.consumo_inicio, ciclo.consumo_fin)}</td>
+            <td>${ciclo.consumo_fin || '-'}</td>
             <td>${ciclo.dian_inicio || '-'}</td>
             <td>${ciclo.entrega_cliente_inicio || '-'}</td>
             <td>${ciclo.pago_inicio || '-'}</td>
@@ -232,7 +250,7 @@ function displayMonthTable(ciclos) {
         tbody.appendChild(row);
     });
 
-    document.getElementById('totalCiclos').innerHTML = `<strong>Total ciclos en el mes: ${ciclos.length}</strong>`;
+    document.getElementById('totalCiclos').innerHTML = `<strong>Total ciclos en el mes: ${uniqueCiclos.length}</strong>`;
 }
 
 function getDateRangeForMonth(ciclos, stepName) {
