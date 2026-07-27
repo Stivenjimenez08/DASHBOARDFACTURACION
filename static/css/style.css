@@ -108,6 +108,7 @@ body {
     gap: 5px;
     flex: 1;
     min-width: 200px;
+    margin-bottom: 10px;
 }
 
 .selector-group label {
@@ -580,6 +581,31 @@ body {
     padding: 20px;
 }
 
+.ciclo-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.ciclo-table-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.ciclo-table-section .section-title {
+    margin-top: 0;
+}
+
+.ciclo-calendar-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.ciclo-calendar-section .section-title {
+    margin-top: 0;
+}
+
 .detail-placeholder {
     text-align: center;
     color: #999;
@@ -624,6 +650,11 @@ body {
 
     .toggle-btn {
         flex: 1;
+    }
+
+    .ciclo-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
 
     .timeline-container {
