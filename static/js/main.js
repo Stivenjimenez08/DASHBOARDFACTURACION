@@ -509,12 +509,21 @@ function buildCalendar(startDate, endDate, cicloData) {
         html += `<div class="calendar-day header">${day}</div>`;
     });
 
-    // Definir actividades del ciclo
+    // Definir todas las actividades del ciclo con colores
     const activitiesMap = {
+        'Generación': { color: '#FF6B6B', label: 'Generación del Libro' },
+        'Lectura Ant': { color: '#4ECDC4', label: 'Lectura Medidores (Ant)' },
+        'Lectura': { color: '#45B7D1', label: 'Lectura Medidores' },
         'Consumo': { color: '#4CAF50', label: 'Consumo' },
-        'DIAN': { color: '#FF9800', label: 'Transmisión DIAN' },
-        'Entrega': { color: '#2196F3', label: 'Entrega Factura' },
+        'Análisis': { color: '#FFA500', label: 'Análisis de Consumos' },
+        'Verificado': { color: '#9C27B0', label: 'Verificados' },
+        'Ingreso Verif': { color: '#3F51B5', label: 'Ingreso Verificados' },
+        'Liquidación': { color: '#E91E63', label: 'Liquidación' },
+        'Calidad': { color: '#00BCD4', label: 'Calidad Facturación' },
+        'Entrega Impr': { color: '#795548', label: 'Entrega al Impresor' },
+        'Entrega': { color: '#2196F3', label: 'Entrega al Cliente' },
         'Pago': { color: '#9C27B0', label: 'Pago sin Recargo' },
+        'Pago Recargo': { color: '#673AB7', label: 'Pago con Recargo' },
         'Suspensión': { color: '#F44336', label: 'Suspensión' }
     };
 
@@ -525,17 +534,41 @@ function buildCalendar(startDate, endDate, cicloData) {
         // Buscar todas las actividades para este día
         let dayActivities = [];
         
-        if (isDateInRange(dateStr, cicloData?.consumo_inicio, cicloData?.consumo_fin)) {
-            dayActivities.push({ key: 'Consumo', ...activitiesMap['Consumo'] });
+        if (isDateInRange(dateStr, cicloData?.generacion_libro, cicloData?.generacion_libro)) {
+            dayActivities.push({ key: 'Generación', ...activitiesMap['Generación'] });
         }
-        if (isDateInRange(dateStr, cicloData?.dian_inicio, cicloData?.dian_fin)) {
-            dayActivities.push({ key: 'DIAN', ...activitiesMap['DIAN'] });
+        if (isDateInRange(dateStr, cicloData?.lectura_anterior_inicio, cicloData?.lectura_anterior_fin)) {
+            dayActivities.push({ key: 'Lectura Ant', ...activitiesMap['Lectura Ant'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.consumo_inicio, cicloData?.consumo_fin)) {
+            dayActivities.push({ key: 'Lectura', ...activitiesMap['Lectura'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.analisis_consumos_inicio, cicloData?.analisis_consumos_fin)) {
+            dayActivities.push({ key: 'Análisis', ...activitiesMap['Análisis'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.verificados_inicio, cicloData?.verificados_fin)) {
+            dayActivities.push({ key: 'Verificado', ...activitiesMap['Verificado'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.ingreso_verificados_inicio, cicloData?.ingreso_verificados_fin)) {
+            dayActivities.push({ key: 'Ingreso Verif', ...activitiesMap['Ingreso Verif'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.liquidacion_inicio, cicloData?.liquidacion_fin)) {
+            dayActivities.push({ key: 'Liquidación', ...activitiesMap['Liquidación'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.calidad_inicio, cicloData?.calidad_fin)) {
+            dayActivities.push({ key: 'Calidad', ...activitiesMap['Calidad'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.entrega_impresor_inicio, cicloData?.entrega_impresor_fin)) {
+            dayActivities.push({ key: 'Entrega Impr', ...activitiesMap['Entrega Impr'] });
         }
         if (isDateInRange(dateStr, cicloData?.entrega_cliente_inicio, cicloData?.entrega_cliente_fin)) {
             dayActivities.push({ key: 'Entrega', ...activitiesMap['Entrega'] });
         }
         if (isDateInRange(dateStr, cicloData?.pago_inicio, cicloData?.pago_fin)) {
             dayActivities.push({ key: 'Pago', ...activitiesMap['Pago'] });
+        }
+        if (isDateInRange(dateStr, cicloData?.pago_recargo_inicio, cicloData?.pago_recargo_fin)) {
+            dayActivities.push({ key: 'Pago Recargo', ...activitiesMap['Pago Recargo'] });
         }
         if (isDateInRange(dateStr, cicloData?.suspension_inicio, cicloData?.suspension_fin)) {
             dayActivities.push({ key: 'Suspensión', ...activitiesMap['Suspensión'] });
