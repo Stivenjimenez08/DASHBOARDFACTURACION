@@ -531,46 +531,47 @@ function buildCalendar(startDate, endDate, cicloData) {
     while (current <= end) {
         const dateStr = current.toISOString().split('T')[0];
         
-        // Buscar todas las actividades para este día
+        // Buscar todas las actividades que comienzan este día
         let dayActivities = [];
         
-        if (isDateInRange(dateStr, cicloData?.generacion_libro, cicloData?.generacion_libro)) {
+        // Para cada actividad, verificar si su fecha de inicio es HOY
+        if (cicloData?.generacion_libro === dateStr) {
             dayActivities.push({ key: 'Generación', ...activitiesMap['Generación'] });
         }
-        if (isDateInRange(dateStr, cicloData?.lectura_anterior_inicio, cicloData?.lectura_anterior_fin)) {
+        if (cicloData?.lectura_anterior_inicio === dateStr) {
             dayActivities.push({ key: 'Lectura Ant', ...activitiesMap['Lectura Ant'] });
         }
-        if (isDateInRange(dateStr, cicloData?.consumo_inicio, cicloData?.consumo_fin)) {
+        if (cicloData?.consumo_inicio === dateStr) {
             dayActivities.push({ key: 'Lectura', ...activitiesMap['Lectura'] });
         }
-        if (isDateInRange(dateStr, cicloData?.analisis_consumos_inicio, cicloData?.analisis_consumos_fin)) {
+        if (cicloData?.analisis_consumos_inicio === dateStr) {
             dayActivities.push({ key: 'Análisis', ...activitiesMap['Análisis'] });
         }
-        if (isDateInRange(dateStr, cicloData?.verificados_inicio, cicloData?.verificados_fin)) {
+        if (cicloData?.verificados_inicio === dateStr) {
             dayActivities.push({ key: 'Verificado', ...activitiesMap['Verificado'] });
         }
-        if (isDateInRange(dateStr, cicloData?.ingreso_verificados_inicio, cicloData?.ingreso_verificados_fin)) {
+        if (cicloData?.ingreso_verificados_inicio === dateStr) {
             dayActivities.push({ key: 'Ingreso Verif', ...activitiesMap['Ingreso Verif'] });
         }
-        if (isDateInRange(dateStr, cicloData?.liquidacion_inicio, cicloData?.liquidacion_fin)) {
+        if (cicloData?.liquidacion_inicio === dateStr) {
             dayActivities.push({ key: 'Liquidación', ...activitiesMap['Liquidación'] });
         }
-        if (isDateInRange(dateStr, cicloData?.calidad_inicio, cicloData?.calidad_fin)) {
+        if (cicloData?.calidad_inicio === dateStr) {
             dayActivities.push({ key: 'Calidad', ...activitiesMap['Calidad'] });
         }
-        if (isDateInRange(dateStr, cicloData?.entrega_impresor_inicio, cicloData?.entrega_impresor_fin)) {
+        if (cicloData?.entrega_impresor_inicio === dateStr) {
             dayActivities.push({ key: 'Entrega Impr', ...activitiesMap['Entrega Impr'] });
         }
-        if (isDateInRange(dateStr, cicloData?.entrega_cliente_inicio, cicloData?.entrega_cliente_fin)) {
+        if (cicloData?.entrega_cliente_inicio === dateStr) {
             dayActivities.push({ key: 'Entrega', ...activitiesMap['Entrega'] });
         }
-        if (isDateInRange(dateStr, cicloData?.pago_inicio, cicloData?.pago_fin)) {
+        if (cicloData?.pago_inicio === dateStr) {
             dayActivities.push({ key: 'Pago', ...activitiesMap['Pago'] });
         }
-        if (isDateInRange(dateStr, cicloData?.pago_recargo_inicio, cicloData?.pago_recargo_fin)) {
+        if (cicloData?.pago_recargo_inicio === dateStr) {
             dayActivities.push({ key: 'Pago Recargo', ...activitiesMap['Pago Recargo'] });
         }
-        if (isDateInRange(dateStr, cicloData?.suspension_inicio, cicloData?.suspension_fin)) {
+        if (cicloData?.suspension_inicio === dateStr) {
             dayActivities.push({ key: 'Suspensión', ...activitiesMap['Suspensión'] });
         }
 
