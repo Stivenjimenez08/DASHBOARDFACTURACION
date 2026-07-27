@@ -534,35 +534,35 @@ function buildCalendar(startDate, endDate, cicloData) {
         // Buscar todas las actividades que comienzan este día
         let dayActivities = [];
         
-        // Para cada actividad, verificar si su fecha de inicio es HOY
+        // Para cada actividad, verificar si su fecha es HOY
         if (cicloData?.generacion_libro === dateStr) {
             dayActivities.push({ key: 'Generación', ...activitiesMap['Generación'] });
         }
-        if (cicloData?.lectura_anterior_inicio === dateStr) {
+        if (cicloData?.lectura_anterior === dateStr) {
             dayActivities.push({ key: 'Lectura Ant', ...activitiesMap['Lectura Ant'] });
         }
-        if (cicloData?.consumo_inicio === dateStr) {
+        if (cicloData?.lectura_actual === dateStr) {
             dayActivities.push({ key: 'Lectura', ...activitiesMap['Lectura'] });
         }
-        if (cicloData?.analisis_consumos_inicio === dateStr) {
+        if (cicloData?.analisis_consumos === dateStr) {
             dayActivities.push({ key: 'Análisis', ...activitiesMap['Análisis'] });
         }
-        if (cicloData?.verificados_inicio === dateStr) {
+        if (cicloData?.verificados === dateStr) {
             dayActivities.push({ key: 'Verificado', ...activitiesMap['Verificado'] });
         }
-        if (cicloData?.ingreso_verificados_inicio === dateStr) {
+        if (cicloData?.ingreso_verificados === dateStr) {
             dayActivities.push({ key: 'Ingreso Verif', ...activitiesMap['Ingreso Verif'] });
         }
-        if (cicloData?.liquidacion_inicio === dateStr) {
+        if (cicloData?.liquidacion === dateStr) {
             dayActivities.push({ key: 'Liquidación', ...activitiesMap['Liquidación'] });
         }
-        if (cicloData?.calidad_inicio === dateStr) {
+        if (cicloData?.calidad === dateStr) {
             dayActivities.push({ key: 'Calidad', ...activitiesMap['Calidad'] });
         }
-        if (cicloData?.entrega_impresor_inicio === dateStr) {
+        if (cicloData?.entrega_impresor === dateStr) {
             dayActivities.push({ key: 'Entrega Impr', ...activitiesMap['Entrega Impr'] });
         }
-        if (cicloData?.entrega_cliente_inicio === dateStr) {
+        if (cicloData?.entrega_cliente === dateStr) {
             dayActivities.push({ key: 'Entrega', ...activitiesMap['Entrega'] });
         }
         if (cicloData?.pago_inicio === dateStr) {
