@@ -8,12 +8,7 @@ let currentCalendarMonth = null;
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('monthSelect').addEventListener('change', handleMonthChange);
     
-    // Usar event delegation para cicloSelect (ya que se regenera)
-    document.addEventListener('change', (e) => {
-        if (e.target.id === 'cicloSelect') {
-            handleCicloChange();
-        }
-    });
+    // El listener para cicloSelect se agrega dinámicamente en handleMonthChange
     
     document.querySelectorAll('.toggle-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -93,6 +88,9 @@ async function handleMonthChange() {
             cicloSelect.appendChild(option);
         });
 
+        // Agregar listener al select después de regenerarlo
+        cicloSelect.addEventListener('change', handleCicloChange);
+
         // Auto-seleccionar el primer ciclo único
         const uniqueCiclos = [];
         const ciclosSeen = new Set();
@@ -118,17 +116,29 @@ async function handleMonthChange() {
 
 function handleCicloChange() {
     const ciclo = document.getElementById('cicloSelect').value;
-    console.log('Ciclo seleccionado:', ciclo, 'Mes actual:', currentMonth);
+    console.log('=== handleCicloChange ===');
+    console.log('Ciclo seleccionado:', ciclo);
+    console.log('currentMonth:', currentMonth);
+    console.log('allData keys:', Object.keys(allData));
     
-    if (!ciclo || !currentMonth) {
-        console.log('Ciclo o mes vacío, retornando');
+    if (!ciclo) {
+        console.log('No hay ciclo seleccionado');
         return;
     }
 
+    if (!currentMonth) {
+        console.log('No hay mes actual, intentando obtener del selector');
+        const monthSelect = document.getElementById('monthSelect').value;
+        if (!monthSelect) {
+            console.log('Tampoco hay mes en el selector');
+            return;
+        }
+        currentMonth = monthSelect;
+    }
+
     currentCiclo = ciclo;
-    console.log('Actualizando currentCiclo a:', currentCiclo);
+    console.log('Actualizando a ciclo:', currentCiclo, 'mes:', currentMonth);
     
-    updatePage1Timeline();
     displayCicloDetail();
 }
 
