@@ -267,8 +267,10 @@ function switchPage(pageNum) {
         selectors.style.display = 'flex';
         cicloSelectorGroup.style.display = 'block';
     } else if (pageNum === '3') {
-        // En Página 3, ocultar ambos selectores
-        selectors.style.display = 'none';
+        // En Página 3, mostrar solo filtro de mes (ocultar ciclo)
+        selectors.style.display = 'flex';
+        monthSelectorGroup.style.display = 'block';
+        cicloSelectorGroup.style.display = 'none';
     }
 }
 
@@ -779,8 +781,7 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
 
 function getCiclosForDate(dateStr, ciclos) {
     // Filtrar solo ciclos que tienen una actividad específica en ese día exacto
-    // No usar rangos, solo fechas específicas
-    return ciclos.filter(ciclo => {
+    const ciclosEnDia = ciclos.filter(ciclo => {
         return dateStr === ciclo.generacion_libro ||
                dateStr === ciclo.lectura_anterior ||
                dateStr === ciclo.lectura_actual ||
@@ -795,6 +796,19 @@ function getCiclosForDate(dateStr, ciclos) {
                dateStr === ciclo.pago_recargo ||
                dateStr === ciclo.suspension;
     });
+    
+    // Deduplicar: mostrar solo 1 vez por número de ciclo
+    const ciclosUnicos = [];
+    const ciclosSeen = new Set();
+    
+    ciclosEnDia.forEach(ciclo => {
+        if (!ciclosSeen.has(ciclo.ciclo)) {
+            ciclosSeen.add(ciclo.ciclo);
+            ciclosUnicos.push(ciclo);
+        }
+    });
+    
+    return ciclosUnicos;
 }
 
 function isDateInRange(dateStr, startStr, endStr) {
