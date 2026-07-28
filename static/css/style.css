@@ -462,6 +462,8 @@ body {
 
 .calendar-view {
     margin-bottom: 30px;
+    width: 100%;
+    overflow: auto;
 }
 
 .calendar-grid {
@@ -547,8 +549,10 @@ body {
     background: white;
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid var(--border);
-    min-height: 200px;
+    border: 2px solid var(--border);
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: auto;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
@@ -570,14 +574,18 @@ body {
 .calendario-column {
     display: flex;
     flex-direction: column;
+    min-width: 0;  /* Permite que el contenido no desborde */
 }
 
 .calendario-column:first-child {
     grid-column: 1;
+    border-right: 2px solid var(--border);
+    padding-right: 15px;
 }
 
 .calendario-column:last-child {
     grid-column: 2;
+    padding-left: 15px;
 }
 
 .events-list {
@@ -706,6 +714,15 @@ body {
     .calendario-grid {
         grid-template-columns: 1fr;
         gap: 15px;
+    }
+
+    .calendario-column:first-child {
+        border-right: none;
+        padding-right: 0;
+    }
+
+    .calendario-column:last-child {
+        padding-left: 0;
     }
 
     .toggle-btn {
