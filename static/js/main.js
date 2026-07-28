@@ -430,13 +430,13 @@ function displayCicloDetail() {
     // Calendario - generar rango completo del mes
     // Usar lectura_actual como referencia (siempre está en el mes del ciclo)
     const referenceDate = cicloData.lectura_actual || cicloData.generacion_libro || cicloData.consumo_inicio;
-    const monthStart = new Date(referenceDate);
+    const monthStart = parseLocalDate(referenceDate);
     monthStart.setDate(1);
     const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
-    const monthStartStr = monthStart.toISOString().split('T')[0];
-    const monthEndStr = monthEnd.toISOString().split('T')[0];
+    const monthStartStr = formatDate(monthStart);
+    const monthEndStr = formatDate(monthEnd);
     
-    console.log('Calendario - Mes del ciclo:', monthStart.toISOString().split('T')[0], 'a', monthEndStr);
+    console.log('Calendario - Mes del ciclo:', monthStartStr, 'a', monthEndStr);
     
     const calendarHtml = buildCalendar(monthStartStr, monthEndStr, cicloData);
     clone.querySelector('#cicloCalendar').innerHTML = calendarHtml;
