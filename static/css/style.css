@@ -308,8 +308,8 @@ body {
 /* Columna Municipio - reducida y con colapso */
 .data-table td:nth-child(2),
 .data-table th:nth-child(2) {
-    width: 150px;
-    min-width: 150px;
+    width: 180px;
+    min-width: 180px;
     word-break: break-word;
     overflow-wrap: break-word;
     white-space: normal;  /* ← Esta SÍ puede colapsar */
@@ -849,10 +849,10 @@ body {
 
 /* Filtro de Mes más largo en Página 1 (Resumen Mes) */
 #page1 .selector-group:first-child {
-    min-width: 280px;
+    min-width: 380px;
 }
 
 /* Filtro de Mes más largo en Página 3 (Calendario) */
 #page3 .selector-group:first-child {
-    min-width: 280px;
+    min-width: 380px;
 }
