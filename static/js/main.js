@@ -107,19 +107,10 @@ async function handleMonthChange() {
         const cicloSelect = document.getElementById('cicloSelect');
         cicloSelect.innerHTML = '<option value="">-- Seleccionar ciclo --</option>';
         
-        data.ciclos.forEach(ciclo => {
-            const option = document.createElement('option');
-            option.value = ciclo.ciclo;
-            option.textContent = `Ciclo ${ciclo.ciclo}`;
-            cicloSelect.appendChild(option);
-        });
-
-        // Agregar listener al select después de regenerarlo
-        cicloSelect.addEventListener('change', handleCicloChange);
-
-        // Auto-seleccionar el primer ciclo único
-        const uniqueCiclos = [];
+        // Deduplicar ciclos (mostrar cada número solo una vez)
         const ciclosSeen = new Set();
+        const uniqueCiclos = [];
+        
         data.ciclos.forEach(ciclo => {
             if (!ciclosSeen.has(ciclo.ciclo)) {
                 ciclosSeen.add(ciclo.ciclo);
@@ -127,6 +118,21 @@ async function handleMonthChange() {
             }
         });
         
+        // Ordenar ciclos numéricamente
+        uniqueCiclos.sort((a, b) => parseInt(a.ciclo) - parseInt(b.ciclo));
+        
+        // Llenar el select con ciclos ordenados y sin duplicados
+        uniqueCiclos.forEach(ciclo => {
+            const option = document.createElement('option');
+            option.value = ciclo.ciclo;
+            option.textContent = ciclo.ciclo;
+            cicloSelect.appendChild(option);
+        });
+
+        // Agregar listener al select después de regenerarlo
+        cicloSelect.addEventListener('change', handleCicloChange);
+
+        // Auto-seleccionar el primer ciclo
         if (uniqueCiclos.length > 0) {
             cicloSelect.value = String(uniqueCiclos[0].ciclo);
             currentCiclo = String(uniqueCiclos[0].ciclo);
