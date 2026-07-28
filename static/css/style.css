@@ -400,6 +400,13 @@ body {
     font-size: 0.85em;
 }
 
+.calendar-day.empty {
+    background: transparent;
+    border: none;
+    cursor: default;
+    box-shadow: none;
+}
+
 /* ============================================================================
    PÁGINA 3: CALENDARIO ORIGINAL
    ============================================================================ */
