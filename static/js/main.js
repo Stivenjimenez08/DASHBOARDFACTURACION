@@ -548,6 +548,12 @@ function buildCalendar(startDate, endDate, cicloData) {
         html += `<div class="calendar-day header">${day}</div>`;
     });
 
+    // Agregar días vacíos al inicio del mes para alinear correctamente
+    const firstDayOfWeek = start.getDay(); // 0 = domingo, 1 = lunes, etc.
+    for (let i = 0; i < firstDayOfWeek; i++) {
+        html += `<div class="calendar-day empty"></div>`;
+    }
+
     // Definir todas las actividades del ciclo con colores
     const activitiesMap = {
         'Generación': { color: '#FF6B6B', label: 'Generación del Libro' },
