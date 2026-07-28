@@ -166,17 +166,26 @@
             <div class="page-content">
                 <h2 class="section-title">📅 CALENDARIO DE ACTIVIDADES POR DÍA</h2>
                 <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
-                    Haz clic en un día para ver los ciclos programados y su estado actual en el mes seleccionado
+                    Selecciona un mes y haz clic en un día para ver los ciclos programados y su estado actual
                 </p>
                 
-                <!-- CALENDARIO INTERACTIVO -->
-                <div id="calendarView" class="calendar-view"></div>
-
-                <!-- DETALLES DEL DÍA SELECCIONADO -->
-                <div id="dayDetailsContainer" class="day-details">
-                    <p style="color: #999; text-align: center; padding: 40px 20px;">
-                        <i class="fas fa-mouse"></i> Selecciona un día del calendario para ver los ciclos programados
-                    </p>
+                <!-- Layout 2 columnas: Calendario | Detalles -->
+                <div class="calendario-grid">
+                    <!-- Columna 1: CALENDARIO -->
+                    <div class="calendario-column">
+                        <!-- CALENDARIO INTERACTIVO -->
+                        <div id="calendarView" class="calendar-view"></div>
+                    </div>
+                    
+                    <!-- Columna 2: DETALLES -->
+                    <div class="calendario-column">
+                        <!-- DETALLES DEL DÍA SELECCIONADO -->
+                        <div id="dayDetailsContainer" class="day-details">
+                            <p style="color: #999; text-align: center; padding: 40px 20px;">
+                                <i class="fas fa-mouse"></i> Selecciona un día del calendario para ver los ciclos programados
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
             </div>
