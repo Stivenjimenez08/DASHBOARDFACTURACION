@@ -288,12 +288,33 @@ body {
 
 .data-table th {
     padding: 12px;
-    text-align: left;
+    text-align: center;
 }
 
 .data-table td {
     padding: 12px;
     border-bottom: 1px solid var(--light);
+    text-align: center;
+}
+
+/* Columna Municipio - reducida y con colapso */
+.data-table td:nth-child(2),
+.data-table th:nth-child(2) {
+    width: 80px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Columnas que NO deben colapsar (una sola línea) */
+.data-table td:nth-child(3),
+.data-table td:nth-child(4),
+.data-table td:nth-child(5),
+.data-table td:nth-child(6),
+.data-table td:nth-child(7),
+.data-table td:nth-child(8),
+.data-table td:nth-child(9),
+.data-table td:nth-child(10) {
+    white-space: nowrap;
 }
 
 .data-table tbody tr:hover {
