@@ -308,8 +308,8 @@ body {
 /* Columna Municipio - reducida y con colapso */
 .data-table td:nth-child(2),
 .data-table th:nth-child(2) {
-    width: 100px;
-    min-width: 100px;
+    width: 150px;
+    min-width: 150px;
     word-break: break-word;
     overflow-wrap: break-word;
     white-space: normal;  /* ← Esta SÍ puede colapsar */
@@ -571,8 +571,9 @@ body {
     border: 2px solid var(--border);
     min-height: 400px;
     max-height: 600px;
-    overflow-y: auto;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    display: flex;              /* ← Usar flex para layout */
+    flex-direction: column;     /* ← Apilar verticalmente */
 }
 
 .day-details h3 {
@@ -580,6 +581,7 @@ body {
     color: var(--dark);
     border-bottom: 2px solid var(--primary);
     padding-bottom: 10px;
+    flex-shrink: 0;            /* ← NO encogerse, queda fijo */
 }
 
 /* Layout 2 columnas para Página 3 */
@@ -612,6 +614,9 @@ body {
     flex-direction: column;
     gap: 15px;
     margin-top: 15px;
+    overflow-y: auto;          /* ← Scroll solo en las actividades */
+    flex: 1;                   /* ← Ocupa el espacio restante */
+    padding-right: 5px;        /* ← Espacio para la scrollbar */
 }
 
 .event-item {
@@ -836,4 +841,18 @@ body {
         padding: 10px;
         gap: 10px;
     }
+}
+
+/* ============================================================================
+   SELECTORES ESPECÍFICOS POR PÁGINA
+   ============================================================================ */
+
+/* Filtro de Mes más largo en Página 1 (Resumen Mes) */
+#page1 .selector-group:first-child {
+    min-width: 280px;
+}
+
+/* Filtro de Mes más largo en Página 3 (Calendario) */
+#page3 .selector-group:first-child {
+    min-width: 280px;
 }
