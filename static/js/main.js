@@ -110,7 +110,7 @@ async function handleMonthChange() {
         data.ciclos.forEach(ciclo => {
             const option = document.createElement('option');
             option.value = ciclo.ciclo;
-            option.textContent = `Ciclo ${ciclo.ciclo} - ${ciclo.municipio}`;
+            option.textContent = `Ciclo ${ciclo.ciclo}`;
             cicloSelect.appendChild(option);
         });
 
