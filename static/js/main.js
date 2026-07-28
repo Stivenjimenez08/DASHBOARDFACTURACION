@@ -778,12 +778,22 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
 }
 
 function getCiclosForDate(dateStr, ciclos) {
+    // Filtrar solo ciclos que tienen una actividad específica en ese día exacto
+    // No usar rangos, solo fechas específicas
     return ciclos.filter(ciclo => {
-        return isDateInRange(dateStr, ciclo.consumo_inicio, ciclo.consumo_fin) ||
-               isDateInRange(dateStr, ciclo.dian_inicio, ciclo.dian_fin) ||
-               isDateInRange(dateStr, ciclo.entrega_cliente_inicio, ciclo.entrega_cliente_fin) ||
-               isDateInRange(dateStr, ciclo.pago_inicio, ciclo.pago_fin) ||
-               isDateInRange(dateStr, ciclo.suspension_inicio, ciclo.suspension_fin);
+        return dateStr === ciclo.generacion_libro ||
+               dateStr === ciclo.lectura_anterior ||
+               dateStr === ciclo.lectura_actual ||
+               dateStr === ciclo.analisis_consumos ||
+               dateStr === ciclo.verificados ||
+               dateStr === ciclo.ingreso_verificados ||
+               dateStr === ciclo.liquidacion ||
+               dateStr === ciclo.calidad ||
+               dateStr === ciclo.entrega_impresor ||
+               dateStr === ciclo.entrega_cliente ||
+               dateStr === ciclo.pago ||
+               dateStr === ciclo.pago_recargo ||
+               dateStr === ciclo.suspension;
     });
 }
 
@@ -796,20 +806,45 @@ function isDateInRange(dateStr, startStr, endStr) {
 }
 
 function getStateForDate(dateStr, ciclo) {
-    if (isDateInRange(dateStr, ciclo.suspension_inicio, ciclo.suspension_fin)) {
+    // Buscar qué actividad específica tiene este ciclo en este día
+    if (dateStr === ciclo.generacion_libro) {
+        return { state: 'Generación del Libro', icon: 'fa-file-alt', color: '#99841D' };
+    }
+    if (dateStr === ciclo.lectura_anterior) {
+        return { state: 'Lectura Medidores (Ant)', icon: 'fa-eye', color: '#45B7D1' };
+    }
+    if (dateStr === ciclo.lectura_actual) {
+        return { state: 'Lectura Medidores', icon: 'fa-eye', color: '#45B7D1' };
+    }
+    if (dateStr === ciclo.analisis_consumos) {
+        return { state: 'Período Crítica', icon: 'fa-magnifying-glass-chart', color: '#FFA500' };
+    }
+    if (dateStr === ciclo.verificados) {
+        return { state: 'Verificados', icon: 'fa-check', color: '#7C991D' };
+    }
+    if (dateStr === ciclo.ingreso_verificados) {
+        return { state: 'Ingreso Verificados', icon: 'fa-arrow-right', color: '#6E851E' };
+    }
+    if (dateStr === ciclo.liquidacion) {
+        return { state: 'Liquidación', icon: 'fa-money-bill', color: '#34991D' };
+    }
+    if (dateStr === ciclo.calidad) {
+        return { state: 'Calidad Facturación', icon: 'fa-check-circle', color: '#00BCD4' };
+    }
+    if (dateStr === ciclo.entrega_impresor) {
+        return { state: 'Entrega al Impresor', icon: 'fa-truck', color: '#795548' };
+    }
+    if (dateStr === ciclo.entrega_cliente) {
+        return { state: 'Entrega al Cliente', icon: 'fa-envelope', color: '#2196F3' };
+    }
+    if (dateStr === ciclo.pago) {
+        return { state: 'Pago sin Recargo', icon: 'fa-credit-card', color: '#9C27B0' };
+    }
+    if (dateStr === ciclo.pago_recargo) {
+        return { state: 'Pago con Recargo', icon: 'fa-credit-card', color: '#673AB7' };
+    }
+    if (dateStr === ciclo.suspension) {
         return { state: 'Suspensión', icon: 'fa-ban', color: '#F44336' };
-    }
-    if (isDateInRange(dateStr, ciclo.pago_inicio, ciclo.pago_fin)) {
-        return { state: 'Pago sin Recargo', icon: 'fa-calendar', color: '#9C27B0' };
-    }
-    if (isDateInRange(dateStr, ciclo.entrega_cliente_inicio, ciclo.entrega_cliente_fin)) {
-        return { state: 'Verificado', icon: 'fa-check', color: '#2196F3' };
-    }
-    if (isDateInRange(dateStr, ciclo.dian_inicio, ciclo.dian_fin)) {
-        return { state: 'Análisis de Consumos', icon: 'fa-file-text', color: '#FF9800' };
-    }
-    if (isDateInRange(dateStr, ciclo.consumo_inicio, ciclo.consumo_fin)) {
-        return { state: 'Lectura', icon: 'fa-leaf', color: '#4CAF50' };
     }
     return { state: 'Desconocido', icon: 'fa-question', color: '#999' };
 }
