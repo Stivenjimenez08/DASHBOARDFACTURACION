@@ -536,10 +536,10 @@ function buildDetailTable(cicloData) {
         ['Inicio de Consumo', formatDateDisplay(cicloData.consumo_inicio)],
         ['Fin de Consumo', formatDateDisplay(cicloData.consumo_fin)],
         ['Días Facturados', cicloData.dias_facturados || '-'],
-        ['Transmisión DIAN', formatCondensedDate(cicloData.dian_inicio, cicloData.dian_fin)],
+        ['Liquidación', formatDateDisplay(cicloData.liquidacion)],
         ['Entrega Factura', formatDateDisplay(cicloData.entrega_cliente_inicio)],
-        ['Pago sin Recargo', formatCondensedDate(cicloData.pago_inicio, cicloData.pago_fin)],
-        ['Suspensión', formatCondensedDate(cicloData.suspension_inicio, cicloData.suspension_fin)]
+        ['Pago sin Recargo', formatDateDisplay(cicloData.pago_inicio)],
+        ['Suspensión', formatDateDisplay(cicloData.suspension_inicio)]
     ];
 
     return rows.map(([key, val]) => `<tr><td>${key}</td><td>${val}</td></tr>`).join('');
