@@ -91,9 +91,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 150px;
-    flex-wrap: wrap;
-    row-gap: 20px;
+    gap: 80px;
+    flex-wrap: nowrap;  /* ← Obligar a estar en 1 línea */
 }
 
 .selectors {
@@ -101,13 +100,14 @@ body {
     gap: 30px;
     flex: 0 1 auto;
     min-width: 350px;
+    flex-shrink: 1;  /* ← Permitir que se encoja un poco si es necesario */
 }
 
 .selector-group {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    flex: 1;
+    flex: 0 1 auto;  /* ← Cambiar de flex: 1 a auto */
     min-width: 220px;
     margin-bottom: 10px;
 }
@@ -142,9 +142,10 @@ body {
 .buttons-container {
     display: flex;
     gap: 15px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;  /* ← Obligar a estar en 1 línea */
     margin-left: auto;
     white-space: nowrap;
+    flex-shrink: 0;     /* ← No encogerse */
 }
 
 .toggle-btn {
@@ -289,6 +290,8 @@ body {
 .data-table th {
     padding: 12px;
     text-align: center;
+    white-space: nowrap;  /* ← No colapsar headers */
+    min-width: 100px;     /* ← Ancho mínimo para cada header */
 }
 
 .data-table td {
@@ -301,11 +304,21 @@ body {
 .data-table td:nth-child(2),
 .data-table th:nth-child(2) {
     width: 80px;
+    min-width: 80px;
     word-break: break-word;
     overflow-wrap: break-word;
+    white-space: normal;  /* ← Esta SÍ puede colapsar */
 }
 
-/* Columnas que NO deben colapsar (una sola línea) */
+/* Todas las otras columnas - NO colapsar */
+.data-table th:nth-child(3),
+.data-table th:nth-child(4),
+.data-table th:nth-child(5),
+.data-table th:nth-child(6),
+.data-table th:nth-child(7),
+.data-table th:nth-child(8),
+.data-table th:nth-child(9),
+.data-table th:nth-child(10),
 .data-table td:nth-child(3),
 .data-table td:nth-child(4),
 .data-table td:nth-child(5),
@@ -315,6 +328,7 @@ body {
 .data-table td:nth-child(9),
 .data-table td:nth-child(10) {
     white-space: nowrap;
+    min-width: 110px;
 }
 
 .data-table tbody tr:hover {
