@@ -1,754 +1,846 @@
-/* ============================================================================
-   ESTILOS GLOBALES
-   ============================================================================ */
-
-:root {
-    --primary: #4CAF50;
-    --primary-dark: #388e3c;
-    --secondary: #2196F3;
-    --warning: #FF9800;
-    --danger: #F44336;
-    --dark: #2d5016;
-    --light: #f5f5f5;
-    --border: #ddd;
-    --text: #333;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html, body {
-    height: 100%;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: #f8f8f8;
-    color: var(--text);
-    line-height: 1.6;
-}
-
-/* ============================================================================
-   CONTAINER
-   ============================================================================ */
-
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0;
-}
-
-/* ============================================================================
-   HEADER
-   ============================================================================ */
-
-.header {
-    background: linear-gradient(135deg, var(--dark) 0%, #1b3d0f 100%);
-    color: white;
-    padding: 30px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.logo-section {
-    flex: 1;
-}
-
-.logo-section i {
-    font-size: 2.5em;
-    margin-right: 15px;
-}
-
-.logo-section h1 {
-    font-size: 2em;
-    margin-bottom: 5px;
-}
-
-.logo-section p {
-    font-size: 0.95em;
-    opacity: 0.9;
-}
-
-.upload-section {
-    text-align: right;
-}
-
-/* ============================================================================
-   CONTROLS SECTION
-   ============================================================================ */
-
-.controls-section {
-    background: white;
-    padding: 20px;
-    margin: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 50px;
-    flex-wrap: wrap;
-}
-
-.selectors {
-    display: flex;
-    gap: 20px;
-    flex: 1;
-    min-width: 300px;
-}
-
-.selector-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    flex: 1;
-    min-width: 200px;
-    margin-bottom: 10px;
-}
-
-.selector-group label {
-    font-weight: 600;
-    font-size: 0.9em;
-    color: var(--text);
-}
-
-.selector-group select {
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.95em;
-    background: white;
-    color: var(--text);
-    cursor: pointer;
-    transition: border-color 0.2s;
-}
-
-.selector-group select:hover {
-    border-color: var(--primary);
-}
-
-.selector-group select:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-}
-
-.buttons-container {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-left: auto;
-}
-
-.toggle-btn {
-    padding: 10px 20px;
-    border: 2px solid var(--primary);
-    background: white;
-    color: var(--primary);
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.95em;
-}
-
-.toggle-btn:hover {
-    background: var(--light);
-}
-
-.toggle-btn.active {
-    background: var(--primary);
-    color: white;
-}
-
-/* ============================================================================
-   PAGE CONTAINER
-   ============================================================================ */
-
-.page {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.page.active {
-    display: block;
-    opacity: 1;
-}
-
-.page-content {
-    padding: 20px;
-}
-
-/* ============================================================================
-   TITLES & SECTIONS
-   ============================================================================ */
-
-.section-title {
-    font-size: 1.3em;
-    font-weight: 700;
-    color: var(--dark);
-    margin: 30px 0 20px;
-    padding-bottom: 10px;
-    border-bottom: 3px solid var(--primary);
-}
-
-/* ============================================================================
-   TIMELINE
-   ============================================================================ */
-
-.timeline-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 30px 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    margin-bottom: 30px;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.timeline-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-    min-width: 120px;
-}
-
-.timeline-step i {
-    font-size: 2em;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-}
-
-.timeline-step p {
-    font-weight: 600;
-    font-size: 0.9em;
-    text-align: center;
-}
-
-.timeline-step small {
-    font-size: 0.8em;
-    color: #666;
-    text-align: center;
-}
-
-.timeline-arrow {
-    flex: 0.5;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary), transparent);
-    min-width: 30px;
-}
-
-.timeline-placeholder {
-    text-align: center;
-    color: #999;
-    padding: 40px;
-}
-
-/* ============================================================================
-   TABLES
-   ============================================================================ */
-
-.table-container {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    overflow-x: auto;
-    margin-bottom: 20px;
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9em;
-}
-
-.data-table thead {
-    background: var(--dark);
-    color: white;
-    font-weight: 600;
-}
-
-.data-table th {
-    padding: 12px;
-    text-align: left;
-}
-
-.data-table td {
-    padding: 12px;
-    border-bottom: 1px solid var(--light);
-}
-
-.data-table tbody tr:hover {
-    background: var(--light);
-}
-
-.data-table td.empty {
-    text-align: center;
-    color: #999;
-}
-
-.detail-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.detail-table td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-}
-
-.detail-table td:first-child {
-    font-weight: 600;
-    color: var(--primary);
-    width: 30%;
-}
-
-/* ============================================================================
-   INFO CARDS
-   ============================================================================ */
-
-.info-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.info-card {
-    display: flex;
-    gap: 15px;
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid var(--primary);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-}
-
-.info-card i {
-    font-size: 1.5em;
-    color: var(--primary);
-}
-
-.info-card .label {
-    font-size: 0.85em;
-    color: #666;
-    margin-bottom: 3px;
-}
-
-.info-card .value {
-    font-weight: 600;
-    font-size: 1em;
-}
-
-/* ============================================================================
-   CALENDAR STYLES
-   ============================================================================ */
-
-.calendar-container {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    margin-bottom: 30px;
-}
-
-.calendar-day {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    font-size: 0.85em;
-    font-weight: 600;
-    cursor: default;
-    border: 2px solid var(--border);
-}
-
-.calendar-day.in-range {
-    background: #4CAF50;
-    color: white;
-    border-color: #45a049;
-    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
-    font-weight: 700;
-    min-height: 80px;
-    aspect-ratio: auto;
-    padding: 6px;
-}
-
-.calendar-day.header {
-    background: #2d5016;
-    color: white;
-    border: none;
-    font-weight: 700;
-    font-size: 0.85em;
-}
-
-.calendar-day.empty {
-    background: transparent;
-    border: none;
-    cursor: default;
-    box-shadow: none;
-}
-
-/* ============================================================================
-   PÁGINA 3: CALENDARIO ORIGINAL
-   ============================================================================ */
-
-.calendar-filters {
-    margin-bottom: 20px;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-
-.calendar-filters label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-.calendar-filters select {
-    padding: 10px 15px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 1em;
-    width: 100%;
-    max-width: 400px;
-    background: white;
-    cursor: pointer;
-}
-
-.calendar-view {
-    margin-bottom: 30px;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-bottom: 30px;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 8px;
-}
-
-.calendar-header {
-    background: #2d5016;
-    color: white;
-    padding: 10px;
-    text-align: center;
-    font-weight: 700;
-    border-radius: 4px;
-    font-size: 0.85em;
-}
-
-.calendar-empty {
-    background: transparent;
-}
-
-.calendar-day-clickable {
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    border: 2px solid var(--border);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    font-size: 0.9em;
-}
-
-.calendar-day-clickable:hover {
-    background: #f0f0f0;
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.calendar-day-clickable.has-events {
-    background: #e8f5e9;
-    border-color: #4CAF50;
-    font-weight: 600;
-}
-
-.calendar-day-clickable.has-events:hover {
-    background: #c8e6c9;
-    border-color: #388e3c;
-}
-
-.day-number {
-    font-weight: 700;
-    font-size: 1.1em;
-    color: #333;
-}
-
-.event-count {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #4CAF50;
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7em;
-    font-weight: 700;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.day-details {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    min-height: 200px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-
-.day-details h3 {
-    margin-top: 0;
-    color: var(--dark);
-    border-bottom: 2px solid var(--primary);
-    padding-bottom: 10px;
-}
-
-.events-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.event-item {
-    padding: 15px;
-    border-left: 4px solid var(--primary);
-    background: #fafafa;
-    border-radius: 6px;
-    transition: all 0.2s;
-}
-
-.event-item:hover {
-    background: #f0f0f0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.event-header {
-    margin-bottom: 8px;
-    font-size: 0.95em;
-    font-weight: 600;
-    color: var(--text);
-}
-
-.event-state {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    font-size: 0.9em;
-}
-
-.event-state i {
-    font-size: 1.1em;
-}
-
-.event-details {
-    color: #666;
-    font-size: 0.85em;
-    line-height: 1.5;
-}
-
-/* ============================================================================
-   DETAIL SECTION
-   ============================================================================ */
-
-.detail-section {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    padding: 20px;
-}
-
-.ciclo-detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    margin-top: 20px;
-}
-
-.ciclo-table-section {
-    display: flex;
-    flex-direction: column;
-}
-
-.ciclo-table-section .section-title {
-    margin-top: 0;
-}
-
-.ciclo-calendar-section {
-    display: flex;
-    flex-direction: column;
-}
-
-.ciclo-calendar-section .section-title {
-    margin-top: 0;
-}
-
-.detail-placeholder {
-    text-align: center;
-    color: #999;
-    padding: 60px 20px;
-}
-
-/* ============================================================================
-   RESPONSIVE
-   ============================================================================ */
-
-@media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-    }
-
-    .logo-section i {
-        font-size: 1.8em;
-    }
-
-    .logo-section h1 {
-        font-size: 1.5em;
-    }
-
-    .controls-section {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .selectors {
-        flex-direction: column;
-    }
-
-    .selector-group select {
-        width: 100%;
-    }
-
-    .buttons-container {
-        width: 100%;
-    }
-
-    .toggle-btn {
-        flex: 1;
-    }
-
-    .ciclo-detail-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .timeline-container {
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .timeline-arrow {
-        width: 2px;
-        height: 30px;
-        flex: none;
-    }
-
-    .data-table {
-        font-size: 0.8em;
-    }
-
-    .data-table th,
-    .data-table td {
-        padding: 8px;
-    }
-
-    .info-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .calendar-grid {
-        gap: 4px;
-        padding: 10px;
-    }
-
-    .calendar-header {
-        font-size: 0.7em;
-        padding: 6px;
-    }
-
-    .day-number {
-        font-size: 0.9em;
-    }
-
-    .event-count {
-        width: 20px;
-        height: 20px;
-        font-size: 0.6em;
-    }
-
-    .calendar-filters select {
-        max-width: 100%;
+// Variables globales
+let allData = {};
+let currentMonth = null;
+let currentCiclo = null;
+let currentCalendarMonth = null;
+
+// ============================================================================
+// FUNCIONES PARA MANEJO DE FECHAS (sin problemas de zona horaria)
+// ============================================================================
+
+// Parsear fecha string "YYYY-MM-DD" sin problemas de zona horaria
+function parseLocalDate(dateStr) {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day);
+}
+
+// Convertir Date a string "YYYY-MM-DD"
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// EVENT LISTENERS
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('monthSelect').addEventListener('change', handleMonthChange);
+    
+    // El listener para cicloSelect se agrega dinámicamente en handleMonthChange
+    
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const pageNum = this.dataset.page;
+            switchPage(pageNum);
+        });
+    });
+    
+    loadMonths();
+});
+
+// FUNCIONES DE CARGA
+// Los datos se cargan automáticamente desde el servidor
+
+async function loadMonths() {
+    try {
+        const response = await fetch('/api/months');
+        const data = await response.json();
+
+        const select = document.getElementById('monthSelect');
+        select.innerHTML = '<option value="">-- Seleccionar mes --</option>';
+
+        data.months.forEach(month => {
+            const option = document.createElement('option');
+            option.value = month;
+            option.textContent = month;
+            select.appendChild(option);
+        });
+        
+        // Ocultar selector de ciclo por defecto
+        const cicloSelectorGroup = document.getElementById('cicloSelect').closest('.selector-group');
+        cicloSelectorGroup.style.display = 'none';
+        
+        // IMPORTANTE: Cargar TODOS los meses en allData para que Página 3 funcione
+        for (const month of data.months) {
+            try {
+                const res = await fetch(`/api/mes/${month}`);
+                const monthData = await res.json();
+                allData[month] = monthData.ciclos;
+            } catch (e) {
+                console.error(`Error loading month ${month}:`, e);
+            }
+        }
+        
+        // Llenar selector de Página 3 ahora que tenemos datos
+        fillCalendarMonthSelector();
+        setupCalendarPage();
+    } catch (error) {
+        console.error('Error loading months:', error);
     }
 }
 
-@media (max-width: 480px) {
-    .header {
-        padding: 15px 10px;
+async function handleMonthChange() {
+    const month = document.getElementById('monthSelect').value;
+    if (!month) {
+        document.getElementById('cicloSelect').innerHTML = '<option value="">-- Seleccionar ciclo --</option>';
+        clearPage1();
+        return;
     }
 
-    .controls-section {
-        padding: 15px 10px;
-        margin: 10px;
-    }
+    currentMonth = month;
+    currentCiclo = null;
 
-    .page-content {
-        padding: 10px;
-    }
+    try {
+        const response = await fetch(`/api/mes/${month}`);
+        const data = await response.json();
+        allData[month] = data.ciclos;
 
-    .section-title {
-        font-size: 1.1em;
-    }
+        // Cargar ciclos en select
+        const cicloSelect = document.getElementById('cicloSelect');
+        cicloSelect.innerHTML = '<option value="">-- Seleccionar ciclo --</option>';
+        
+        data.ciclos.forEach(ciclo => {
+            const option = document.createElement('option');
+            option.value = ciclo.ciclo;
+            option.textContent = `Ciclo ${ciclo.ciclo} - ${ciclo.municipio}`;
+            cicloSelect.appendChild(option);
+        });
 
-    .timeline-container {
-        padding: 15px 10px;
-    }
+        // Agregar listener al select después de regenerarlo
+        cicloSelect.addEventListener('change', handleCicloChange);
 
-    .timeline-step p {
-        font-size: 0.8em;
-    }
+        // Auto-seleccionar el primer ciclo único
+        const uniqueCiclos = [];
+        const ciclosSeen = new Set();
+        data.ciclos.forEach(ciclo => {
+            if (!ciclosSeen.has(ciclo.ciclo)) {
+                ciclosSeen.add(ciclo.ciclo);
+                uniqueCiclos.push(ciclo);
+            }
+        });
+        
+        if (uniqueCiclos.length > 0) {
+            cicloSelect.value = String(uniqueCiclos[0].ciclo);
+            currentCiclo = String(uniqueCiclos[0].ciclo);
+            displayCicloDetail();
+        }
 
-    .info-cards {
-        gap: 10px;
-    }
-
-    .info-card {
-        padding: 10px;
-        gap: 10px;
+        // Actualizar página 1
+        displayMonthData(data.ciclos);
+    } catch (error) {
+        console.error('Error loading month data:', error);
     }
 }
+
+function handleCicloChange() {
+    const ciclo = document.getElementById('cicloSelect').value;
+    console.log('=== handleCicloChange ===');
+    console.log('Ciclo seleccionado:', ciclo);
+    console.log('currentMonth:', currentMonth);
+    console.log('allData keys:', Object.keys(allData));
+    
+    if (!ciclo) {
+        console.log('No hay ciclo seleccionado');
+        return;
+    }
+
+    if (!currentMonth) {
+        console.log('No hay mes actual, intentando obtener del selector');
+        const monthSelect = document.getElementById('monthSelect').value;
+        if (!monthSelect) {
+            console.log('Tampoco hay mes en el selector');
+            return;
+        }
+        currentMonth = monthSelect;
+    }
+
+    currentCiclo = ciclo;
+    console.log('Actualizando a ciclo:', currentCiclo, 'mes:', currentMonth);
+    
+    displayCicloDetail();
+}
+
+function updatePage1Timeline() {
+    if (!currentMonth || !currentCiclo) return;
+
+    const ciclos = allData[currentMonth] || [];
+    const cicloData = ciclos.find(c => String(c.ciclo) === String(currentCiclo));
+
+    if (!cicloData) return;
+
+    const steps = [
+        {
+            name: 'Consumo',
+            icon: 'fa-leaf',
+            start: cicloData.consumo_inicio,
+            end: cicloData.consumo_fin,
+            color: '#4CAF50'
+        },
+        {
+            name: 'Transmisión DIAN',
+            icon: 'fa-file-text',
+            start: cicloData.dian_inicio,
+            end: cicloData.dian_inicio,
+            color: '#FF9800'
+        },
+        {
+            name: 'Entrega Factura',
+            icon: 'fa-envelope',
+            start: cicloData.entrega_cliente_inicio,
+            end: cicloData.entrega_cliente_inicio,
+            color: '#2196F3'
+        },
+        {
+            name: 'Pago sin Recargo',
+            icon: 'fa-calendar',
+            start: cicloData.pago_inicio,
+            end: cicloData.pago_inicio,
+            color: '#9C27B0'
+        },
+        {
+            name: 'Suspensión',
+            icon: 'fa-ban',
+            start: cicloData.suspension_inicio,
+            end: cicloData.suspension_fin,
+            color: '#F44336'
+        }
+    ];
+
+    let html = '';
+    steps.forEach((step, idx) => {
+        const dateText = formatDateRange(step.start, step.end);
+        html += `
+            <div class="timeline-step">
+                <i class="fas ${step.icon}" style="background: ${step.color}"></i>
+                <p>${step.name}</p>
+                <small>${dateText}</small>
+            </div>
+        `;
+        if (idx < steps.length - 1) {
+            html += '<div class="timeline-arrow"></div>';
+        }
+    });
+
+    const timelineEl = document.getElementById('monthTimeline');
+    if (timelineEl) {
+        timelineEl.innerHTML = html;
+    }
+}
+
+function switchPage(pageNum) {
+    // Toggle buttons
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.closest('.toggle-btn').classList.add('active');
+
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+    });
+
+    // Show selected page
+    document.getElementById(`page${pageNum}`).classList.add('active');
+    
+    // Mostrar/ocultar selector de ciclo según la página
+    const cicloSelect = document.getElementById('cicloSelect');
+    const cicloSelectorGroup = cicloSelect.closest('.selector-group');
+    
+    if (pageNum === '1') {
+        cicloSelectorGroup.style.display = 'none';
+    } else if (pageNum === '2') {
+        cicloSelectorGroup.style.display = 'block';
+    } else {
+        cicloSelectorGroup.style.display = 'none';
+    }
+}
+
+// PÁGINA 1: RESUMEN DEL MES
+function displayMonthData(ciclos) {
+    updateMonthNameDisplay(currentMonth);
+    displayMonthTable(ciclos);
+}
+
+function updateMonthNameDisplay(month) {
+    const monthNameSpan = document.getElementById('selectedMonthName');
+    if (monthNameSpan && month) {
+        monthNameSpan.textContent = month;
+    }
+}
+
+function displayMonthTimeline(ciclos) {
+    // Mostrar hitos principales del mes
+    const steps = [
+        { name: 'Consumo', icon: 'fa-leaf', color: '#4CAF50' },
+        { name: 'Transmisión DIAN', icon: 'fa-file-text', color: '#FF9800' },
+        { name: 'Entrega Factura', icon: 'fa-envelope', color: '#2196F3' },
+        { name: 'Pago sin Recargo', icon: 'fa-calendar', color: '#9C27B0' },
+        { name: 'Suspensión', icon: 'fa-ban', color: '#F44336' }
+    ];
+
+    let html = '';
+    steps.forEach((step, idx) => {
+        html += `
+            <div class="timeline-step">
+                <i class="fas ${step.icon}" style="background: ${step.color}"></i>
+                <p>${step.name}</p>
+                <small>${getDateRangeForMonth(ciclos, step.name)}</small>
+            </div>
+        `;
+        if (idx < steps.length - 1) {
+            html += '<div class="timeline-arrow"></div>';
+        }
+    });
+
+    const timelineEl = document.getElementById('monthTimeline');
+    if (timelineEl) {
+        timelineEl.innerHTML = html;
+    }
+}
+
+function displayMonthTable(ciclos) {
+    const tbody = document.getElementById('monthTableBody');
+    tbody.innerHTML = '';
+
+    // Deduplicar ciclos (mostrar solo una línea por ciclo único)
+    const uniqueCiclos = [];
+    const ciclosSeen = new Set();
+    
+    ciclos.forEach(ciclo => {
+        if (!ciclosSeen.has(ciclo.ciclo)) {
+            ciclosSeen.add(ciclo.ciclo);
+            uniqueCiclos.push(ciclo);
+        }
+    });
+
+    uniqueCiclos.forEach(ciclo => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${ciclo.ciclo}</td>
+            <td>${ciclo.municipio}</td>
+            <td>${ciclo.analista}</td>
+            <td><strong>${ciclo.dias_facturados || '-'}</strong></td>
+            <td>${ciclo.consumo_fin || '-'}</td>
+            <td>${ciclo.dian_inicio || '-'}</td>
+            <td>${ciclo.entrega_cliente_inicio || '-'}</td>
+            <td>${ciclo.pago_inicio || '-'}</td>
+            <td>${ciclo.suspension_inicio || '-'}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    document.getElementById('totalCiclos').innerHTML = `<strong>Total ciclos en el mes: ${uniqueCiclos.length}</strong>`;
+}
+
+function getDateRangeForMonth(ciclos, stepName) {
+    const dateFields = {
+        'Consumo': ['consumo_inicio', 'consumo_fin'],
+        'Transmisión DIAN': ['dian_inicio', 'dian_fin'],
+        'Entrega Factura': ['entrega_cliente_inicio', 'entrega_cliente_fin'],
+        'Pago sin Recargo': ['pago_inicio', 'pago_fin'],
+        'Suspensión': ['suspension_inicio', 'suspension_fin']
+    };
+
+    const [startField, endField] = dateFields[stepName] || ['', ''];
+    const startDates = ciclos
+        .map(c => c[startField])
+        .filter(d => d)
+        .sort();
+
+    if (startDates.length === 0) return '-';
+
+    // Solo Consumo muestra rango, el resto solo fecha inicial
+    if (stepName === 'Consumo') {
+        const endDates = ciclos
+            .map(c => c[endField])
+            .filter(d => d)
+            .sort();
+        if (endDates.length > 0) {
+            return `${startDates[0]} a ${endDates[endDates.length - 1]}`;
+        }
+    }
+    // DIAN, Entrega, Pago, Suspensión: solo fecha inicial
+    return startDates[0];
+}
+
+function formatDateRange(start, end) {
+    if (!start && !end) return '-';
+    if (!start) return `hasta ${end}`;
+    if (!end) return `desde ${start}`;
+    if (start === end) return start;
+    return `${start} a ${end}`;
+}
+
+function formatCondensedDate(start, end) {
+    if (!start && !end) return '-';
+    if (!start) return `hasta ${end}`;
+    if (!end) return `desde ${start}`;
+    if (start === end) return start;
+    return `${start} a ${end}`;
+}
+
+function clearPage1() {
+    const timelineEl = document.getElementById('monthTimeline');
+    if (timelineEl) {
+        timelineEl.innerHTML = '<div class="timeline-placeholder">Selecciona un mes para ver la línea de tiempo</div>';
+    }
+    document.getElementById('monthTableBody').innerHTML = '<tr><td colspan="9" class="empty">Carga un archivo y selecciona un mes</td></tr>';
+    document.getElementById('totalCiclos').innerHTML = '';
+}
+
+// PÁGINA 2: DETALLE CICLO
+function displayCicloDetail() {
+    console.log('displayCicloDetail ejecutando. currentMonth:', currentMonth, 'currentCiclo:', currentCiclo);
+    
+    if (!currentMonth || !currentCiclo) {
+        console.log('Sin mes o ciclo para mostrar');
+        return;
+    }
+
+    const ciclos = allData[currentMonth] || [];
+    console.log('Ciclos disponibles en', currentMonth, ':', ciclos.length);
+    
+    const cicloData = ciclos.find(c => String(c.ciclo) === String(currentCiclo));
+    console.log('Ciclo encontrado:', cicloData);
+
+    if (!cicloData) return;
+
+    const template = document.getElementById('cicloDetailTemplate');
+    const clone = template.content.cloneNode(true);
+
+    // Rellenar información general
+    clone.querySelector('#detail-ciclo').textContent = cicloData.ciclo;
+    clone.querySelector('#detail-municipio').textContent = cicloData.municipio;
+    clone.querySelector('#detail-analista').textContent = cicloData.analista;
+    clone.querySelector('#detail-dias').textContent = `${cicloData.dias_facturados || '-'} días`;
+    clone.querySelector('#detail-periodo').textContent = formatDateRange(
+        cicloData.consumo_inicio,
+        cicloData.consumo_fin
+    );
+
+    // Timeline del ciclo
+    const timelineHtml = buildCicloTimeline(cicloData);
+    clone.querySelector('#cicloTimeline').innerHTML = timelineHtml;
+
+    // Tabla de detalles
+    const detailTableHtml = buildDetailTable(cicloData);
+    clone.querySelector('#detailTable').innerHTML = detailTableHtml;
+
+    // Calendario - generar rango completo del mes
+    // Usar lectura_actual como referencia (siempre está en el mes del ciclo)
+    const referenceDate = cicloData.lectura_actual || cicloData.generacion_libro || cicloData.consumo_inicio;
+    const monthStart = parseLocalDate(referenceDate);
+    monthStart.setDate(1);
+    const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
+    const monthStartStr = formatDate(monthStart);
+    const monthEndStr = formatDate(monthEnd);
+    
+    console.log('Calendario - Mes del ciclo:', monthStartStr, 'a', monthEndStr);
+    
+    const calendarHtml = buildCalendar(monthStartStr, monthEndStr, cicloData);
+    clone.querySelector('#cicloCalendar').innerHTML = calendarHtml;
+
+    const container = document.getElementById('cicloDetailContainer');
+    container.innerHTML = '';
+    container.appendChild(clone);
+}
+
+function buildCicloTimeline(cicloData) {
+    const steps = [
+        {
+            name: 'Generación del Libro',
+            icon: 'fa-file-alt',
+            start: cicloData.generacion_libro,
+            end: cicloData.generacion_libro,
+            color: '#FF6B6B'
+        },
+        {
+            name: 'Consumo',
+            icon: 'fa-leaf',
+            start: cicloData.consumo_inicio,
+            end: cicloData.consumo_fin,
+            color: '#4CAF50'
+        },
+        {
+            name: 'Período Crítica',
+            icon: 'fa-chart-bar',
+            start: cicloData.analisis_consumos,
+            end: cicloData.analisis_consumos,
+            color: '#FFA500'
+        },
+        {
+            name: 'Liquidación',
+            icon: 'fa-money-bill',
+            start: cicloData.liquidacion,
+            end: cicloData.liquidacion,
+            color: '#E91E63'
+        },
+        {
+            name: 'Entrega Factura',
+            icon: 'fa-envelope',
+            start: cicloData.entrega_cliente_inicio,
+            end: cicloData.entrega_cliente_inicio,
+            color: '#2196F3'
+        },
+        {
+            name: 'Pago sin Recargo',
+            icon: 'fa-credit-card',
+            start: cicloData.pago_inicio,
+            end: cicloData.pago_inicio,
+            color: '#9C27B0'
+        },
+        {
+            name: 'Suspensión',
+            icon: 'fa-ban',
+            start: cicloData.suspension_inicio,
+            end: cicloData.suspension_fin,
+            color: '#F44336'
+        }
+    ];
+
+    let html = '';
+    steps.forEach((step, idx) => {
+        html += `
+            <div class="timeline-step">
+                <i class="fas ${step.icon}" style="background: ${step.color}"></i>
+                <p>${step.name}</p>
+                <small>${formatDateRange(step.start, step.end)}</small>
+            </div>
+        `;
+        if (idx < steps.length - 1) {
+            html += '<div class="timeline-arrow"></div>';
+        }
+    });
+
+    return html;
+}
+
+function buildDetailTable(cicloData) {
+    const rows = [
+        ['Ciclo', cicloData.ciclo],
+        ['Municipio', cicloData.municipio],
+        ['Responsable', cicloData.analista],
+        ['Período Facturación', cicloData.periodo],
+        ['Inicio de Consumo', cicloData.consumo_inicio],
+        ['Fin de Consumo', cicloData.consumo_fin],
+        ['Días Facturados', cicloData.dias_facturados || '-'],
+        ['Transmisión DIAN', formatCondensedDate(cicloData.dian_inicio, cicloData.dian_fin)],
+        ['Entrega Factura', cicloData.entrega_cliente_inicio || '-'],
+        ['Pago sin Recargo', formatCondensedDate(cicloData.pago_inicio, cicloData.pago_fin)],
+        ['Suspensión', formatCondensedDate(cicloData.suspension_inicio, cicloData.suspension_fin)]
+    ];
+
+    return rows.map(([key, val]) => `<tr><td>${key}</td><td>${val}</td></tr>`).join('');
+}
+
+function buildCalendar(startDate, endDate, cicloData) {
+    console.log('buildCalendar - startDate:', startDate, 'endDate:', endDate);
+    console.log('buildCalendar - cicloData fields:');
+    console.log('  generacion_libro:', cicloData?.generacion_libro);
+    console.log('  lectura_actual:', cicloData?.lectura_actual);
+    console.log('  analisis_consumos:', cicloData?.analisis_consumos);
+    console.log('  verificados:', cicloData?.verificados);
+    console.log('  pago:', cicloData?.pago);
+    console.log('  suspension:', cicloData?.suspension);
+    
+    if (!startDate || !endDate) {
+        return '<p style="grid-column: 1/-1; text-align: center; color: #999;">Fechas no disponibles</p>';
+    }
+
+    // Usar parseLocalDate para evitar problemas de zona horaria
+    const start = parseLocalDate(startDate);
+    const end = parseLocalDate(endDate);
+    const current = new Date(start);
+
+    let html = '';
+
+    // Headers día de semana
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    dayNames.forEach(day => {
+        html += `<div class="calendar-day header">${day}</div>`;
+    });
+
+    // Agregar días vacíos al inicio del mes para alinear correctamente
+    const firstDayOfWeek = start.getDay(); // 0 = domingo, 1 = lunes, etc.
+    for (let i = 0; i < firstDayOfWeek; i++) {
+        html += `<div class="calendar-day empty"></div>`;
+    }
+
+    // Definir todas las actividades del ciclo con colores
+    const activitiesMap = {
+        'Generación': { color: '#FF6B6B', label: 'Generación del Libro' },
+        'Lectura': { color: '#45B7D1', label: 'Lectura Medidores' },
+        'Análisis': { color: '#FFA500', label: 'Análisis de Consumos' },
+        'Verificado': { color: '#9C27B0', label: 'Verificados' },
+        'Ingreso Verif': { color: '#3F51B5', label: 'Ingreso Verificados' },
+        'Liquidación': { color: '#E91E63', label: 'Liquidación' },
+        'Calidad': { color: '#00BCD4', label: 'Calidad Facturación' },
+        'Entrega Impr': { color: '#795548', label: 'Entrega al Impresor' },
+        'Entrega': { color: '#2196F3', label: 'Entrega al Cliente' },
+        'Pago': { color: '#9C27B0', label: 'Pago sin Recargo' },
+        'Pago Recargo': { color: '#673AB7', label: 'Pago con Recargo' },
+        'Suspensión': { color: '#F44336', label: 'Suspensión' }
+    };
+
+    // Días del rango
+    let activitiesFound = 0;
+    while (current <= end) {
+        // Usar formatDate en lugar de toISOString para evitar problemas de zona horaria
+        const dateStr = formatDate(current);
+        
+        // Buscar todas las actividades que comienzan este día
+        let dayActivities = [];
+        
+        // Para cada actividad, verificar si su fecha es HOY
+        if (cicloData?.generacion_libro === dateStr) {
+            dayActivities.push({ key: 'Generación', ...activitiesMap['Generación'] });
+            activitiesFound++;
+        }
+        if (cicloData?.lectura_actual === dateStr) {
+            dayActivities.push({ key: 'Lectura', ...activitiesMap['Lectura'] });
+            activitiesFound++;
+        }
+        if (cicloData?.analisis_consumos === dateStr) {
+            dayActivities.push({ key: 'Análisis', ...activitiesMap['Análisis'] });
+            activitiesFound++;
+        }
+        if (cicloData?.verificados === dateStr) {
+            dayActivities.push({ key: 'Verificado', ...activitiesMap['Verificado'] });
+            activitiesFound++;
+        }
+        if (cicloData?.ingreso_verificados === dateStr) {
+            dayActivities.push({ key: 'Ingreso Verif', ...activitiesMap['Ingreso Verif'] });
+            activitiesFound++;
+        }
+        if (cicloData?.liquidacion === dateStr) {
+            dayActivities.push({ key: 'Liquidación', ...activitiesMap['Liquidación'] });
+            activitiesFound++;
+        }
+        if (cicloData?.calidad === dateStr) {
+            dayActivities.push({ key: 'Calidad', ...activitiesMap['Calidad'] });
+            activitiesFound++;
+        }
+        if (cicloData?.entrega_impresor === dateStr) {
+            dayActivities.push({ key: 'Entrega Impr', ...activitiesMap['Entrega Impr'] });
+            activitiesFound++;
+        }
+        if (cicloData?.entrega_cliente === dateStr) {
+            dayActivities.push({ key: 'Entrega', ...activitiesMap['Entrega'] });
+            activitiesFound++;
+        }
+        if (cicloData?.pago === dateStr) {
+            dayActivities.push({ key: 'Pago', ...activitiesMap['Pago'] });
+            activitiesFound++;
+        }
+        if (cicloData?.pago_recargo === dateStr) {
+            dayActivities.push({ key: 'Pago Recargo', ...activitiesMap['Pago Recargo'] });
+            activitiesFound++;
+        }
+        if (cicloData?.suspension === dateStr) {
+            dayActivities.push({ key: 'Suspensión', ...activitiesMap['Suspensión'] });
+            activitiesFound++;
+        }
+
+        // Construir badges de actividades
+        let badgesHtml = '';
+        dayActivities.forEach(activity => {
+            badgesHtml += `
+                <div class="activity-badge" style="background: ${activity.color}; color: white; font-size: 0.6em; padding: 2px 4px; margin-top: 2px; border-radius: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${activity.label}">
+                    ${activity.label}
+                </div>
+            `;
+        });
+
+        html += `
+            <div class="calendar-day in-range" style="position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; align-items: center;">
+                <div style="font-weight: 700; margin-bottom: 2px;">${current.getDate()}</div>
+                ${badgesHtml}
+            </div>
+        `;
+        current.setDate(current.getDate() + 1);
+    }
+
+    console.log('buildCalendar - Total actividades encontradas:', activitiesFound);
+    return html;
+}
+
+// ============================================================================
+// PÁGINA 3: CALENDARIO
+// ============================================================================
+
+function fillCalendarMonthSelector() {
+    const monthSelect = document.getElementById('monthSelectCal');
+    if (!monthSelect) return;
+    
+    monthSelect.innerHTML = '<option value="">-- Seleccionar mes --</option>';
+    
+    Object.keys(allData).forEach(month => {
+        const option = document.createElement('option');
+        option.value = month;
+        option.textContent = month;
+        monthSelect.appendChild(option);
+    });
+}
+
+function setupCalendarPage() {
+    const monthSelect = document.getElementById('monthSelectCal');
+    if (!monthSelect) return;
+    
+    monthSelect.addEventListener('change', handleCalendarMonthChange);
+}
+
+function handleCalendarMonthChange() {
+    const month = document.getElementById('monthSelectCal').value;
+    if (!month) {
+        document.getElementById('calendarView').innerHTML = '';
+        document.getElementById('dayDetailsContainer').innerHTML = '<p style="color: #999; text-align: center; padding: 40px 20px;">Selecciona un mes</p>';
+        return;
+    }
+
+    currentCalendarMonth = month;
+    displayCalendarMonth(month);
+}
+
+function displayCalendarMonth(month) {
+    const ciclos = allData[month] || [];
+    
+    // Obtener fecha mínima y máxima del mes
+    const allDates = ciclos.flatMap(c => [c.consumo_inicio, c.consumo_fin])
+        .filter(d => d);
+    
+    if (allDates.length === 0) {
+        document.getElementById('calendarView').innerHTML = '<p style="color: #999;">Sin actividades en este mes</p>';
+        return;
+    }
+
+    const minDate = new Date(allDates.sort()[0]);
+    const maxDate = new Date(allDates.sort().pop());
+
+    // Generar calendario clicable
+    const html = generateInteractiveCalendar(minDate, maxDate, ciclos);
+    document.getElementById('calendarView').innerHTML = html;
+
+    // Agregar listeners a los días
+    document.querySelectorAll('.calendar-day-clickable').forEach(day => {
+        day.addEventListener('click', function() {
+            const dateStr = this.dataset.date;
+            showDayDetails(dateStr, ciclos);
+        });
+    });
+}
+
+function generateInteractiveCalendar(minDate, maxDate, ciclos) {
+    const current = new Date(minDate);
+    let html = '<div class="calendar-grid">';
+    
+    // Headers de días
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    dayNames.forEach(day => {
+        html += `<div class="calendar-header">${day}</div>`;
+    });
+
+    // Espacios vacíos al inicio
+    const startDay = new Date(minDate);
+    startDay.setDate(1);
+    for (let i = 0; i < startDay.getDay(); i++) {
+        html += '<div class="calendar-empty"></div>';
+    }
+
+    // Días del mes
+    while (current <= maxDate) {
+        const dateStr = current.toISOString().split('T')[0];
+        const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
+        const hasEvents = ciclosEnDia.length > 0;
+
+        html += `
+            <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''}" 
+                 data-date="${dateStr}"
+                 title="${hasEvents ? ciclosEnDia.length + ' ciclos' : 'Sin eventos'}">
+                <div class="day-number">${current.getDate()}</div>
+                ${hasEvents ? `<div class="event-count">${ciclosEnDia.length}</div>` : ''}
+            </div>
+        `;
+
+        current.setDate(current.getDate() + 1);
+    }
+
+    html += '</div>';
+    return html;
+}
+
+function getCiclosForDate(dateStr, ciclos) {
+    return ciclos.filter(ciclo => {
+        return isDateInRange(dateStr, ciclo.consumo_inicio, ciclo.consumo_fin) ||
+               isDateInRange(dateStr, ciclo.dian_inicio, ciclo.dian_fin) ||
+               isDateInRange(dateStr, ciclo.entrega_cliente_inicio, ciclo.entrega_cliente_fin) ||
+               isDateInRange(dateStr, ciclo.pago_inicio, ciclo.pago_fin) ||
+               isDateInRange(dateStr, ciclo.suspension_inicio, ciclo.suspension_fin);
+    });
+}
+
+function isDateInRange(dateStr, startStr, endStr) {
+    if (!startStr || !endStr) return false;
+    const date = new Date(dateStr);
+    const start = new Date(startStr);
+    const end = new Date(endStr);
+    return date >= start && date <= end;
+}
+
+function getStateForDate(dateStr, ciclo) {
+    if (isDateInRange(dateStr, ciclo.suspension_inicio, ciclo.suspension_fin)) {
+        return { state: 'Suspensión', icon: 'fa-ban', color: '#F44336' };
+    }
+    if (isDateInRange(dateStr, ciclo.pago_inicio, ciclo.pago_fin)) {
+        return { state: 'Pago sin Recargo', icon: 'fa-calendar', color: '#9C27B0' };
+    }
+    if (isDateInRange(dateStr, ciclo.entrega_cliente_inicio, ciclo.entrega_cliente_fin)) {
+        return { state: 'Verificado', icon: 'fa-check', color: '#2196F3' };
+    }
+    if (isDateInRange(dateStr, ciclo.dian_inicio, ciclo.dian_fin)) {
+        return { state: 'Análisis de Consumos', icon: 'fa-file-text', color: '#FF9800' };
+    }
+    if (isDateInRange(dateStr, ciclo.consumo_inicio, ciclo.consumo_fin)) {
+        return { state: 'Lectura', icon: 'fa-leaf', color: '#4CAF50' };
+    }
+    return { state: 'Desconocido', icon: 'fa-question', color: '#999' };
+}
+
+function showDayDetails(dateStr, ciclos) {
+    const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
+    const date = new Date(dateStr);
+    const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][date.getDay()];
+    
+    let html = `<h3>${dayName}, ${date.getDate()} - ${ciclosEnDia.length} ciclos en este día</h3>`;
+    
+    if (ciclosEnDia.length === 0) {
+        html += '<p style="color: #999;">Sin ciclos programados</p>';
+    } else {
+        html += '<div class="events-list">';
+        ciclosEnDia.forEach(ciclo => {
+            const stateInfo = getStateForDate(dateStr, ciclo);
+            html += `
+                <div class="event-item">
+                    <div class="event-header">
+                        <strong>Ciclo ${ciclo.ciclo}</strong> - ${ciclo.municipio}
+                    </div>
+                    <div class="event-state">
+                        <i class="fas ${stateInfo.icon}" style="color: ${stateInfo.color}"></i>
+                        <span style="color: ${stateInfo.color}; font-weight: 600;">${stateInfo.state}</span>
+                    </div>
+                    <div class="event-details">
+                        <small>Responsable: ${ciclo.analista}</small>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+
+    document.getElementById('dayDetailsContainer').innerHTML = html;
+}
+
+// INICIALIZACIÓN
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Dashboard iniciado. Cargando datos...');
+});
