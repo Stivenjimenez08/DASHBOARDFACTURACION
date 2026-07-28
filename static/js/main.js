@@ -253,16 +253,22 @@ function switchPage(pageNum) {
     // Show selected page
     document.getElementById(`page${pageNum}`).classList.add('active');
     
-    // Mostrar/ocultar selector de ciclo según la página
+    // Mostrar/ocultar selectores según la página
+    const monthSelect = document.getElementById('monthSelect');
     const cicloSelect = document.getElementById('cicloSelect');
+    const monthSelectorGroup = monthSelect.closest('.selector-group');
     const cicloSelectorGroup = cicloSelect.closest('.selector-group');
+    const selectors = monthSelectorGroup.closest('.selectors');
     
     if (pageNum === '1') {
+        selectors.style.display = 'flex';
         cicloSelectorGroup.style.display = 'none';
     } else if (pageNum === '2') {
+        selectors.style.display = 'flex';
         cicloSelectorGroup.style.display = 'block';
-    } else {
-        cicloSelectorGroup.style.display = 'none';
+    } else if (pageNum === '3') {
+        // En Página 3, ocultar ambos selectores
+        selectors.style.display = 'none';
     }
 }
 
@@ -751,7 +757,7 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
 
     // Días del mes
     while (current <= maxDate) {
-        const dateStr = current.toISOString().split('T')[0];
+        const dateStr = formatDate(current);  // ← Usar formatDate en lugar de toISOString
         const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
         const hasEvents = ciclosEnDia.length > 0;
 
@@ -783,9 +789,9 @@ function getCiclosForDate(dateStr, ciclos) {
 
 function isDateInRange(dateStr, startStr, endStr) {
     if (!startStr || !endStr) return false;
-    const date = new Date(dateStr);
-    const start = new Date(startStr);
-    const end = new Date(endStr);
+    const date = parseLocalDate(dateStr);
+    const start = parseLocalDate(startStr);
+    const end = parseLocalDate(endStr);
     return date >= start && date <= end;
 }
 
@@ -810,7 +816,7 @@ function getStateForDate(dateStr, ciclo) {
 
 function showDayDetails(dateStr, ciclos) {
     const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
-    const date = new Date(dateStr);
+    const date = parseLocalDate(dateStr);  // ← Usar parseLocalDate en lugar de new Date
     const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][date.getDay()];
     
     let html = `<h3>${dayName}, ${date.getDate()} - ${ciclosEnDia.length} ciclos en este día</h3>`;
