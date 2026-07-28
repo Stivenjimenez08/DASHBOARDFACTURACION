@@ -308,8 +308,8 @@ body {
 /* Columna Municipio - reducida y con colapso */
 .data-table td:nth-child(2),
 .data-table th:nth-child(2) {
-    width: 200px;
-    min-width: 200px;
+    width: 80px;
+    min-width: 80px;
     word-break: break-word;
     overflow-wrap: break-word;
     white-space: normal;  /* ← Esta SÍ puede colapsar */
@@ -338,6 +338,16 @@ body {
 
 .data-table tbody tr:hover {
     background: var(--light);
+}
+
+/* Ciclos especiales - sombreado diferenciado */
+.data-table tbody tr.ciclo-especial {
+    background-color: #E8F5E9;  /* Verde claro */
+    font-weight: 500;
+}
+
+.data-table tbody tr.ciclo-especial:hover {
+    background-color: #C8E6C9;  /* Verde más oscuro al pasar mouse */
 }
 
 .data-table td.empty {
@@ -849,10 +859,10 @@ body {
 
 /* Filtro de Mes más largo en Página 1 (Resumen Mes) */
 #page1 .selector-group:first-child {
-    min-width: 380px;
+    min-width: 280px;
 }
 
 /* Filtro de Mes más largo en Página 3 (Calendario) */
 #page3 .selector-group:first-child {
-    min-width: 380px;
+    min-width: 280px;
 }
