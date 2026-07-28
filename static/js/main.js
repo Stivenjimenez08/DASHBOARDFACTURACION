@@ -465,7 +465,7 @@ function buildCicloTimeline(cicloData) {
         },
         {
             name: 'Período Crítica',
-            icon: 'fa-chart-bar',
+            icon: 'fa-magnifying-glass-chart',
             start: cicloData.analisis_consumos,
             end: cicloData.analisis_consumos,
             color: '#FFA500'
