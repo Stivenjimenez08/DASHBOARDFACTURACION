@@ -91,7 +91,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 30px;
+    gap: 50px;
     flex-wrap: wrap;
 }
 
@@ -140,8 +140,9 @@ body {
 
 .buttons-container {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     flex-wrap: wrap;
+    margin-left: auto;
 }
 
 .toggle-btn {
