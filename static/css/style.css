@@ -300,7 +300,7 @@ body {
 /* Columna Municipio - reducida y con colapso */
 .data-table td:nth-child(2),
 .data-table th:nth-child(2) {
-    width: 80px;
+    width: 200px;
     word-break: break-word;
     overflow-wrap: break-word;
 }
