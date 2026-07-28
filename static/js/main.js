@@ -327,6 +327,9 @@ function displayMonthTable(ciclos) {
     const tbody = document.getElementById('monthTableBody');
     tbody.innerHTML = '';
 
+    // Ciclos especiales que deben resaltarse
+    const ciclosEspeciales = [94, 87, 91, 75, 76, 92, 93, 89, 81, 79, 95, 77];
+
     // Deduplicar ciclos (mostrar solo una línea por ciclo único)
     const uniqueCiclos = [];
     const ciclosSeen = new Set();
@@ -340,6 +343,12 @@ function displayMonthTable(ciclos) {
 
     uniqueCiclos.forEach(ciclo => {
         const row = document.createElement('tr');
+        
+        // Agregar clase si es un ciclo especial
+        if (ciclosEspeciales.includes(parseInt(ciclo.ciclo))) {
+            row.classList.add('ciclo-especial');
+        }
+        
         row.innerHTML = `
             <td>${ciclo.ciclo}</td>
             <td>${ciclo.municipio}</td>
