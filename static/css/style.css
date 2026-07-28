@@ -100,22 +100,26 @@ body {
     gap: 30px;
     flex: 0 1 auto;
     min-width: 350px;
-    flex-shrink: 1;  /* ← Permitir que se encoja un poco si es necesario */
+    flex-shrink: 1;
+    align-items: flex-end;  /* ← Alinear al final (donde está el select) */
 }
 
 .selector-group {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    flex: 0 1 auto;  /* ← Cambiar de flex: 1 a auto */
+    flex: 0 1 auto;
     min-width: 220px;
-    margin-bottom: 10px;
+    margin-bottom: 0;  /* ← Remover margin-bottom */
 }
 
 .selector-group label {
     font-weight: 600;
     font-size: 0.9em;
     color: var(--text);
+    height: 20px;  /* ← Altura consistente */
+    display: flex;
+    align-items: center;
 }
 
 .selector-group select {
@@ -127,6 +131,7 @@ body {
     color: var(--text);
     cursor: pointer;
     transition: border-color 0.2s;
+    height: 40px;  /* ← Altura consistente */
 }
 
 .selector-group select:hover {
@@ -303,8 +308,8 @@ body {
 /* Columna Municipio - reducida y con colapso */
 .data-table td:nth-child(2),
 .data-table th:nth-child(2) {
-    width: 80px;
-    min-width: 80px;
+    width: 120px;
+    min-width: 1200px;
     word-break: break-word;
     overflow-wrap: break-word;
     white-space: normal;  /* ← Esta SÍ puede colapsar */
