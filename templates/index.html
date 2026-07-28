@@ -16,6 +16,11 @@
                 <h1>CICLOS DE FACTURACIÓN</h1>
                 <p>Información operativa para programación de actividades</p>
             </div>
+            <div class="upload-section">
+                <p style="color: #666; font-size: 0.9em;">
+                    <i class="fas fa-info-circle"></i> Datos actualizados automáticamente
+                </p>
+            </div>
         </header>
 
         <!-- SELECTORES Y BOTONES -->
@@ -59,11 +64,10 @@
                                 <th>Municipio</th>
                                 <th>Responsable</th>
                                 <th>Días Facturados</th>
-                                <th>Lectura ciclo</th>
-                                <th>Critica</th>
-                                <th>Liquidación</th>
+                                <th>Período Ciclo</th>
+                                <th>Transmisión DIAN</th>
                                 <th>Entrega Factura</th>
-                                <th>Pago Oportuno</th>
+                                <th>Máximo Pago</th>
                                 <th>Suspensión</th>
                             </tr>
                         </thead>
@@ -132,7 +136,7 @@
                 </div>
 
                 <!-- LÍNEA DE TIEMPO DEL CICLO -->
-                <h2 class="section-title">LÍNEA DE TIEMPO DEL CICLO </h2>
+                <h2 class="section-title">LÍNEA DE TIEMPO DEL CICLO SELECCIONADO</h2>
                 <div id="cicloTimeline" class="timeline-container"></div>
 
                 <!-- DETALLE DEL CICLO Y CALENDARIO -->
@@ -147,7 +151,7 @@
                     </div>
                     
                     <div class="ciclo-calendar-section">
-                        <h2 class="section-title">ACTIVIDADES DEL CICLO </h2>
+                        <h2 class="section-title">DÍAS FACTURADOS (CONSUMO)</h2>
                         <div id="cicloCalendar" class="calendar-container"></div>
                     </div>
                 </div>
@@ -161,19 +165,9 @@
             <div class="page-content">
                 <h2 class="section-title">📅 CALENDARIO DE ACTIVIDADES POR DÍA</h2>
                 <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
-                    Selecciona un mes y haz clic en un día para ver los ciclos programados y su estado actual
+                    Haz clic en un día para ver los ciclos programados y su estado actual en el mes seleccionado
                 </p>
                 
-                <!-- SELECTOR DE MES PARA CALENDARIO -->
-                <div class="calendar-filters">
-                    <label for="monthSelectCal" style="display: block; margin-bottom: 8px; font-weight: 600;">
-                        <i class="fas fa-calendar-alt"></i> Selecciona un mes:
-                    </label>
-                    <select id="monthSelectCal">
-                        <option value="">-- Seleccionar mes --</option>
-                    </select>
-                </div>
-
                 <!-- CALENDARIO INTERACTIVO -->
                 <div id="calendarView" class="calendar-view"></div>
 
