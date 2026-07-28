@@ -453,7 +453,7 @@ function buildCicloTimeline(cicloData) {
             icon: 'fa-file-alt',
             start: cicloData.generacion_libro,
             end: cicloData.generacion_libro,
-            color: '#FF6B6B'
+            color: '#99841D'
         },
         {
             name: 'Consumo',
@@ -474,7 +474,7 @@ function buildCicloTimeline(cicloData) {
             icon: 'fa-money-bill',
             start: cicloData.liquidacion,
             end: cicloData.liquidacion,
-            color: '#E91E63'
+            color: '#34991D'
         },
         {
             name: 'Entrega Factura',
@@ -569,12 +569,12 @@ function buildCalendar(startDate, endDate, cicloData) {
 
     // Definir todas las actividades del ciclo con colores
     const activitiesMap = {
-        'Generación': { color: '#FF6B6B', label: 'Generación del Libro' },
+        'Generación': { color: '#99841D', label: 'Generación del Libro' },
         'Lectura': { color: '#45B7D1', label: 'Lectura Medidores' },
         'Análisis': { color: '#FFA500', label: 'Análisis de Consumos' },
-        'Verificado': { color: '#9C27B0', label: 'Verificados' },
-        'Ingreso Verif': { color: '#3F51B5', label: 'Ingreso Verificados' },
-        'Liquidación': { color: '#E91E63', label: 'Liquidación' },
+        'Verificado': { color: '#7C991D', label: 'Verificados' },
+        'Ingreso Verif': { color: '#6E851E', label: 'Ingreso Verificados' },
+        'Liquidación': { color: '#34991D', label: 'Liquidación' },
         'Calidad': { color: '#00BCD4', label: 'Calidad Facturación' },
         'Entrega Impr': { color: '#795548', label: 'Entrega al Impresor' },
         'Entrega': { color: '#2196F3', label: 'Entrega al Cliente' },
@@ -798,7 +798,7 @@ function getStateForDate(dateStr, ciclo) {
         return { state: 'Verificado', icon: 'fa-check', color: '#2196F3' };
     }
     if (isDateInRange(dateStr, ciclo.dian_inicio, ciclo.dian_fin)) {
-        return { state: 'Análisis de Consumos', icon: 'fa-file-text', color: '#FF9800' };
+        return { state: 'Análisis de Consumos', icon: 'fa-file-text', color: '#FFA500' };
     }
     if (isDateInRange(dateStr, ciclo.consumo_inicio, ciclo.consumo_fin)) {
         return { state: 'Lectura', icon: 'fa-leaf', color: '#4CAF50' };
