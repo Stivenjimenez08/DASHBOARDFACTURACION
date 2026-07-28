@@ -23,6 +23,13 @@ function formatDate(date) {
     return `${year}-${month}-${day}`;
 }
 
+// Convertir fecha YYYY-MM-DD a formato DD-MM-YYYY para mostrar
+function formatDateDisplay(dateStr) {
+    if (!dateStr) return '-';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+}
+
 // EVENT LISTENERS
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('monthSelect').addEventListener('change', handleMonthChange);
@@ -321,12 +328,12 @@ function displayMonthTable(ciclos) {
             <td>${ciclo.municipio}</td>
             <td>${ciclo.analista}</td>
             <td><strong>${ciclo.dias_facturados || '-'}</strong></td>
-            <td>${ciclo.consumo_fin || '-'}</td>
-            <td>${ciclo.analisis_consumos || '-'}</td>
-            <td>${ciclo.liquidacion || '-'}</td>
-            <td>${ciclo.entrega_cliente_inicio || '-'}</td>
-            <td>${ciclo.pago_inicio || '-'}</td>
-            <td>${ciclo.suspension_inicio || '-'}</td>
+            <td>${formatDateDisplay(ciclo.consumo_fin)}</td>
+            <td>${formatDateDisplay(ciclo.analisis_consumos)}</td>
+            <td>${formatDateDisplay(ciclo.liquidacion)}</td>
+            <td>${formatDateDisplay(ciclo.entrega_cliente_inicio)}</td>
+            <td>${formatDateDisplay(ciclo.pago_inicio)}</td>
+            <td>${formatDateDisplay(ciclo.suspension_inicio)}</td>
         `;
         tbody.appendChild(row);
     });
@@ -367,18 +374,18 @@ function getDateRangeForMonth(ciclos, stepName) {
 
 function formatDateRange(start, end) {
     if (!start && !end) return '-';
-    if (!start) return `hasta ${end}`;
-    if (!end) return `desde ${start}`;
-    if (start === end) return start;
-    return `${start} a ${end}`;
+    if (!start) return `hasta ${formatDateDisplay(end)}`;
+    if (!end) return `desde ${formatDateDisplay(start)}`;
+    if (start === end) return formatDateDisplay(start);
+    return `${formatDateDisplay(start)} a ${formatDateDisplay(end)}`;
 }
 
 function formatCondensedDate(start, end) {
     if (!start && !end) return '-';
-    if (!start) return `hasta ${end}`;
-    if (!end) return `desde ${start}`;
-    if (start === end) return start;
-    return `${start} a ${end}`;
+    if (!start) return `hasta ${formatDateDisplay(end)}`;
+    if (!end) return `desde ${formatDateDisplay(start)}`;
+    if (start === end) return formatDateDisplay(start);
+    return `${formatDateDisplay(start)} a ${formatDateDisplay(end)}`;
 }
 
 function clearPage1() {
@@ -523,11 +530,11 @@ function buildDetailTable(cicloData) {
         ['Municipio', cicloData.municipio],
         ['Responsable', cicloData.analista],
         ['Período Facturación', cicloData.periodo],
-        ['Inicio de Consumo', cicloData.consumo_inicio],
-        ['Fin de Consumo', cicloData.consumo_fin],
+        ['Inicio de Consumo', formatDateDisplay(cicloData.consumo_inicio)],
+        ['Fin de Consumo', formatDateDisplay(cicloData.consumo_fin)],
         ['Días Facturados', cicloData.dias_facturados || '-'],
         ['Transmisión DIAN', formatCondensedDate(cicloData.dian_inicio, cicloData.dian_fin)],
-        ['Entrega Factura', cicloData.entrega_cliente_inicio || '-'],
+        ['Entrega Factura', formatDateDisplay(cicloData.entrega_cliente_inicio)],
         ['Pago sin Recargo', formatCondensedDate(cicloData.pago_inicio, cicloData.pago_fin)],
         ['Suspensión', formatCondensedDate(cicloData.suspension_inicio, cicloData.suspension_fin)]
     ];
