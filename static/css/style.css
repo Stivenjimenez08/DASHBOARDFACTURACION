@@ -91,7 +91,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 80px;
+    gap: 150px;
     flex-wrap: wrap;
     row-gap: 20px;
 }
