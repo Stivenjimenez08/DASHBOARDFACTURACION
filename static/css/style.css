@@ -357,13 +357,13 @@ body {
 
 /* Ciclos especiales - sombreado diferenciado */
 .data-table tbody tr.ciclo-especial {
-    background-color: #f0f8e0 !important;  /* Verde limón muy claro */
+    background-color: #aeadb3 !important;  /* Verde limón muy claro */
     font-weight: 500 !important;
-    border-left: 4px solid #b7c72c;
+    border-left: 4px solid #959675;
 }
 
 .data-table tbody tr.ciclo-especial:hover {
-    background-color: #e8f5d8 !important;  /* Verde limón claro al pasar mouse */
+    background-color: #918f94 !important;  /* Verde limón claro al pasar mouse */
 }
 
 .data-table td.empty {
