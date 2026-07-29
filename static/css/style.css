@@ -323,8 +323,8 @@ body {
 /* Columna Municipio - reducida y con colapso */
 .data-table td:nth-child(2),
 .data-table th:nth-child(2) {
-    width: 80px;
-    min-width: 80px;
+    width: 200px;
+    min-width: 200px;
     word-break: break-word;
     overflow-wrap: break-word;
     white-space: normal;  /* ← Esta SÍ puede colapsar */
@@ -357,13 +357,13 @@ body {
 
 /* Ciclos especiales - sombreado diferenciado */
 .data-table tbody tr.ciclo-especial {
-    background-color: #f0f8e0 !important;  /* Verde limón muy claro */
+    background-color: #D7DED7 !important;  /* Verde limón muy claro */
     font-weight: 500 !important;
-    border-left: 4px solid #b7c72c;
+    border-left: 4px solid #D0D4C1;
 }
 
 .data-table tbody tr.ciclo-especial:hover {
-    background-color: #e8f5d8 !important;  /* Verde limón claro al pasar mouse */
+    background-color: #CED6CE!important;  /* Verde limón claro al pasar mouse */
 }
 
 .data-table td.empty {
@@ -451,8 +451,8 @@ body {
 }
 
 .calendar-day.in-range {
-    background: #00b891;  /* Verde claro EDEQ */
-    color: white;
+    background: #E6E8E6;  /* Verde claro EDEQ */
+    color: black;
     border-color: #008891;
     box-shadow: 0 2px 6px rgba(0, 184, 145, 0.3);
     font-weight: 700;
