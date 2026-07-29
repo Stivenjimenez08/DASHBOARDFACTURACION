@@ -772,6 +772,14 @@ function displayCalendarMonth(month) {
             showDayDetails(dateStr, ciclos);
         });
     });
+    
+    // Volver a aplicar clase 'selected' si hay un día previamente seleccionado
+    if (currentSelectedDay) {
+        const selectedDayEl = document.querySelector(`[data-date="${currentSelectedDay}"]`);
+        if (selectedDayEl) {
+            selectedDayEl.classList.add('selected');
+        }
+    }
 }
 
 function generateInteractiveCalendar(minDate, maxDate, ciclos) {
@@ -798,7 +806,7 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
         const hasEvents = ciclosEnDia.length > 0;
 
         html += `
-            <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''}" 
+            <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''} ${dateStr === currentSelectedDay ? 'selected' : ''}" 
                  data-date="${dateStr}"
                  title="${hasEvents ? ciclosEnDia.length + ' ciclos' : 'Sin eventos'}">
                 <div class="day-number">${current.getDate()}</div>
@@ -906,6 +914,18 @@ function getStateForDate(dateStr, ciclo) {
 
 function showDayDetails(dateStr, ciclos) {
     currentSelectedDay = dateStr;  // ← Guardar día seleccionado
+    
+    // Remover clase 'selected' de todos los días
+    document.querySelectorAll('.calendar-day-clickable.selected').forEach(el => {
+        el.classList.remove('selected');
+    });
+    
+    // Agregar clase 'selected' al día clickeado
+    const selectedDayEl = document.querySelector(`[data-date="${dateStr}"]`);
+    if (selectedDayEl) {
+        selectedDayEl.classList.add('selected');
+    }
+    
     const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
     const date = parseLocalDate(dateStr);  // ← Usar parseLocalDate en lugar de new Date
     const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][date.getDay()];
