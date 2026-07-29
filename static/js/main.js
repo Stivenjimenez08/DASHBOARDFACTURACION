@@ -2,6 +2,7 @@
 let allData = {};
 let currentMonth = null;
 let currentCiclo = null;
+let currentActivity = '';  // ← Variable para actividad seleccionada
 let currentCalendarMonth = null;
 
 // ============================================================================
@@ -144,6 +145,13 @@ async function handleMonthChange() {
         
         // ✨ Actualizar Página 3 (Calendario) con el mes seleccionado
         displayCalendarMonth(month);
+        
+        // ✨ Agregar listener al selector de actividad (Página 3)
+        const activitySelect = document.getElementById('activitySelect');
+        activitySelect.addEventListener('change', () => {
+            currentActivity = activitySelect.value;
+            displayCalendarMonth(currentMonth);  // ← Redibujar calendario con nuevo filtro
+        });
     } catch (error) {
         console.error('Error loading month data:', error);
     }
@@ -262,6 +270,7 @@ function switchPage(pageNum) {
     // Mostrar/ocultar selectores según la página
     const monthSelect = document.getElementById('monthSelect');
     const cicloSelect = document.getElementById('cicloSelect');
+    const activitySelectorGroup = document.getElementById('activitySelectorGroup');
     const monthSelectorGroup = monthSelect.closest('.selector-group');
     const cicloSelectorGroup = cicloSelect.closest('.selector-group');
     const selectors = monthSelectorGroup.closest('.selectors');
@@ -269,14 +278,17 @@ function switchPage(pageNum) {
     if (pageNum === '1') {
         selectors.style.display = 'flex';
         cicloSelectorGroup.style.display = 'none';
+        activitySelectorGroup.style.display = 'none';
     } else if (pageNum === '2') {
         selectors.style.display = 'flex';
         cicloSelectorGroup.style.display = 'block';
+        activitySelectorGroup.style.display = 'none';
     } else if (pageNum === '3') {
-        // En Página 3, mostrar solo filtro de mes (ocultar ciclo)
+        // En Página 3, mostrar filtro de mes y actividad
         selectors.style.display = 'flex';
         monthSelectorGroup.style.display = 'block';
         cicloSelectorGroup.style.display = 'none';
+        activitySelectorGroup.style.display = 'block';  /* ← Mostrar selector de actividad */
     }
 }
 
@@ -797,7 +809,7 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
 
 function getCiclosForDate(dateStr, ciclos) {
     // Filtrar solo ciclos que tienen una actividad específica en ese día exacto
-    const ciclosEnDia = ciclos.filter(ciclo => {
+    let ciclosEnDia = ciclos.filter(ciclo => {
         return dateStr === ciclo.generacion_libro ||
                dateStr === ciclo.lectura_anterior ||
                dateStr === ciclo.lectura_actual ||
@@ -812,6 +824,13 @@ function getCiclosForDate(dateStr, ciclos) {
                dateStr === ciclo.pago_recargo ||
                dateStr === ciclo.suspension;
     });
+    
+    // Filtrar por actividad seleccionada (si no es "Todos")
+    if (currentActivity && currentActivity !== '') {
+        ciclosEnDia = ciclosEnDia.filter(ciclo => {
+            return dateStr === ciclo[currentActivity];  // ← Filtrar por actividad específica
+        });
+    }
     
     // Deduplicar: mostrar solo 1 vez por número de ciclo
     const ciclosUnicos = [];
