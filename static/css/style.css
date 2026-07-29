@@ -3,12 +3,12 @@
    ============================================================================ */
 
 :root {
-    --primary: #4CAF50;
-    --primary-dark: #388e3c;
-    --secondary: #2196F3;
-    --warning: #FF9800;
-    --danger: #F44336;
-    --dark: #2d5016;
+    --primary: #0095a2;        /* Azul turquesa (EDEQ) */
+    --primary-dark: #008891;   /* Verde oscuro (EDEQ) */
+    --secondary: #00b891;      /* Verde claro (EDEQ) */
+    --warning: #cb6107;        /* Naranja (EDEQ) */
+    --danger: #F44336;         /* Rojo */
+    --dark: #0095a2;           /* Azul turquesa oscuro */
     --light: #f5f5f5;
     --border: #ddd;
     --text: #333;
@@ -46,17 +46,30 @@ body {
    ============================================================================ */
 
 .header {
-    background: linear-gradient(135deg, var(--dark) 0%, #1b3d0f 100%);
+    background: linear-gradient(135deg, #0095a2 0%, #008891 100%);
     color: white;
     padding: 30px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .logo-section {
     flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo-img {
+    height: 60px;
+    width: auto;
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
 }
 
 .logo-section i {
@@ -65,13 +78,15 @@ body {
 }
 
 .logo-section h1 {
-    font-size: 2em;
-    margin-bottom: 5px;
+    font-size: 1.8em;
+    margin-bottom: 3px;
+    color: #0095a2;
 }
 
 .logo-section p {
-    font-size: 0.95em;
-    opacity: 0.9;
+    font-size: 0.9em;
+    opacity: 0.8;
+    color: #666;
 }
 
 .upload-section {
@@ -308,8 +323,8 @@ body {
 /* Columna Municipio - reducida y con colapso */
 .data-table td:nth-child(2),
 .data-table th:nth-child(2) {
-    width: 200px;
-    min-width: 200px;
+    width: 80px;
+    min-width: 80px;
     word-break: break-word;
     overflow-wrap: break-word;
     white-space: normal;  /* ← Esta SÍ puede colapsar */
@@ -342,12 +357,13 @@ body {
 
 /* Ciclos especiales - sombreado diferenciado */
 .data-table tbody tr.ciclo-especial {
-    background-color: #E8F5E9;  /* Verde claro */
-    font-weight: 500;
+    background-color: #f0f8e0 !important;  /* Verde limón muy claro */
+    font-weight: 500 !important;
+    border-left: 4px solid #b7c72c;
 }
 
 .data-table tbody tr.ciclo-especial:hover {
-    background-color: #C8E6C9;  /* Verde más oscuro al pasar mouse */
+    background-color: #e8f5d8 !important;  /* Verde limón claro al pasar mouse */
 }
 
 .data-table td.empty {
