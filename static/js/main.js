@@ -3,6 +3,7 @@ let allData = {};
 let currentMonth = null;
 let currentCiclo = null;
 let currentActivity = '';  // ← Variable para actividad seleccionada
+let currentSelectedDay = null;  // ← Variable para recordar el día seleccionado
 let currentCalendarMonth = null;
 
 // ============================================================================
@@ -151,6 +152,11 @@ async function handleMonthChange() {
         activitySelect.addEventListener('change', () => {
             currentActivity = activitySelect.value;
             displayCalendarMonth(currentMonth);  // ← Redibujar calendario con nuevo filtro
+            
+            // Si hay un día seleccionado, actualizar su detalle también
+            if (currentSelectedDay) {
+                showDayDetails(currentSelectedDay, allData[currentMonth]);
+            }
         });
     } catch (error) {
         console.error('Error loading month data:', error);
@@ -899,6 +905,7 @@ function getStateForDate(dateStr, ciclo) {
 }
 
 function showDayDetails(dateStr, ciclos) {
+    currentSelectedDay = dateStr;  // ← Guardar día seleccionado
     const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
     const date = parseLocalDate(dateStr);  // ← Usar parseLocalDate en lugar de new Date
     const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][date.getDay()];
