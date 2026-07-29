@@ -46,7 +46,7 @@ body {
    ============================================================================ */
 
 .header {
-    background: linear-gradient(135deg, #0095a2 0%, #008891 100%);
+    background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 20%, #0095a2 60%, #008891 100%);
     color: white;
     padding: 30px 20px;
     display: flex;
@@ -451,10 +451,10 @@ body {
 }
 
 .calendar-day.in-range {
-    background: #4CAF50;
+    background: #00b891;  /* Verde claro EDEQ */
     color: white;
-    border-color: #45a049;
-    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+    border-color: #008891;
+    box-shadow: 0 2px 6px rgba(0, 184, 145, 0.3);
     font-weight: 700;
     min-height: 80px;
     aspect-ratio: auto;
@@ -462,7 +462,7 @@ body {
 }
 
 .calendar-day.header {
-    background: #2d5016;
+    background: #0095a2;  /* Azul turquesa EDEQ */
     color: white;
     border: none;
     font-weight: 700;
@@ -522,7 +522,7 @@ body {
 }
 
 .calendar-header {
-    background: #2d5016;
+    background: #0095a2;  /* Azul turquesa EDEQ */
     color: white;
     padding: 10px;
     text-align: center;
@@ -577,7 +577,7 @@ body {
     position: absolute;
     top: -8px;
     right: -8px;
-    background: #4CAF50;
+    background: #0095a2;  /* Azul turquesa EDEQ */
     color: white;
     border-radius: 50%;
     width: 24px;
