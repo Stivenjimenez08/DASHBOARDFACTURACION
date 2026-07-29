@@ -12,7 +12,7 @@
         <!-- HEADER -->
         <header class="header">
             <div class="logo-section">
-                <img src="static/img/logo-edeq-color.png" alt="Logo EDEQ" class="logo-img">
+                <img src="static/img/logo-edeq.png" alt="Logo EDEQ" class="logo-img">
                 <div class="header-text">
                     <h1>CICLOS DE FACTURACIÓN</h1>
                     <p>Información operativa para programación de actividades</p>
@@ -39,6 +39,20 @@
                     <label for="cicloSelect">Ciclo</label>
                     <select id="cicloSelect">
                         <option value="">-- Seleccionar ciclo --</option>
+                    </select>
+                </div>
+
+                <div class="selector-group" id="activitySelectorGroup" style="display: none;">
+                    <label for="activitySelect">Actividad</label>
+                    <select id="activitySelect">
+                        <option value="">Todos</option>
+                        <option value="generacion_libro">Generación</option>
+                        <option value="lectura_actual">Lectura</option>
+                        <option value="analisis_consumos">Crítica</option>
+                        <option value="liquidacion">Liquidación</option>
+                        <option value="entrega_cliente">Entrega Factura</option>
+                        <option value="pago">Pago sin Recargo</option>
+                        <option value="suspension">Suspensión</option>
                     </select>
                 </div>
             </div>
