@@ -569,7 +569,7 @@ body {
 
 /* Día seleccionado en calendario */
 .calendar-day-clickable.selected {
-    background: #0095a2;           /* Azul turquesa EDEQ */
+    background: #74BBC2;           /* Azul turquesa EDEQ */
     color: white;
     border: 3px solid #006f7f;     /* Borde más grueso y oscuro */
     box-shadow: 0 0 12px rgba(0, 149, 162, 0.5);
