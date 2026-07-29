@@ -323,8 +323,8 @@ body {
 /* Columna Municipio - reducida y con colapso */
 .data-table td:nth-child(2),
 .data-table th:nth-child(2) {
-    width: 200px;
-    min-width: 200px;
+    width: 80px;
+    min-width: 80px;
     word-break: break-word;
     overflow-wrap: break-word;
     white-space: normal;  /* ← Esta SÍ puede colapsar */
@@ -357,13 +357,13 @@ body {
 
 /* Ciclos especiales - sombreado diferenciado */
 .data-table tbody tr.ciclo-especial {
-    background-color: #E0DEDE !important;  /* Verde limón muy claro */
+    background-color: #f0f8e0 !important;  /* Verde limón muy claro */
     font-weight: 500 !important;
-    border-left: 4px solid #8fb435;
+    border-left: 4px solid #b7c72c;
 }
 
 .data-table tbody tr.ciclo-especial:hover {
-    background-color: #D1D1D1 !important;  /* Verde limón claro al pasar mouse */
+    background-color: #e8f5d8 !important;  /* Verde limón claro al pasar mouse */
 }
 
 .data-table td.empty {
@@ -451,8 +451,8 @@ body {
 }
 
 .calendar-day.in-range {
-    background: #E6E8E7;  /* Verde claro EDEQ */
-    color: black;
+    background: #00b891;  /* Verde claro EDEQ */
+    color: white;
     border-color: #008891;
     box-shadow: 0 2px 6px rgba(0, 184, 145, 0.3);
     font-weight: 700;
@@ -565,6 +565,21 @@ body {
 .calendar-day-clickable.has-events:hover {
     background: #c8e6c9;
     border-color: #388e3c;
+}
+
+/* Día seleccionado en calendario */
+.calendar-day-clickable.selected {
+    background: #0095a2;           /* Azul turquesa EDEQ */
+    color: white;
+    border: 3px solid #006f7f;     /* Borde más grueso y oscuro */
+    box-shadow: 0 0 12px rgba(0, 149, 162, 0.5);
+    font-weight: 700;
+    transform: scale(1.08);        /* Ligeramente más grande */
+}
+
+.calendar-day-clickable.selected:hover {
+    background: #007a8a;           /* Más oscuro al pasar mouse */
+    box-shadow: 0 0 16px rgba(0, 149, 162, 0.8);
 }
 
 .day-number {
