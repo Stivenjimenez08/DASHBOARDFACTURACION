@@ -452,7 +452,7 @@ body {
 
 .calendar-day.in-range {
     background: #E6E8E7;  /* Verde claro EDEQ */
-    color: white;
+    color: black;
     border-color: #008891;
     box-shadow: 0 2px 6px rgba(0, 184, 145, 0.3);
     font-weight: 700;
