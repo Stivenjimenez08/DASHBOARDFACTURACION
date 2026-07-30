@@ -869,7 +869,34 @@ function isDateInRange(dateStr, startStr, endStr) {
 }
 
 function getStateForDate(dateStr, ciclo) {
-    // Buscar qué actividad específica tiene este ciclo en este día
+    // Si hay un filtro de actividad, solo mostrar esa actividad
+    if (currentActivity && currentActivity !== '') {
+        // Mapear el nombre del campo a la información de actividad
+        const activityMap = {
+            'generacion_libro': { state: 'Generación del Libro', icon: 'fa-file-alt', color: '#99841D' },
+            'lectura_anterior': { state: 'Lectura Medidores (Ant)', icon: 'fa-eye', color: '#45B7D1' },
+            'lectura_actual': { state: 'Lectura Medidores', icon: 'fa-eye', color: '#45B7D1' },
+            'analisis_consumos': { state: 'Período Crítica', icon: 'fa-magnifying-glass-chart', color: '#FFA500' },
+            'verificados': { state: 'Verificados', icon: 'fa-check', color: '#7C991D' },
+            'ingreso_verificados': { state: 'Ingreso Verificados', icon: 'fa-arrow-right', color: '#6E851E' },
+            'liquidacion': { state: 'Liquidación', icon: 'fa-money-bill', color: '#34991D' },
+            'calidad': { state: 'Calidad Facturación', icon: 'fa-check-circle', color: '#00BCD4' },
+            'entrega_impresor': { state: 'Entrega al Impresor', icon: 'fa-truck', color: '#795548' },
+            'entrega_cliente': { state: 'Entrega al Cliente', icon: 'fa-envelope', color: '#2196F3' },
+            'pago': { state: 'Pago sin Recargo', icon: 'fa-credit-card', color: '#9C27B0' },
+            'pago_recargo': { state: 'Pago con Recargo', icon: 'fa-credit-card', color: '#673AB7' },
+            'suspension': { state: 'Suspensión', icon: 'fa-ban', color: '#F44336' }
+        };
+        
+        // Si la fecha del ciclo coincide con la actividad filtrada
+        if (dateStr === ciclo[currentActivity]) {
+            return activityMap[currentActivity] || { state: 'Desconocido', icon: 'fa-question', color: '#999' };
+        }
+        // Si no coincide la fecha, devolver null para que no se muestre
+        return null;
+    }
+    
+    // Si no hay filtro, mostrar la primera actividad que encuentre (comportamiento original)
     if (dateStr === ciclo.generacion_libro) {
         return { state: 'Generación del Libro', icon: 'fa-file-alt', color: '#99841D' };
     }
@@ -930,14 +957,26 @@ function showDayDetails(dateStr, ciclos) {
     const date = parseLocalDate(dateStr);  // ← Usar parseLocalDate en lugar de new Date
     const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][date.getDay()];
     
-    let html = `<h3>${dayName}, ${date.getDate()} - ${ciclosEnDia.length} ciclos en este día</h3>`;
+    // Contar ciclos que realmente se mostrarán después de filtrar por actividad
+    const ciclosFiltrados = ciclosEnDia.filter(ciclo => {
+        const stateInfo = getStateForDate(dateStr, ciclo);
+        return stateInfo !== null;
+    });
     
-    if (ciclosEnDia.length === 0) {
+    let html = `<h3>${dayName}, ${date.getDate()} - ${ciclosFiltrados.length} ciclos en este día</h3>`;
+    
+    if (ciclosFiltrados.length === 0) {
         html += '<p style="color: #999;">Sin ciclos programados</p>';
     } else {
         html += '<div class="events-list">';
         ciclosEnDia.forEach(ciclo => {
             const stateInfo = getStateForDate(dateStr, ciclo);
+            
+            // Si el filtro de actividad devuelve null, no mostrar este ciclo
+            if (stateInfo === null) {
+                return;
+            }
+            
             html += `
                 <div class="event-item">
                     <div class="event-header">
