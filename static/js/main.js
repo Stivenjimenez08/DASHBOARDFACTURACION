@@ -104,8 +104,6 @@ async function handleMonthChange() {
     try {
         const response = await fetch(`/api/mes/${month}`);
         const data = await response.json();
-        allData[month] = data.ciclos;
-
         // Cargar ciclos en select
         const cicloSelect = document.getElementById('cicloSelect');
         cicloSelect.innerHTML = '<option value="">-- Seleccionar ciclo --</option>';
