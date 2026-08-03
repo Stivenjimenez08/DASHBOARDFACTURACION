@@ -46,8 +46,8 @@ def excel_date_to_python(excel_date):
 def extract_month_from_date(date_obj):
     """Extrae mes/año de una fecha (de GENERACION_LIBRO) formato: 'marzo 2026'"""
     month_names = {
-        1: 'enero', 2: 'febrero', 3: 'marzo', 4: 'abril', 5: 'mayo', 6: 'junio',
-        7: 'julio', 8: 'agosto', 9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre'
+        1: 'ENERO', 2: 'FEBRERO', 3: 'MARZO', 4: 'ABRIL', 5: 'MAYO', 6: 'JUNIO',
+        7: 'JULIO', 8: 'AGOSTO', 9: 'SEPTIEMBRE', 10: 'OCTUBRE', 11: 'NOVIEMBRE', 12: 'DICIEMBRE'
     }
     try:
         if pd.isna(date_obj):
