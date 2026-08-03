@@ -8,29 +8,30 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
 COLUMN_MAP = {
-    'CICLO': 1, 'ZONA': 2, 'ANALISTA': 3, 'MUNICIPIO': 4, 'PERIODO': 5,
-    # Consumo (fechas de lectura)
-    'CONSUMO_INICIO': 7, 'CONSUMO_FIN': 9, 'DIAS_FACTURADOS': 11,
-    # Nuevas actividades (solo fecha de inicio = columna "Día")
+    'CICLO': 1,
+    'ZONA': 2,
+    'ANALISTA': 3,
+    'MUNICIPIO': 4,
+    'PERIODO': 5,
+    'DIAS_FACTURADOS': 11,
+    # Actividades con fechas (Pandas ya fusionó Día+Mes en formato datetime)
     'GENERACION_LIBRO': 6,
-    'LECTURA_ANTERIOR': 7,
-    'LECTURA_ACTUAL': 9,
-    'ANALISIS_CONSUMOS': 12,
-    'VERIFICADOS': 14,
-    'INGRESO_VERIFICADOS': 16,
-    'LIQUIDACION': 18,
-    'CALIDAD': 20,
-    'ENTREGA_IMPRESOR': 22,
-    'ENTREGA_CLIENTE': 24,
-    'PAGO': 26,
-    'PAGO_RECARGO': 28,
-    'SUSPENSION': 30,
-    # Mantener para backward compatibility (timeline)
-    'DIAN_INICIO': 24, 'DIAN_FIN': 26,
-    'ENTREGA_CLIENTE_INICIO': 24, 'ENTREGA_CLIENTE_FIN': 26,
-    'PAGO_INICIO': 26, 'PAGO_FIN': 27,
-    'SUSPENSION_INICIO': 30, 'SUSPENSION_FIN': 31,
-    'MES_REFERENCIA': 31,  # ← Columna 32 (índice 31) con la fecha/mes
+    'LECTURA_ANTERIOR': 8,    # Cambio: era 7, ahora 8
+    'LECTURA_ACTUAL': 10,     # Cambio: era 9, ahora 10
+    'ANALISIS_CONSUMOS': 12,  # Crítica - CORRECTO
+    'VERIFICADOS': 14,        # CORRECTO
+    'INGRESO_VERIFICADOS': 16,  # CORRECTO
+    'LIQUIDACION': 18,        # CORRECTO
+    'CALIDAD': 20,            # CORRECTO
+    'ENTREGA_IMPRESOR': 22,   # CORRECTO
+    'ENTREGA_CLIENTE': 24,    # CORRECTO
+    'PAGO': 26,               # Pago sin recargo - CORRECTO
+    'PAGO_RECARGO': 28,       # Pago con recargo - CORRECTO
+    'SUSPENSION': 30,         # Suspensión - CORRECTO
+    # Para backward compatibility
+    'CONSUMO_INICIO': 8,
+    'CONSUMO_FIN': 10,
+    'MES_REFERENCIA': 6,
 }
 
 def excel_date_to_python(excel_date):
@@ -107,29 +108,26 @@ def parse_excel_file(filepath):
                     
                     # ✨ EXTRAER MES DE LA COLUMNA 32 (índice 31) - para Vista 3
                     mes_fecha = excel_date_to_python(row.iloc[COLUMN_MAP['MES_REFERENCIA']])
-                    mes_referencia = get_month_from_date(mes_fecha)
-                    
-                    # ✨ EXTRAER MES DE GENERACIÓN - para Vista 1
+                    # ✨ EXTRAER FECHAS CORRECTAMENTE (ya son datetime)
+                    # Generación
                     generacion_fecha = excel_date_to_python(row.iloc[COLUMN_MAP['GENERACION_LIBRO']])
-                    mes_generacion = get_month_from_date(generacion_fecha)
-                    
-                    if not mes_referencia:
-                        print(f"   ⚠️  Ciclo {ciclo_num} sin fecha de referencia, saltando")
-                        continue
+                    mes_generacion = get_month_from_date(generacion_fecha) if generacion_fecha else None
                     
                     if not mes_generacion:
                         print(f"   ⚠️  Ciclo {ciclo_num} sin fecha de generación, saltando")
                         continue
                     
-                    # Extraer fechas
-                    consumo_inicio = excel_date_to_python(row.iloc[COLUMN_MAP['CONSUMO_INICIO']])
-                    consumo_fin = excel_date_to_python(row.iloc[COLUMN_MAP['CONSUMO_FIN']])
-                    
-                    # Calcular días
-                    dias_facturados = None
-                    if consumo_inicio and consumo_fin:
-                        try: dias_facturados = (pd.to_datetime(consumo_fin) - pd.to_datetime(consumo_inicio)).days
-                        except: pass
+                    # Extraer fechas de actividades (ya son datetime en el Excel)
+                    fechas_actividades = {}
+                    for actividad in ['generacion_libro', 'lectura_anterior', 'lectura_actual',
+                                     'analisis_consumos', 'verificados', 'ingreso_verificados',
+                                     'liquidacion', 'calidad', 'entrega_impresor', 'entrega_cliente',
+                                     'pago', 'pago_recargo', 'suspension']:
+                        col_name = actividad.upper()
+                        if col_name in COLUMN_MAP:
+                            col_idx = COLUMN_MAP[col_name]
+                            fecha = excel_date_to_python(row.iloc[col_idx])
+                            fechas_actividades[actividad] = fecha
                     
                     ciclo = {
                         'ciclo': ciclo_num,
@@ -137,38 +135,18 @@ def parse_excel_file(filepath):
                         'analista': str(row.iloc[COLUMN_MAP['ANALISTA']]).strip() if pd.notna(row.iloc[COLUMN_MAP['ANALISTA']]) else '',
                         'municipio': str(row.iloc[COLUMN_MAP['MUNICIPIO']]).strip() if pd.notna(row.iloc[COLUMN_MAP['MUNICIPIO']]) else '',
                         'periodo': str(row.iloc[COLUMN_MAP['PERIODO']]).strip() if pd.notna(row.iloc[COLUMN_MAP['PERIODO']]) else '',
-                        'consumo_inicio': consumo_inicio,
-                        'consumo_fin': consumo_fin,
-                        'dias_facturados': dias_facturados,
-                        # Todas las actividades (solo fecha de inicio)
-                        'generacion_libro': excel_date_to_python(row.iloc[COLUMN_MAP['GENERACION_LIBRO']]),
-                        'lectura_anterior': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ANTERIOR']]),
-                        'lectura_actual': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ACTUAL']]),
-                        'analisis_consumos': excel_date_to_python(row.iloc[COLUMN_MAP['ANALISIS_CONSUMOS']]),
-                        'verificados': excel_date_to_python(row.iloc[COLUMN_MAP['VERIFICADOS']]),
-                        'ingreso_verificados': excel_date_to_python(row.iloc[COLUMN_MAP['INGRESO_VERIFICADOS']]),
-                        'liquidacion': excel_date_to_python(row.iloc[COLUMN_MAP['LIQUIDACION']]),
-                        'calidad': excel_date_to_python(row.iloc[COLUMN_MAP['CALIDAD']]),
-                        'entrega_impresor': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_IMPRESOR']]),
-                        'entrega_cliente': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE']]),
-                        'pago': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO']]),
-                        'pago_recargo': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_RECARGO']]),
-                        'suspension': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION']]),
-                        # Backward compatibility (para timeline y otros)
-                        'dian_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['DIAN_INICIO']]),
-                        'dian_fin': excel_date_to_python(row.iloc[COLUMN_MAP['DIAN_FIN']]),
-                        'entrega_cliente_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_INICIO']]),
-                        'entrega_cliente_fin': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_FIN']]),
-                        'pago_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_INICIO']]),
-                        'pago_fin': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_FIN']]),
-                        'suspension_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_INICIO']]),
-                        'suspension_fin': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_FIN']]),
+                        'dias_facturados': None,  # No calculamos
+                        **fechas_actividades,  # ✨ Agregar todas las fechas de actividades
+                        # Backward compatibility (para timeline)
+                        'dian_inicio': fechas_actividades.get('entrega_cliente'),
+                        'dian_fin': fechas_actividades.get('entrega_cliente'),
+                        'entrega_cliente_inicio': fechas_actividades.get('entrega_cliente'),
+                        'entrega_cliente_fin': fechas_actividades.get('entrega_cliente'),
+                        'pago_inicio': fechas_actividades.get('pago'),
+                        'pago_fin': fechas_actividades.get('pago'),
+                        'suspension_inicio': fechas_actividades.get('suspension'),
+                        'suspension_fin': fechas_actividades.get('suspension'),
                     }
-                    
-                    # ✨ AGRUPAR POR MES REFERENCIA (Vista 3 - Calendario)
-                    if mes_referencia not in ciclos_por_mes:
-                        ciclos_por_mes[mes_referencia] = []
-                    ciclos_por_mes[mes_referencia].append(ciclo)
                     
                     # ✨ AGRUPAR POR MES GENERACIÓN (Vista 1 - Resumen Mes)
                     if mes_generacion not in ciclos_por_generacion:
@@ -202,8 +180,8 @@ def parse_excel_file(filepath):
                 except Exception as e:
                     continue
             
-            # ✨ RETORNAR LAS 3 AGRUPACIONES
-            return ciclos_por_mes, ciclos_por_generacion, ciclos_por_actividad_mes
+            # ✨ RETORNAR LAS 2 AGRUPACIONES
+            return ciclos_por_generacion, ciclos_por_actividad_mes
         
         except Exception as e:
             print(f"   ❌ Error procesando hoja {sheet_name}: {str(e)}")
@@ -242,16 +220,14 @@ def load_excel_from_file():
     print(f"\n📂 Cargando: {filename}")
     
     try:
-        data_mes_ref, data_generacion, data_por_actividad = parse_excel_file(excel_path)
-        CACHED_DATA.clear()
+        data_generacion, data_por_actividad = parse_excel_file(excel_path)
         CACHED_DATA_GENERACION.clear()
         CACHED_DATA_BY_ACTIVITY_MONTH.clear()
         CACHED_DATA_GENERACION.update(data_generacion)
-        CACHED_DATA_BY_ACTIVITY_MONTH.update(data_por_actividad)  # ← Usar esta para Vista 3
+        CACHED_DATA_BY_ACTIVITY_MONTH.update(data_por_actividad)
         
         months_gen = list(data_generacion.keys())
         months_activity = list(data_por_actividad.keys())
-        total_ciclos = sum(len(data_por_actividad[m]) for m in months_activity)
         
         print(f"\n✅ Carga exitosa:")
         print(f"   📊 Por Actividad (Vista 3): {len(months_activity)} mes(es)")
