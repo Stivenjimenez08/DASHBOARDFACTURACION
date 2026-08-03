@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import glob
 from datetime import datetime, timedelta
+
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
@@ -43,17 +44,27 @@ def excel_date_to_python(excel_date):
     except: return None
 
 def extract_month_from_date(date_obj):
-    """Extrae mes/año de una fecha (de GENERACION_LIBRO)"""
+    """Extrae mes/año de una fecha (de GENERACION_LIBRO) formato: 'marzo 2026'"""
+    month_names = {
+        1: 'enero', 2: 'febrero', 3: 'marzo', 4: 'abril', 5: 'mayo', 6: 'junio',
+        7: 'julio', 8: 'agosto', 9: 'septiembre', 10: 'octubre', 11: 'noviembre', 12: 'diciembre'
+    }
     try:
         if pd.isna(date_obj):
             return None
+        
+        parsed_date = None
         if isinstance(date_obj, pd.Timestamp):
-            return date_obj.strftime('%m-%Y')
-        if isinstance(date_obj, datetime):
-            return date_obj.strftime('%m-%Y')
-        if isinstance(date_obj, str):
-            parsed = pd.to_datetime(date_obj)
-            return parsed.strftime('%m-%Y')
+            parsed_date = date_obj
+        elif isinstance(date_obj, datetime):
+            parsed_date = date_obj
+        elif isinstance(date_obj, str):
+            parsed_date = pd.to_datetime(date_obj)
+        
+        if parsed_date:
+            month_name = month_names[parsed_date.month]
+            year = parsed_date.year
+            return f"{month_name} {year}"
         return None
     except:
         return None
@@ -98,7 +109,6 @@ def parse_excel_file_consolidated(filepath):
                         month_key = extract_month_from_date(gen_libro_date)
                         
                         if not month_key:
-                            print(f"   ⚠️  No se pudo extraer mes para ciclo {ciclo_num}")
                             continue
                         
                         # Inicializar mes si no existe
@@ -217,7 +227,7 @@ print("="*60)
 load_excel_from_file()
 
 # ============================================================================
-# RUTAS API (sin cambios)
+# RUTAS API
 # ============================================================================
 
 @app.route('/')
