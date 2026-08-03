@@ -45,20 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // ✨ Listener para el filtro de actividad (Vista 3) - AGREGADO UNA SOLA VEZ
-    const activitySelect = document.getElementById('activitySelect');
-    if (activitySelect) {
-        activitySelect.addEventListener('change', () => {
-            currentActivity = activitySelect.value;
-            displayCalendarMonth(currentMonth);  // Redibujar calendario
-            
-            // Si hay un día seleccionado, actualizar su detalle también
-            if (currentSelectedDay) {
-                showDayDetails(currentSelectedDay, allData[currentMonth]);
-            }
-        });
-    }
-    
     loadMonths();
 });
 
@@ -87,8 +73,7 @@ async function loadMonths() {
         // IMPORTANTE: Cargar TODOS los meses en allData para que Página 3 funcione
         for (const month of data.months) {
             try {
-                // ✨ Vista 3 necesita datos por MES_REFERENCIA (todas las actividades del mes)
-                const res = await fetch(`/api/mes-all/${month}`);
+                const res = await fetch(`/api/mes/${month}`);
                 const monthData = await res.json();
                 allData[month] = monthData.ciclos;
             } catch (e) {
@@ -116,11 +101,9 @@ async function handleMonthChange() {
     currentCiclo = null;
 
     try {
-        // ✨ Vista 1: Obtener datos por GENERACIÓN del ciclo
         const response = await fetch(`/api/mes/${month}`);
         const data = await response.json();
-        // ✨ NO sobrescribir allData[month] - ya tiene datos correctos de MES_REFERENCIA
-        // (se cargó en loadMonths() con /api/mes-all/)
+        allData[month] = data.ciclos;
 
         // Cargar ciclos en select
         const cicloSelect = document.getElementById('cicloSelect');
@@ -158,17 +141,23 @@ async function handleMonthChange() {
             displayCicloDetail();
         }
 
-        // Actualizar página 1 con datos por GENERACIÓN
+        // Actualizar página 1
         displayMonthData(data.ciclos);
         
         // ✨ Actualizar Página 3 (Calendario) con el mes seleccionado
         displayCalendarMonth(month);
         
-        // ✨ Resetear filtro de actividad al cambiar mes
+        // ✨ Agregar listener al selector de actividad (Página 3)
         const activitySelect = document.getElementById('activitySelect');
-        activitySelect.value = '';
-        currentActivity = '';
-        currentSelectedDay = null;  // Limpiar día seleccionado
+        activitySelect.addEventListener('change', () => {
+            currentActivity = activitySelect.value;
+            displayCalendarMonth(currentMonth);  // ← Redibujar calendario con nuevo filtro
+            
+            // Si hay un día seleccionado, actualizar su detalle también
+            if (currentSelectedDay) {
+                showDayDetails(currentSelectedDay, allData[currentMonth]);
+            }
+        });
     } catch (error) {
         console.error('Error loading month data:', error);
     }
@@ -813,53 +802,16 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
 
     // Días del mes
     while (current <= maxDate) {
-        const dateStr = formatDate(current);
-        
-        // ✨ Obtener TODOS los ciclos del día
-        const todosLosCiclos = ciclos.filter(ciclo => {
-            return dateStr === ciclo.generacion_libro ||
-                   dateStr === ciclo.lectura_anterior ||
-                   dateStr === ciclo.lectura_actual ||
-                   dateStr === ciclo.analisis_consumos ||
-                   dateStr === ciclo.verificados ||
-                   dateStr === ciclo.ingreso_verificados ||
-                   dateStr === ciclo.liquidacion ||
-                   dateStr === ciclo.calidad ||
-                   dateStr === ciclo.entrega_impresor ||
-                   dateStr === ciclo.entrega_cliente ||
-                   dateStr === ciclo.pago ||
-                   dateStr === ciclo.pago_recargo ||
-                   dateStr === ciclo.suspension;
-        });
-        
-        // ✨ Si hay filtro de actividad, contar solo ciclos con esa actividad
-        let ciclosAMostrar = todosLosCiclos;
-        if (currentActivity && currentActivity !== '') {
-            ciclosAMostrar = todosLosCiclos.filter(ciclo => {
-                const stateInfo = getStateForDate(dateStr, ciclo);
-                return stateInfo !== null;
-            });
-        }
-        
-        // Deduplicar por ciclo
-        const ciclosSeen = new Set();
-        const ciclosUnicos = [];
-        ciclosAMostrar.forEach(ciclo => {
-            if (!ciclosSeen.has(ciclo.ciclo)) {
-                ciclosSeen.add(ciclo.ciclo);
-                ciclosUnicos.push(ciclo);
-            }
-        });
-        
-        const hasEvents = todosLosCiclos.length > 0;  // ✨ Mostrar día si hay CUALQUIER ciclo
-        const eventCount = ciclosUnicos.length;  // ✨ Contar solo filtrados
+        const dateStr = formatDate(current);  // ← Usar formatDate en lugar de toISOString
+        const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
+        const hasEvents = ciclosEnDia.length > 0;
 
         html += `
             <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''} ${dateStr === currentSelectedDay ? 'selected' : ''}" 
                  data-date="${dateStr}"
-                 title="${hasEvents ? todosLosCiclos.length + ' ciclos (' + eventCount + ' filtrados)' : 'Sin eventos'}">
+                 title="${hasEvents ? ciclosEnDia.length + ' ciclos' : 'Sin eventos'}">
                 <div class="day-number">${current.getDate()}</div>
-                ${eventCount > 0 ? `<div class="event-count">${eventCount}</div>` : ''}
+                ${hasEvents ? `<div class="event-count">${ciclosEnDia.length}</div>` : ''}
             </div>
         `;
 
@@ -1002,44 +954,26 @@ function showDayDetails(dateStr, ciclos) {
         selectedDayEl.classList.add('selected');
     }
     
-    // ✨ Obtener TODOS los ciclos del día (sin filtro de actividad)
-    const ciclosDelDia = ciclos.filter(ciclo => {
-        return dateStr === ciclo.generacion_libro ||
-               dateStr === ciclo.lectura_anterior ||
-               dateStr === ciclo.lectura_actual ||
-               dateStr === ciclo.analisis_consumos ||
-               dateStr === ciclo.verificados ||
-               dateStr === ciclo.ingreso_verificados ||
-               dateStr === ciclo.liquidacion ||
-               dateStr === ciclo.calidad ||
-               dateStr === ciclo.entrega_impresor ||
-               dateStr === ciclo.entrega_cliente ||
-               dateStr === ciclo.pago ||
-               dateStr === ciclo.pago_recargo ||
-               dateStr === ciclo.suspension;
-    });
-    
-    const date = parseLocalDate(dateStr);
+    const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
+    const date = parseLocalDate(dateStr);  // ← Usar parseLocalDate en lugar de new Date
     const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][date.getDay()];
     
-    // ✨ Si hay filtro, mostrar solo ciclos filtrados. Sin filtro, mostrar TODOS
-    let ciclosAMostrar = ciclosDelDia;
-    if (currentActivity && currentActivity !== '') {
-        ciclosAMostrar = ciclosDelDia.filter(ciclo => {
-            const stateInfo = getStateForDate(dateStr, ciclo);
-            return stateInfo !== null;
-        });
-    }
+    // Contar ciclos que realmente se mostrarán después de filtrar por actividad
+    const ciclosFiltrados = ciclosEnDia.filter(ciclo => {
+        const stateInfo = getStateForDate(dateStr, ciclo);
+        return stateInfo !== null;
+    });
     
-    let html = `<h3>${dayName}, ${date.getDate()} - ${ciclosAMostrar.length} ciclos en este día</h3>`;
+    let html = `<h3>${dayName}, ${date.getDate()} - ${ciclosFiltrados.length} ciclos en este día</h3>`;
     
-    if (ciclosAMostrar.length === 0) {
+    if (ciclosFiltrados.length === 0) {
         html += '<p style="color: #999;">Sin ciclos programados</p>';
     } else {
         html += '<div class="events-list">';
-        ciclosAMostrar.forEach(ciclo => {
+        ciclosEnDia.forEach(ciclo => {
             const stateInfo = getStateForDate(dateStr, ciclo);
             
+            // Si el filtro de actividad devuelve null, no mostrar este ciclo
             if (stateInfo === null) {
                 return;
             }
