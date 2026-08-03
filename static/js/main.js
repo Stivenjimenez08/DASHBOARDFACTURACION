@@ -982,12 +982,28 @@ function showDayDetails(dateStr, ciclos) {
         selectedDayEl.classList.add('selected');
     }
     
-    const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
+    // ✨ Primero: Obtener TODOS los ciclos del día (sin filtro de actividad)
+    const ciclosDelDia = ciclos.filter(ciclo => {
+        return dateStr === ciclo.generacion_libro ||
+               dateStr === ciclo.lectura_anterior ||
+               dateStr === ciclo.lectura_actual ||
+               dateStr === ciclo.analisis_consumos ||
+               dateStr === ciclo.verificados ||
+               dateStr === ciclo.ingreso_verificados ||
+               dateStr === ciclo.liquidacion ||
+               dateStr === ciclo.calidad ||
+               dateStr === ciclo.entrega_impresor ||
+               dateStr === ciclo.entrega_cliente ||
+               dateStr === ciclo.pago ||
+               dateStr === ciclo.pago_recargo ||
+               dateStr === ciclo.suspension;
+    });
+    
     const date = parseLocalDate(dateStr);  // ← Usar parseLocalDate en lugar de new Date
     const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][date.getDay()];
     
-    // Contar ciclos que realmente se mostrarán después de filtrar por actividad
-    const ciclosFiltrados = ciclosEnDia.filter(ciclo => {
+    // ✨ Segundo: Filtrar por la actividad seleccionada
+    const ciclosFiltrados = ciclosDelDia.filter(ciclo => {
         const stateInfo = getStateForDate(dateStr, ciclo);
         return stateInfo !== null;
     });
@@ -998,7 +1014,7 @@ function showDayDetails(dateStr, ciclos) {
         html += '<p style="color: #999;">Sin ciclos programados</p>';
     } else {
         html += '<div class="events-list">';
-        ciclosEnDia.forEach(ciclo => {
+        ciclosDelDia.forEach(ciclo => {
             const stateInfo = getStateForDate(dateStr, ciclo);
             
             // Si el filtro de actividad devuelve null, no mostrar este ciclo
