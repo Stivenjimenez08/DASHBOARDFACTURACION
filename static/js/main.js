@@ -180,13 +180,17 @@ async function handleMonthChange() {
     }
 }
 
-function handleActivityChange() {
+function handleActivityChange(event) {
     const activitySelect = document.getElementById('activitySelect');
     if (activitySelect) {
         currentActivity = activitySelect.value;
-        displayCalendarMonth(currentMonth);
-        if (currentSelectedDay) {
-            showDayDetails(currentSelectedDay, allData[currentMonth]);
+        console.log('📌 Actividad seleccionada:', currentActivity);
+        
+        if (currentMonth && allData[currentMonth]) {
+            displayCalendarMonth(currentMonth);
+            if (currentSelectedDay) {
+                showDayDetails(currentSelectedDay, allData[currentMonth]);
+            }
         }
     }
 }
@@ -312,19 +316,89 @@ function displayCicloDetail() {
 
     // TIMELINE
     html += '<h2 class="section-title">LÍNEA DE TIEMPO DEL CICLO SELECCIONADO</h2>';
-    html += '<div id="cicloTimeline" class="timeline-container"></div>';
+    html += '<div class="timeline-container">';
+    
+    const steps = [
+        {
+            name: 'Consumo',
+            icon: 'fa-leaf',
+            start: cicloData.consumo_inicio,
+            end: cicloData.consumo_fin,
+            color: '#4CAF50'
+        },
+        {
+            name: 'Transmisión DIAN',
+            icon: 'fa-file-text',
+            start: cicloData.dian_inicio,
+            end: cicloData.dian_fin,
+            color: '#FF9800'
+        },
+        {
+            name: 'Entrega Factura',
+            icon: 'fa-envelope',
+            start: cicloData.entrega_cliente_inicio,
+            end: cicloData.entrega_cliente_fin,
+            color: '#2196F3'
+        },
+        {
+            name: 'Pago sin Recargo',
+            icon: 'fa-credit-card',
+            start: cicloData.pago_inicio,
+            end: cicloData.pago_fin,
+            color: '#9C27B0'
+        },
+        {
+            name: 'Suspensión',
+            icon: 'fa-ban',
+            start: cicloData.suspension_inicio,
+            end: cicloData.suspension_fin,
+            color: '#F44336'
+        }
+    ];
 
-    // CALENDARIO
-    html += '<h2 class="section-title">DÍAS FACTURADOS (CONSUMO)</h2>';
-    html += '<div id="cicloCalendar" class="calendar-container"></div>';
+    steps.forEach((step, idx) => {
+        const isComplete = step.start && step.end;
+        const startDate = step.start ? formatDateDisplay(step.start) : '-';
+        const endDate = step.end ? formatDateDisplay(step.end) : '-';
+
+        html += `
+            <div class="timeline-step ${isComplete ? 'complete' : 'incomplete'}">
+                <div class="timeline-marker" style="background-color: ${step.color};">
+                    <i class="fas ${step.icon}"></i>
+                </div>
+                <div class="timeline-content">
+                    <h4>${step.name}</h4>
+                    <p>${startDate} → ${endDate}</p>
+                </div>
+            </div>
+        `;
+    });
     
     html += '</div>';
 
-    detailContainer.innerHTML = html;
+    // CALENDARIO
+    html += '<h2 class="section-title">DÍAS FACTURADOS (CONSUMO)</h2>';
+    html += '<div class="calendar-container">';
     
-    // Actualizar timeline y calendario después de renderizar
-    updatePage2Timeline();
-    displayCicloCalendar();
+    if (cicloData.consumo_inicio && cicloData.consumo_fin) {
+        const minDate = parseLocalDate(cicloData.consumo_inicio);
+        const maxDate = parseLocalDate(cicloData.consumo_fin);
+        
+        if (minDate && maxDate) {
+            html += generateCicloCalendar(minDate, maxDate, cicloData);
+        } else {
+            html += '<p style="color: #999;">Fechas inválidas</p>';
+        }
+    } else {
+        html += '<p style="color: #999;">Sin información de consumo</p>';
+    }
+    
+    html += '</div>';
+    
+    html += '</div>';
+
+    // Actualizar DOM de una sola vez
+    detailContainer.innerHTML = html;
 }
 
 function updatePage2Timeline() {
@@ -456,15 +530,28 @@ function generateCicloCalendar(minDate, maxDate, cicloData) {
 // ============================================================================
 
 function displayCalendarMonth(month) {
+    console.log('📅 displayCalendarMonth llamado con mes:', month);
+    console.log('Datos disponibles en allData:', Object.keys(allData));
+    
+    if (!month) {
+        console.error('Mes no especificado');
+        return;
+    }
+    
     const ciclos = allData[month] || [];
+    console.log('Ciclos para mes ' + month + ':', ciclos.length);
     
     if (ciclos.length === 0) {
-        document.getElementById('calendarView').innerHTML = '<p style="color: #999;">Sin ciclos en este mes</p>';
+        const calendarView = document.getElementById('calendarView');
+        if (calendarView) {
+            calendarView.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">Sin ciclos en este mes</p>';
+        }
         return;
     }
 
     const monthParts = month.match(/(\w+)\s+(\d{4})/);
     if (!monthParts) {
+        console.error('Formato de mes inválido:', month);
         document.getElementById('calendarView').innerHTML = '<p style="color: #999;">Formato de mes inválido</p>';
         return;
     }
@@ -475,6 +562,7 @@ function displayCalendarMonth(month) {
     const year = parseInt(monthParts[2]);
     
     if (monthIndex === -1) {
+        console.error('Mes no reconocido:', monthParts[1]);
         document.getElementById('calendarView').innerHTML = '<p style="color: #999;">Mes no reconocido</p>';
         return;
     }
@@ -482,20 +570,27 @@ function displayCalendarMonth(month) {
     const minDate = new Date(year, monthIndex, 1);
     const maxDate = new Date(year, monthIndex + 1, 0);
 
-    const html = generateInteractiveCalendar(minDate, maxDate, ciclos);
-    document.getElementById('calendarView').innerHTML = html;
-
-    document.querySelectorAll('.calendar-day-clickable').forEach(day => {
-        day.addEventListener('click', function() {
-            const dateStr = this.dataset.date;
-            showDayDetails(dateStr, ciclos);
-        });
-    });
+    console.log('Generando calendario de', minDate, 'a', maxDate);
     
-    if (currentSelectedDay) {
-        const selectedDayEl = document.querySelector(`[data-date="${currentSelectedDay}"]`);
-        if (selectedDayEl) {
-            selectedDayEl.classList.add('selected');
+    const html = generateInteractiveCalendar(minDate, maxDate, ciclos);
+    const calendarView = document.getElementById('calendarView');
+    if (calendarView) {
+        calendarView.innerHTML = html;
+
+        // Agregar listeners a los días
+        document.querySelectorAll('.calendar-day-clickable').forEach(day => {
+            day.addEventListener('click', function() {
+                const dateStr = this.dataset.date;
+                showDayDetails(dateStr, ciclos);
+            });
+        });
+        
+        // Restaurar día seleccionado si existe
+        if (currentSelectedDay) {
+            const selectedDayEl = document.querySelector(`[data-date="${currentSelectedDay}"]`);
+            if (selectedDayEl) {
+                selectedDayEl.classList.add('selected');
+            }
         }
     }
 }
