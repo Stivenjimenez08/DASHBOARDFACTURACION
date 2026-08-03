@@ -323,7 +323,9 @@ body {
 
 /* Columna Municipio - reducida y con colapso */
 .data-table td:nth-child(2),
-.data-table th:nth-child(2) {
+.data-table th:nth-child(2),
+.data-table td:nth-child(3),
+.data-table th:nth-child(3) {
     width: 200px;
     min-width: 200px;
     word-break: break-word;
@@ -332,7 +334,6 @@ body {
 }
 
 /* Todas las otras columnas - NO colapsar */
-.data-table th:nth-child(3),
 .data-table th:nth-child(4),
 .data-table th:nth-child(5),
 .data-table th:nth-child(6),
@@ -341,7 +342,6 @@ body {
 .data-table th:nth-child(9),
 .data-table th:nth-child(10),
 .data-table th:nth-child(11),
-.data-table td:nth-child(3),
 .data-table td:nth-child(4),
 .data-table td:nth-child(5),
 .data-table td:nth-child(6),
