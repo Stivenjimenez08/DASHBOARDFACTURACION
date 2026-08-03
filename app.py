@@ -91,7 +91,8 @@ def parse_excel_file(filepath):
             
             df = df_raw.iloc[6:].reset_index(drop=True)
             
-            ciclos_por_mes = {}  # ← Diccionario temporal para agrupar por mes
+            ciclos_por_mes = {}  # ← Agrupado por MES_REFERENCIA (Vista 3)
+            ciclos_por_generacion = {}  # ← Agrupado por GENERACIÓN (Vista 1)
             
             for idx, row in df.iterrows():
                 try:
@@ -102,12 +103,20 @@ def parse_excel_file(filepath):
                     try: ciclo_num = int(float(ciclo_val))
                     except: continue
                     
-                    # ✨ EXTRAER MES DE LA COLUMNA 32 (índice 31)
+                    # ✨ EXTRAER MES DE LA COLUMNA 32 (índice 31) - para Vista 3
                     mes_fecha = excel_date_to_python(row.iloc[COLUMN_MAP['MES_REFERENCIA']])
                     mes_referencia = get_month_from_date(mes_fecha)
                     
+                    # ✨ EXTRAER MES DE GENERACIÓN - para Vista 1
+                    generacion_fecha = excel_date_to_python(row.iloc[COLUMN_MAP['GENERACION_LIBRO']])
+                    mes_generacion = get_month_from_date(generacion_fecha)
+                    
                     if not mes_referencia:
                         print(f"   ⚠️  Ciclo {ciclo_num} sin fecha de referencia, saltando")
+                        continue
+                    
+                    if not mes_generacion:
+                        print(f"   ⚠️  Ciclo {ciclo_num} sin fecha de generación, saltando")
                         continue
                     
                     # Extraer fechas
@@ -154,23 +163,21 @@ def parse_excel_file(filepath):
                         'suspension_fin': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_FIN']]),
                     }
                     
-                    # ✨ AGRUPAR POR MES EXTRAÍDO
+                    # ✨ AGRUPAR POR MES REFERENCIA (Vista 3 - Calendario)
                     if mes_referencia not in ciclos_por_mes:
                         ciclos_por_mes[mes_referencia] = []
                     ciclos_por_mes[mes_referencia].append(ciclo)
                     
+                    # ✨ AGRUPAR POR MES GENERACIÓN (Vista 1 - Resumen Mes)
+                    if mes_generacion not in ciclos_por_generacion:
+                        ciclos_por_generacion[mes_generacion] = []
+                    ciclos_por_generacion[mes_generacion].append(ciclo)
+                    
                 except Exception as e:
                     continue
             
-            # ✨ CONVERTIR AGRUPACIÓN TEMPORAL A ESTRUCTURA FINAL
-            data_by_month = ciclos_por_mes
-            
-            print(f"   ✅ Consolidado procesado exitosamente")
-            print(f"   📊 Meses encontrados: {len(data_by_month)}")
-            for mes, ciclos in sorted(data_by_month.items()):
-                print(f"      • {mes}: {len(ciclos)} ciclos")
-            
-            return data_by_month
+            # ✨ RETORNAR AMBAS AGRUPACIONES
+            return ciclos_por_mes, ciclos_por_generacion
         
         except Exception as e:
             print(f"   ❌ Error procesando hoja {sheet_name}: {str(e)}")
@@ -184,7 +191,8 @@ def parse_excel_file(filepath):
         traceback.print_exc()
         return {}
 
-CACHED_DATA = {}
+CACHED_DATA = {}  # ← Por MES_REFERENCIA (Vista 3 - Calendario)
+CACHED_DATA_GENERACION = {}  # ← Por GENERACIÓN del ciclo (Vista 1 - Resumen Mes)
 
 def load_excel_from_file():
     """Carga automáticamente Excel desde carpeta data/"""
@@ -207,16 +215,26 @@ def load_excel_from_file():
     print(f"\n📂 Cargando: {filename}")
     
     try:
-        data = parse_excel_file(excel_path)
+        data_mes_ref, data_generacion = parse_excel_file(excel_path)
         CACHED_DATA.clear()
-        CACHED_DATA.update(data)
+        CACHED_DATA_GENERACION.clear()
+        CACHED_DATA.update(data_mes_ref)
+        CACHED_DATA_GENERACION.update(data_generacion)
         
-        months = list(data.keys())
-        total_ciclos = sum(len(data[m]) for m in months)
+        months_ref = list(data_mes_ref.keys())
+        months_gen = list(data_generacion.keys())
+        total_ciclos = sum(len(data_mes_ref[m]) for m in months_ref)
         
         print(f"\n✅ Carga exitosa:")
-        print(f"   - {len(months)} mes(es)")
-        print(f"   - {total_ciclos} ciclos totales")
+        print(f"   📊 Por Mes Referencia (Vista 3): {len(months_ref)} mes(es)")
+        for mes, ciclos in sorted(data_mes_ref.items()):
+            print(f"      • {mes}: {len(ciclos)} ciclos")
+        
+        print(f"\n   📊 Por Generación (Vista 1): {len(months_gen)} mes(es)")
+        for mes, ciclos in sorted(data_generacion.items()):
+            print(f"      • {mes}: {len(ciclos)} ciclos")
+        
+        print(f"\n   📈 Total ciclos: {total_ciclos}")
         
         return True
     except Exception as e:
@@ -241,10 +259,20 @@ def index():
 
 @app.route('/api/months')
 def get_months():
-    return jsonify({'months': list(CACHED_DATA.keys()), 'total': len(CACHED_DATA)})
+    # Para Vista 1, retornar meses por generación
+    return jsonify({'months': list(CACHED_DATA_GENERACION.keys()), 'total': len(CACHED_DATA_GENERACION)})
 
 @app.route('/api/mes/<month>')
 def get_month_data(month):
+    # ✨ Vista 1 - Resumen Mes: Filtra por GENERACIÓN del ciclo
+    if month not in CACHED_DATA_GENERACION:
+        return jsonify({'error': 'No encontrado'}), 404
+    ciclos = CACHED_DATA_GENERACION[month]
+    return jsonify({'month': month, 'ciclos': ciclos, 'total': len(ciclos)})
+
+@app.route('/api/mes-all/<month>')
+def get_month_data_all(month):
+    # ✨ Vista 3 - Calendario: Filtra por MES_REFERENCIA (todas las actividades)
     if month not in CACHED_DATA:
         return jsonify({'error': 'No encontrado'}), 404
     ciclos = CACHED_DATA[month]
@@ -252,6 +280,7 @@ def get_month_data(month):
 
 @app.route('/api/ciclo/<month>/<int:ciclo>')
 def get_ciclo_detail(month, ciclo):
+    # Vista 2 y 3: Busca en datos de MES_REFERENCIA
     if month not in CACHED_DATA:
         return jsonify({'error': 'No encontrado'}), 404
     ciclo_data = next((c for c in CACHED_DATA[month] if c['ciclo'] == ciclo), None)
