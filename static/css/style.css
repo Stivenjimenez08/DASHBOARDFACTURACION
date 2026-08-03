@@ -299,6 +299,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9em;
+    table-layout: fixed;
 }
 
 .data-table thead {
@@ -308,14 +309,14 @@ body {
 }
 
 .data-table th {
-    padding: 12px;
+    padding: 10px;
     text-align: center;
     white-space: nowrap;  /* ← No colapsar headers */
     min-width: 100px;     /* ← Ancho mínimo para cada header */
 }
 
 .data-table td {
-    padding: 12px;
+    padding: 10px;
     border-bottom: 1px solid var(--light);
     text-align: center;
 }
@@ -350,7 +351,7 @@ body {
 .data-table td:nth-child(10),
 .data-table th:nth-child(11){
     white-space: nowrap;
-    min-width: 110px;
+    min-width: 90px;
 }
 
 .data-table tbody tr:hover {
