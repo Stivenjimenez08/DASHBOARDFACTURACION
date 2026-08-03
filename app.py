@@ -93,6 +93,8 @@ def parse_excel_file(filepath):
             
             ciclos_por_mes = {}  # ← Agrupado por MES_REFERENCIA (Vista 3)
             ciclos_por_generacion = {}  # ← Agrupado por GENERACIÓN (Vista 1)
+            ciclos_por_actividad_mes = {}  # ← Agrupado por mes de CADA ACTIVIDAD (Vista 3 REAL)
+            ciclos_vistos_por_mes = {}  # ← Para evitar duplicados por mes
             
             for idx, row in df.iterrows():
                 try:
@@ -173,11 +175,35 @@ def parse_excel_file(filepath):
                         ciclos_por_generacion[mes_generacion] = []
                     ciclos_por_generacion[mes_generacion].append(ciclo)
                     
+                    # ✨ AGRUPAR POR MES DE CADA ACTIVIDAD (Vista 3 - Calendario REAL)
+                    # Para cada actividad que tenga fecha, agregar ciclo a ese mes
+                    actividades = {
+                        'generacion_libro', 'lectura_anterior', 'lectura_actual',
+                        'analisis_consumos', 'verificados', 'ingreso_verificados',
+                        'liquidacion', 'calidad', 'entrega_impresor', 'entrega_cliente',
+                        'pago', 'pago_recargo', 'suspension'
+                    }
+                    
+                    for actividad in actividades:
+                        fecha_actividad = ciclo.get(actividad)
+                        if fecha_actividad:
+                            mes_actividad = get_month_from_date(fecha_actividad)
+                            if mes_actividad:
+                                # Inicializar mes si no existe
+                                if mes_actividad not in ciclos_por_actividad_mes:
+                                    ciclos_por_actividad_mes[mes_actividad] = []
+                                
+                                # Evitar duplicados del mismo ciclo en el mismo mes
+                                key = (mes_actividad, ciclo_num)
+                                if key not in ciclos_vistos_por_mes:
+                                    ciclos_por_actividad_mes[mes_actividad].append(ciclo)
+                                    ciclos_vistos_por_mes[key] = True
+                    
                 except Exception as e:
                     continue
             
-            # ✨ RETORNAR AMBAS AGRUPACIONES
-            return ciclos_por_mes, ciclos_por_generacion
+            # ✨ RETORNAR LAS 3 AGRUPACIONES
+            return ciclos_por_mes, ciclos_por_generacion, ciclos_por_actividad_mes
         
         except Exception as e:
             print(f"   ❌ Error procesando hoja {sheet_name}: {str(e)}")
@@ -193,6 +219,7 @@ def parse_excel_file(filepath):
 
 CACHED_DATA = {}  # ← Por MES_REFERENCIA (Vista 3 - Calendario)
 CACHED_DATA_GENERACION = {}  # ← Por GENERACIÓN del ciclo (Vista 1 - Resumen Mes)
+CACHED_DATA_BY_ACTIVITY_MONTH = {}  # ← Por mes de CADA actividad (Vista 3 - Calendario REAL)
 
 def load_excel_from_file():
     """Carga automáticamente Excel desde carpeta data/"""
@@ -215,19 +242,20 @@ def load_excel_from_file():
     print(f"\n📂 Cargando: {filename}")
     
     try:
-        data_mes_ref, data_generacion = parse_excel_file(excel_path)
+        data_mes_ref, data_generacion, data_por_actividad = parse_excel_file(excel_path)
         CACHED_DATA.clear()
         CACHED_DATA_GENERACION.clear()
-        CACHED_DATA.update(data_mes_ref)
+        CACHED_DATA_BY_ACTIVITY_MONTH.clear()
         CACHED_DATA_GENERACION.update(data_generacion)
+        CACHED_DATA_BY_ACTIVITY_MONTH.update(data_por_actividad)  # ← Usar esta para Vista 3
         
-        months_ref = list(data_mes_ref.keys())
         months_gen = list(data_generacion.keys())
-        total_ciclos = sum(len(data_mes_ref[m]) for m in months_ref)
+        months_activity = list(data_por_actividad.keys())
+        total_ciclos = sum(len(data_por_actividad[m]) for m in months_activity)
         
         print(f"\n✅ Carga exitosa:")
-        print(f"   📊 Por Mes Referencia (Vista 3): {len(months_ref)} mes(es)")
-        for mes, ciclos in sorted(data_mes_ref.items()):
+        print(f"   📊 Por Actividad (Vista 3): {len(months_activity)} mes(es)")
+        for mes, ciclos in sorted(data_por_actividad.items()):
             print(f"      • {mes}: {len(ciclos)} ciclos")
         
         print(f"\n   📊 Por Generación (Vista 1): {len(months_gen)} mes(es)")
@@ -272,10 +300,10 @@ def get_month_data(month):
 
 @app.route('/api/mes-all/<month>')
 def get_month_data_all(month):
-    # ✨ Vista 3 - Calendario: Filtra por MES_REFERENCIA (todas las actividades)
-    if month not in CACHED_DATA:
+    # ✨ Vista 3 - Calendario: Retorna ciclos agrupados por mes de CADA ACTIVIDAD
+    if month not in CACHED_DATA_BY_ACTIVITY_MONTH:
         return jsonify({'error': 'No encontrado'}), 404
-    ciclos = CACHED_DATA[month]
+    ciclos = CACHED_DATA_BY_ACTIVITY_MONTH[month]
     return jsonify({'month': month, 'ciclos': ciclos, 'total': len(ciclos)})
 
 @app.route('/api/ciclo/<month>/<int:ciclo>')
