@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (activitySelect) {
         activitySelect.addEventListener('change', () => {
             currentActivity = activitySelect.value;
-            displayCalendarMonth(currentMonth);  // ← Redibujar calendario con nuevo filtro
+            displayCalendarMonth(currentMonth);  // Redibujar calendario
             
             // Si hay un día seleccionado, actualizar su detalle también
             if (currentSelectedDay) {
@@ -116,9 +116,11 @@ async function handleMonthChange() {
     currentCiclo = null;
 
     try {
+        // ✨ Vista 1: Obtener datos por GENERACIÓN del ciclo
         const response = await fetch(`/api/mes/${month}`);
         const data = await response.json();
-        allData[month] = data.ciclos;
+        // ✨ NO sobrescribir allData[month] - ya tiene datos correctos de MES_REFERENCIA
+        // (se cargó en loadMonths() con /api/mes-all/)
 
         // Cargar ciclos en select
         const cicloSelect = document.getElementById('cicloSelect');
@@ -156,7 +158,7 @@ async function handleMonthChange() {
             displayCicloDetail();
         }
 
-        // Actualizar página 1
+        // Actualizar página 1 con datos por GENERACIÓN
         displayMonthData(data.ciclos);
         
         // ✨ Actualizar Página 3 (Calendario) con el mes seleccionado
@@ -166,7 +168,7 @@ async function handleMonthChange() {
         const activitySelect = document.getElementById('activitySelect');
         activitySelect.value = '';
         currentActivity = '';
-    
+        currentSelectedDay = null;  // Limpiar día seleccionado
     } catch (error) {
         console.error('Error loading month data:', error);
     }
@@ -813,7 +815,7 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
     while (current <= maxDate) {
         const dateStr = formatDate(current);  // ← Usar formatDate en lugar de toISOString
         
-        // ✨ Para generar el calendario: IGNORAR filtro de actividad (mostrar TODOS los ciclos)
+        // ✨ IGNORAR filtro de actividad para generar calendario (mostrar TODOS los ciclos)
         const ciclosEnDia = ciclos.filter(ciclo => {
             return dateStr === ciclo.generacion_libro ||
                    dateStr === ciclo.lectura_anterior ||
