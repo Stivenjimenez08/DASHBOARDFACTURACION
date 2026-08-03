@@ -348,7 +348,7 @@ body {
 .data-table td:nth-child(9),
 .data-table td:nth-child(10) {
     white-space: nowrap;
-    min-width: 110px;
+    min-width: 100px;
 }
 
 .data-table tbody tr:hover {
