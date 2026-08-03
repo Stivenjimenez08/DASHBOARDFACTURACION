@@ -45,6 +45,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
+    // ✨ Listener para el filtro de actividad (Vista 3) - AGREGADO UNA SOLA VEZ
+    const activitySelect = document.getElementById('activitySelect');
+    if (activitySelect) {
+        activitySelect.addEventListener('change', () => {
+            currentActivity = activitySelect.value;
+            displayCalendarMonth(currentMonth);  // ← Redibujar calendario con nuevo filtro
+            
+            // Si hay un día seleccionado, actualizar su detalle también
+            if (currentSelectedDay) {
+                showDayDetails(currentSelectedDay, allData[currentMonth]);
+            }
+        });
+    }
+    
     loadMonths();
 });
 
@@ -148,17 +162,11 @@ async function handleMonthChange() {
         // ✨ Actualizar Página 3 (Calendario) con el mes seleccionado
         displayCalendarMonth(month);
         
-        // ✨ Agregar listener al selector de actividad (Página 3)
+        // ✨ Resetear filtro de actividad al cambiar mes
         const activitySelect = document.getElementById('activitySelect');
-        activitySelect.addEventListener('change', () => {
-            currentActivity = activitySelect.value;
-            displayCalendarMonth(currentMonth);  // ← Redibujar calendario con nuevo filtro
-            
-            // Si hay un día seleccionado, actualizar su detalle también
-            if (currentSelectedDay) {
-                showDayDetails(currentSelectedDay, allData[currentMonth]);
-            }
-        });
+        activitySelect.value = '';
+        currentActivity = '';
+    
     } catch (error) {
         console.error('Error loading month data:', error);
     }
