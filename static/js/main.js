@@ -104,6 +104,8 @@ async function handleMonthChange() {
     try {
         const response = await fetch(`/api/mes/${month}`);
         const data = await response.json();
+        allData[month] = data.ciclos;
+
         // Cargar ciclos en select
         const cicloSelect = document.getElementById('cicloSelect');
         cicloSelect.innerHTML = '<option value="">-- Seleccionar ciclo --</option>';
@@ -802,15 +804,42 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
     // Días del mes
     while (current <= maxDate) {
         const dateStr = formatDate(current);  // ← Usar formatDate en lugar de toISOString
-        const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
-        const hasEvents = ciclosEnDia.length > 0;
+        
+        // ✨ Para generar el calendario: IGNORAR filtro de actividad (mostrar TODOS los ciclos)
+        const ciclosEnDia = ciclos.filter(ciclo => {
+            return dateStr === ciclo.generacion_libro ||
+                   dateStr === ciclo.lectura_anterior ||
+                   dateStr === ciclo.lectura_actual ||
+                   dateStr === ciclo.analisis_consumos ||
+                   dateStr === ciclo.verificados ||
+                   dateStr === ciclo.ingreso_verificados ||
+                   dateStr === ciclo.liquidacion ||
+                   dateStr === ciclo.calidad ||
+                   dateStr === ciclo.entrega_impresor ||
+                   dateStr === ciclo.entrega_cliente ||
+                   dateStr === ciclo.pago ||
+                   dateStr === ciclo.pago_recargo ||
+                   dateStr === ciclo.suspension;
+        });
+        
+        // Deduplicar por ciclo
+        const ciclosSeen = new Set();
+        const ciclosUnicos = [];
+        ciclosEnDia.forEach(ciclo => {
+            if (!ciclosSeen.has(ciclo.ciclo)) {
+                ciclosSeen.add(ciclo.ciclo);
+                ciclosUnicos.push(ciclo);
+            }
+        });
+        
+        const hasEvents = ciclosUnicos.length > 0;
 
         html += `
             <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''} ${dateStr === currentSelectedDay ? 'selected' : ''}" 
                  data-date="${dateStr}"
-                 title="${hasEvents ? ciclosEnDia.length + ' ciclos' : 'Sin eventos'}">
+                 title="${hasEvents ? ciclosUnicos.length + ' ciclos' : 'Sin eventos'}">
                 <div class="day-number">${current.getDate()}</div>
-                ${hasEvents ? `<div class="event-count">${ciclosEnDia.length}</div>` : ''}
+                ${hasEvents ? `<div class="event-count">${ciclosUnicos.length}</div>` : ''}
             </div>
         `;
 
