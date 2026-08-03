@@ -339,6 +339,7 @@ body {
 .data-table th:nth-child(8),
 .data-table th:nth-child(9),
 .data-table th:nth-child(10),
+.data-table th:nth-child(11),
 .data-table td:nth-child(3),
 .data-table td:nth-child(4),
 .data-table td:nth-child(5),
@@ -346,9 +347,10 @@ body {
 .data-table td:nth-child(7),
 .data-table td:nth-child(8),
 .data-table td:nth-child(9),
-.data-table td:nth-child(10) {
+.data-table td:nth-child(10),
+.data-table th:nth-child(11){
     white-space: nowrap;
-    min-width: 100px;
+    min-width: 110px;
 }
 
 .data-table tbody tr:hover {
