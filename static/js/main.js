@@ -73,7 +73,8 @@ async function loadMonths() {
         // IMPORTANTE: Cargar TODOS los meses en allData para que Página 3 funcione
         for (const month of data.months) {
             try {
-                const res = await fetch(`/api/mes/${month}`);
+                // ✨ Vista 3 necesita datos por MES_REFERENCIA (todas las actividades del mes)
+                const res = await fetch(`/api/mes-all/${month}`);
                 const monthData = await res.json();
                 allData[month] = monthData.ciclos;
             } catch (e) {
