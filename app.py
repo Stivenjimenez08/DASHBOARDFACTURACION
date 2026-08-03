@@ -3,15 +3,15 @@ import pandas as pd
 import os
 import glob
 from datetime import datetime, timedelta
-
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
+# Mapeo de columnas para el formato consolidado (una hoja con todo)
 COLUMN_MAP = {
     'CICLO': 1, 'ZONA': 2, 'ANALISTA': 3, 'MUNICIPIO': 4, 'PERIODO': 5,
-    # Consumo (fechas de lectura)
-    'CONSUMO_INICIO': 7, 'CONSUMO_FIN': 9, 'DIAS_FACTURADOS': 11,
-    # Nuevas actividades (solo fecha de inicio = columna "Día")
+    # Consumo
+    'CONSUMO_INICIO': 7, 'CONSUMO_FIN': 9,
+    # Actividades (solo fecha de inicio)
     'GENERACION_LIBRO': 6,
     'LECTURA_ANTERIOR': 7,
     'LECTURA_ACTUAL': 9,
@@ -25,12 +25,11 @@ COLUMN_MAP = {
     'PAGO': 26,
     'PAGO_RECARGO': 28,
     'SUSPENSION': 30,
-    # Mantener para backward compatibility (timeline)
+    # Backward compatibility
     'DIAN_INICIO': 24, 'DIAN_FIN': 26,
     'ENTREGA_CLIENTE_INICIO': 24, 'ENTREGA_CLIENTE_FIN': 26,
     'PAGO_INICIO': 26, 'PAGO_FIN': 27,
     'SUSPENSION_INICIO': 30, 'SUSPENSION_FIN': 31,
-    'MES_REFERENCIA': 31,  # ← Columna 32 (índice 31) con la fecha/mes
 }
 
 def excel_date_to_python(excel_date):
@@ -43,171 +42,156 @@ def excel_date_to_python(excel_date):
     try: return (datetime(1900, 1, 1) + timedelta(days=float(excel_date) - 2)).strftime('%Y-%m-%d')
     except: return None
 
-def get_month_from_date(date_str):
-    """Extrae formato MES YYYY de una fecha (ej: '2026-02-05' -> 'FEBRERO 2026')"""
-    if not date_str:
-        return None
+def extract_month_from_date(date_obj):
+    """Extrae mes/año de una fecha (de GENERACION_LIBRO)"""
     try:
-        date_obj = pd.to_datetime(date_str)
-        months_es = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
-                     'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE']
-        return f"{months_es[date_obj.month - 1]} {date_obj.year}"
+        if pd.isna(date_obj):
+            return None
+        if isinstance(date_obj, pd.Timestamp):
+            return date_obj.strftime('%m-%Y')
+        if isinstance(date_obj, datetime):
+            return date_obj.strftime('%m-%Y')
+        if isinstance(date_obj, str):
+            parsed = pd.to_datetime(date_obj)
+            return parsed.strftime('%m-%Y')
+        return None
     except:
         return None
 
-def parse_excel_file(filepath):
-    """Parsea Excel consolidado - UNA SOLA HOJA con todos los meses"""
+def parse_excel_file_consolidated(filepath):
+    """Parsea Excel consolidado (una única hoja, ciclos de múltiples meses)"""
     data_by_month = {}
     
     try:
-        # Detectar engine basado en extensión
         if filepath.endswith('.xls'):
             engine = 'xlrd'
         else:
             engine = 'openpyxl'
         
-        # Leer archivo
         xls = pd.ExcelFile(filepath, engine=engine)
         print(f"📂 Hojas encontradas: {len(xls.sheet_names)}")
         
-        # Procesar SOLO la hoja "CONSOLIDADO CRONOGRAMA"
-        sheet_name = 'CONSOLIDADO CRONOGRAMA'
-        
-        if sheet_name not in xls.sheet_names:
-            print(f"❌ No se encontró la hoja '{sheet_name}'")
-            print(f"   Hojas disponibles: {xls.sheet_names}")
-            return {}
-        
-        print(f"   Procesando hoja: {sheet_name}")
-        
-        try:
-            # Leer hoja
-            df_raw = pd.read_excel(filepath, sheet_name=sheet_name, header=None, engine=engine)
+        for sheet_name in xls.sheet_names:
+            print(f"   Procesando: {sheet_name}")
             
-            # Saltar headers (filas 0-5), datos desde fila 6
-            if df_raw.shape[0] < 7:
-                print(f"   ⚠️  Hoja con pocas filas, saltando")
-                return {}
-            
-            df = df_raw.iloc[6:].reset_index(drop=True)
-            
-            ciclos_por_mes = {}  # ← Diccionario temporal para agrupar por mes
-            
-            for idx, row in df.iterrows():
-                try:
-                    # Validar que hay ciclo
-                    ciclo_val = row.iloc[COLUMN_MAP['CICLO']]
-                    if pd.isna(ciclo_val): continue
-                    
-                    try: ciclo_num = int(float(ciclo_val))
-                    except: continue
-                    
-                    # ✨ EXTRAER MES DE LA COLUMNA 32 (índice 31)
-                    mes_fecha = excel_date_to_python(row.iloc[COLUMN_MAP['MES_REFERENCIA']])
-                    mes_referencia = get_month_from_date(mes_fecha)
-                    
-                    if not mes_referencia:
-                        print(f"   ⚠️  Ciclo {ciclo_num} sin fecha de referencia, saltando")
-                        continue
-                    
-                    # Extraer fechas
-                    consumo_inicio = excel_date_to_python(row.iloc[COLUMN_MAP['CONSUMO_INICIO']])
-                    consumo_fin = excel_date_to_python(row.iloc[COLUMN_MAP['CONSUMO_FIN']])
-                    
-                    # Calcular días
-                    dias_facturados = None
-                    if consumo_inicio and consumo_fin:
-                        try: dias_facturados = (pd.to_datetime(consumo_fin) - pd.to_datetime(consumo_inicio)).days
-                        except: pass
-                    
-                    ciclo = {
-                        'ciclo': ciclo_num,
-                        'zona': int(row.iloc[COLUMN_MAP['ZONA']]) if pd.notna(row.iloc[COLUMN_MAP['ZONA']]) else None,
-                        'analista': str(row.iloc[COLUMN_MAP['ANALISTA']]).strip() if pd.notna(row.iloc[COLUMN_MAP['ANALISTA']]) else '',
-                        'municipio': str(row.iloc[COLUMN_MAP['MUNICIPIO']]).strip() if pd.notna(row.iloc[COLUMN_MAP['MUNICIPIO']]) else '',
-                        'periodo': str(row.iloc[COLUMN_MAP['PERIODO']]).strip() if pd.notna(row.iloc[COLUMN_MAP['PERIODO']]) else '',
-                        'consumo_inicio': consumo_inicio,
-                        'consumo_fin': consumo_fin,
-                        'dias_facturados': dias_facturados,
-                        # Todas las actividades (solo fecha de inicio)
-                        'generacion_libro': excel_date_to_python(row.iloc[COLUMN_MAP['GENERACION_LIBRO']]),
-                        'lectura_anterior': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ANTERIOR']]),
-                        'lectura_actual': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ACTUAL']]),
-                        'analisis_consumos': excel_date_to_python(row.iloc[COLUMN_MAP['ANALISIS_CONSUMOS']]),
-                        'verificados': excel_date_to_python(row.iloc[COLUMN_MAP['VERIFICADOS']]),
-                        'ingreso_verificados': excel_date_to_python(row.iloc[COLUMN_MAP['INGRESO_VERIFICADOS']]),
-                        'liquidacion': excel_date_to_python(row.iloc[COLUMN_MAP['LIQUIDACION']]),
-                        'calidad': excel_date_to_python(row.iloc[COLUMN_MAP['CALIDAD']]),
-                        'entrega_impresor': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_IMPRESOR']]),
-                        'entrega_cliente': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE']]),
-                        'pago': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO']]),
-                        'pago_recargo': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_RECARGO']]),
-                        'suspension': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION']]),
-                        # Backward compatibility (para timeline y otros)
-                        'dian_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['DIAN_INICIO']]),
-                        'dian_fin': excel_date_to_python(row.iloc[COLUMN_MAP['DIAN_FIN']]),
-                        'entrega_cliente_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_INICIO']]),
-                        'entrega_cliente_fin': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_FIN']]),
-                        'pago_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_INICIO']]),
-                        'pago_fin': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_FIN']]),
-                        'suspension_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_INICIO']]),
-                        'suspension_fin': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_FIN']]),
-                    }
-                    
-                    # ✨ AGRUPAR POR MES EXTRAÍDO
-                    if mes_referencia not in ciclos_por_mes:
-                        ciclos_por_mes[mes_referencia] = []
-                    ciclos_por_mes[mes_referencia].append(ciclo)
-                    
-                except Exception as e:
+            try:
+                df_raw = pd.read_excel(filepath, sheet_name=sheet_name, header=None, engine=engine)
+                
+                if df_raw.shape[0] < 7:
+                    print(f"   ⚠️  Pocas filas, saltando")
                     continue
+                
+                # Datos desde fila 6
+                df = df_raw.iloc[6:].reset_index(drop=True)
+                
+                ciclos_total = 0
+                for idx, row in df.iterrows():
+                    try:
+                        ciclo_val = row.iloc[COLUMN_MAP['CICLO']]
+                        if pd.isna(ciclo_val): continue
+                        
+                        try: ciclo_num = int(float(ciclo_val))
+                        except: continue
+                        
+                        # Extraer mes de GENERACION_LIBRO
+                        gen_libro_date = row.iloc[COLUMN_MAP['GENERACION_LIBRO']]
+                        month_key = extract_month_from_date(gen_libro_date)
+                        
+                        if not month_key:
+                            print(f"   ⚠️  No se pudo extraer mes para ciclo {ciclo_num}")
+                            continue
+                        
+                        # Inicializar mes si no existe
+                        if month_key not in data_by_month:
+                            data_by_month[month_key] = []
+                        
+                        # Extraer fechas
+                        consumo_inicio = excel_date_to_python(row.iloc[COLUMN_MAP['CONSUMO_INICIO']])
+                        consumo_fin = excel_date_to_python(row.iloc[COLUMN_MAP['CONSUMO_FIN']])
+                        
+                        # Calcular días
+                        dias_facturados = None
+                        if consumo_inicio and consumo_fin:
+                            try: dias_facturados = (pd.to_datetime(consumo_fin) - pd.to_datetime(consumo_inicio)).days
+                            except: pass
+                        
+                        ciclo = {
+                            'ciclo': ciclo_num,
+                            'zona': int(row.iloc[COLUMN_MAP['ZONA']]) if pd.notna(row.iloc[COLUMN_MAP['ZONA']]) else None,
+                            'analista': str(row.iloc[COLUMN_MAP['ANALISTA']]).strip() if pd.notna(row.iloc[COLUMN_MAP['ANALISTA']]) else '',
+                            'municipio': str(row.iloc[COLUMN_MAP['MUNICIPIO']]).strip() if pd.notna(row.iloc[COLUMN_MAP['MUNICIPIO']]) else '',
+                            'periodo': str(row.iloc[COLUMN_MAP['PERIODO']]).strip() if pd.notna(row.iloc[COLUMN_MAP['PERIODO']]) else '',
+                            'consumo_inicio': consumo_inicio,
+                            'consumo_fin': consumo_fin,
+                            'dias_facturados': dias_facturados,
+                            # Actividades
+                            'generacion_libro': excel_date_to_python(gen_libro_date),
+                            'lectura_anterior': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ANTERIOR']]),
+                            'lectura_actual': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ACTUAL']]),
+                            'analisis_consumos': excel_date_to_python(row.iloc[COLUMN_MAP['ANALISIS_CONSUMOS']]),
+                            'verificados': excel_date_to_python(row.iloc[COLUMN_MAP['VERIFICADOS']]),
+                            'ingreso_verificados': excel_date_to_python(row.iloc[COLUMN_MAP['INGRESO_VERIFICADOS']]),
+                            'liquidacion': excel_date_to_python(row.iloc[COLUMN_MAP['LIQUIDACION']]),
+                            'calidad': excel_date_to_python(row.iloc[COLUMN_MAP['CALIDAD']]),
+                            'entrega_impresor': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_IMPRESOR']]),
+                            'entrega_cliente': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE']]),
+                            'pago': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO']]),
+                            'pago_recargo': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_RECARGO']]),
+                            'suspension': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION']]),
+                            # Backward compatibility
+                            'dian_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['DIAN_INICIO']]),
+                            'dian_fin': excel_date_to_python(row.iloc[COLUMN_MAP['DIAN_FIN']]),
+                            'entrega_cliente_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_INICIO']]),
+                            'entrega_cliente_fin': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_FIN']]),
+                            'pago_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_INICIO']]),
+                            'pago_fin': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_FIN']]),
+                            'suspension_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_INICIO']]),
+                            'suspension_fin': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_FIN']]),
+                        }
+                        data_by_month[month_key].append(ciclo)
+                        ciclos_total += 1
+                    except Exception as e:
+                        continue
+                
+                if ciclos_total > 0:
+                    print(f"   ✅ {ciclos_total} ciclos cargados")
+                    for month in sorted(data_by_month.keys()):
+                        print(f"     • {month}: {len(data_by_month[month])} ciclos")
+                else:
+                    print(f"   ⚠️  Sin ciclos detectados")
             
-            # ✨ CONVERTIR AGRUPACIÓN TEMPORAL A ESTRUCTURA FINAL
-            data_by_month = ciclos_por_mes
-            
-            print(f"   ✅ Consolidado procesado exitosamente")
-            print(f"   📊 Meses encontrados: {len(data_by_month)}")
-            for mes, ciclos in sorted(data_by_month.items()):
-                print(f"      • {mes}: {len(ciclos)} ciclos")
-            
-            return data_by_month
+            except Exception as e:
+                print(f"   ❌ Error: {str(e)}")
+                continue
         
-        except Exception as e:
-            print(f"   ❌ Error procesando hoja {sheet_name}: {str(e)}")
-            import traceback
-            traceback.print_exc()
-            return {}
+        return data_by_month
     
     except Exception as e:
         print(f"❌ Error abriendo archivo: {str(e)}")
-        import traceback
-        traceback.print_exc()
         return {}
 
 CACHED_DATA = {}
 
 def load_excel_from_file():
-    """Carga automáticamente Excel desde carpeta data/"""
+    """Carga Excel desde data/"""
     data_folder = 'data'
     
     if not os.path.exists(data_folder):
         print(f"⚠️  Carpeta '{data_folder}/' no existe")
         return False
     
-    # Buscar archivos .xls o .xlsx
     excel_files = glob.glob(f'{data_folder}/*.xls*')
     
     if not excel_files:
         print(f"⚠️  No hay archivos Excel en '{data_folder}/'")
         return False
     
-    # Tomar el primer archivo
     excel_path = excel_files[0]
     filename = os.path.basename(excel_path)
     print(f"\n📂 Cargando: {filename}")
     
     try:
-        data = parse_excel_file(excel_path)
+        data = parse_excel_file_consolidated(excel_path)
         CACHED_DATA.clear()
         CACHED_DATA.update(data)
         
@@ -218,11 +202,12 @@ def load_excel_from_file():
         print(f"   - {len(months)} mes(es)")
         print(f"   - {total_ciclos} ciclos totales")
         
+        for month in months:
+            print(f"     • {month}: {len(data[month])} ciclos")
+        
         return True
     except Exception as e:
         print(f"❌ Error: {str(e)}")
-        import traceback
-        traceback.print_exc()
         return False
 
 # Cargar al iniciar
@@ -232,7 +217,7 @@ print("="*60)
 load_excel_from_file()
 
 # ============================================================================
-# RUTAS API
+# RUTAS API (sin cambios)
 # ============================================================================
 
 @app.route('/')
