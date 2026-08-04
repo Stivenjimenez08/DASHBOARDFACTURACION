@@ -32,13 +32,35 @@ function formatDateDisplay(dateStr) {
     return `${day}-${month}-${year}`;
 }
 
+// Función para navegar a página 1 sin cambiar botones seleccionados
+function navigateToPage1() {
+    // Solo cambiar la página visible, sin tocar los botones toggle
+    document.querySelectorAll('.page').forEach(page => {
+        page.classList.remove('active');
+    });
+    document.getElementById('page1').classList.add('active');
+    
+    // Mostrar selectores según página 1
+    const monthSelect = document.getElementById('monthSelect');
+    const cicloSelect = document.getElementById('cicloSelect');
+    const activitySelectorGroup = document.getElementById('activitySelectorGroup');
+    const monthSelectorGroup = monthSelect.closest('.selector-group');
+    const cicloSelectorGroup = cicloSelect.closest('.selector-group');
+    const selectors = monthSelectorGroup.closest('.selectors');
+    
+    selectors.style.display = 'flex';
+    cicloSelectorGroup.style.display = 'none';
+    activitySelectorGroup.style.display = 'none';
+}
+
 // EVENT LISTENERS
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('monthSelect').addEventListener('change', handleMonthChange);
     
-    // Listener para el botón home
-    document.getElementById('homeBtn').addEventListener('click', () => {
-        switchPage('1');
+    // Listener para el botón home - navega a página 1 sin cambiar botones seleccionados
+    document.getElementById('homeBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateToPage1();
     });
     
     // El listener para cicloSelect se agrega dinámicamente en handleMonthChange
