@@ -7,12 +7,11 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
-# Mapeo de columnas para el formato consolidado (una hoja con todo)
 COLUMN_MAP = {
     'CICLO': 1, 'ZONA': 2, 'ANALISTA': 3, 'MUNICIPIO': 4, 'PERIODO': 5,
-    # Consumo
-    'CONSUMO_INICIO': 7, 'CONSUMO_FIN': 9,
-    # Actividades (solo fecha de inicio)
+    # Consumo (fechas de lectura)
+    'CONSUMO_INICIO': 7, 'CONSUMO_FIN': 9, 'DIAS_FACTURADOS': 11,
+    # Nuevas actividades (solo fecha de inicio = columna "Día")
     'GENERACION_LIBRO': 6,
     'LECTURA_ANTERIOR': 7,
     'LECTURA_ACTUAL': 9,
@@ -26,7 +25,7 @@ COLUMN_MAP = {
     'PAGO': 26,
     'PAGO_RECARGO': 28,
     'SUSPENSION': 30,
-    # Backward compatibility
+    # Mantener para backward compatibility (timeline)
     'DIAN_INICIO': 24, 'DIAN_FIN': 26,
     'ENTREGA_CLIENTE_INICIO': 24, 'ENTREGA_CLIENTE_FIN': 26,
     'PAGO_INICIO': 26, 'PAGO_FIN': 27,
@@ -43,77 +42,45 @@ def excel_date_to_python(excel_date):
     try: return (datetime(1900, 1, 1) + timedelta(days=float(excel_date) - 2)).strftime('%Y-%m-%d')
     except: return None
 
-def extract_month_from_date(date_obj):
-    """Extrae mes/año de una fecha (de GENERACION_LIBRO) formato: 'marzo 2026'"""
-    month_names = {
-        1: 'ENERO', 2: 'FEBRERO', 3: 'MARZO', 4: 'ABRIL', 5: 'MAYO', 6: 'JUNIO',
-        7: 'JULIO', 8: 'AGOSTO', 9: 'SEPTIEMBRE', 10: 'OCTUBRE', 11: 'NOVIEMBRE', 12: 'DICIEMBRE'
-    }
-    try:
-        if pd.isna(date_obj):
-            return None
-        
-        parsed_date = None
-        if isinstance(date_obj, pd.Timestamp):
-            parsed_date = date_obj
-        elif isinstance(date_obj, datetime):
-            parsed_date = date_obj
-        elif isinstance(date_obj, str):
-            parsed_date = pd.to_datetime(date_obj)
-        
-        if parsed_date:
-            month_name = month_names[parsed_date.month]
-            year = parsed_date.year
-            return f"{month_name} {year}"
-        return None
-    except:
-        return None
-
-def parse_excel_file_consolidated(filepath):
-    """Parsea Excel consolidado (una única hoja, ciclos de múltiples meses)"""
+def parse_excel_file(filepath):
+    """Parsea Excel con soporte para múltiples hojas y formatos"""
     data_by_month = {}
     
     try:
+        # Detectar engine basado en extensión
         if filepath.endswith('.xls'):
             engine = 'xlrd'
         else:
             engine = 'openpyxl'
         
+        # Leer archivo
         xls = pd.ExcelFile(filepath, engine=engine)
+        
         print(f"📂 Hojas encontradas: {len(xls.sheet_names)}")
         
-        for sheet_name in xls.sheet_names:
-            print(f"   Procesando: {sheet_name}")
+        for sheet_idx, sheet_name in enumerate(xls.sheet_names):
+            print(f"   Procesando hoja {sheet_idx + 1}: {sheet_name}")
             
             try:
+                # Leer hoja
                 df_raw = pd.read_excel(filepath, sheet_name=sheet_name, header=None, engine=engine)
                 
+                # Saltar headers (filas 0-5), datos desde fila 6
                 if df_raw.shape[0] < 7:
-                    print(f"   ⚠️  Pocas filas, saltando")
+                    print(f"   ⚠️  Hoja con pocas filas, saltando")
                     continue
                 
-                # Datos desde fila 6
                 df = df_raw.iloc[6:].reset_index(drop=True)
                 
-                ciclos_total = 0
+                ciclos = []
                 for idx, row in df.iterrows():
                     try:
+                        # Validar que hay ciclo
                         ciclo_val = row.iloc[COLUMN_MAP['CICLO']]
                         if pd.isna(ciclo_val): continue
                         
                         try: ciclo_num = int(float(ciclo_val))
                         except: continue
-                        
-                        # Extraer mes de GENERACION_LIBRO
-                        gen_libro_date = row.iloc[COLUMN_MAP['GENERACION_LIBRO']]
-                        month_key = extract_month_from_date(gen_libro_date)
-                        
-                        if not month_key:
-                            continue
-                        
-                        # Inicializar mes si no existe
-                        if month_key not in data_by_month:
-                            data_by_month[month_key] = []
                         
                         # Extraer fechas
                         consumo_inicio = excel_date_to_python(row.iloc[COLUMN_MAP['CONSUMO_INICIO']])
@@ -134,8 +101,8 @@ def parse_excel_file_consolidated(filepath):
                             'consumo_inicio': consumo_inicio,
                             'consumo_fin': consumo_fin,
                             'dias_facturados': dias_facturados,
-                            # Actividades
-                            'generacion_libro': excel_date_to_python(gen_libro_date),
+                            # Todas las actividades (solo fecha de inicio)
+                            'generacion_libro': excel_date_to_python(row.iloc[COLUMN_MAP['GENERACION_LIBRO']]),
                             'lectura_anterior': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ANTERIOR']]),
                             'lectura_actual': excel_date_to_python(row.iloc[COLUMN_MAP['LECTURA_ACTUAL']]),
                             'analisis_consumos': excel_date_to_python(row.iloc[COLUMN_MAP['ANALISIS_CONSUMOS']]),
@@ -148,7 +115,7 @@ def parse_excel_file_consolidated(filepath):
                             'pago': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO']]),
                             'pago_recargo': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_RECARGO']]),
                             'suspension': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION']]),
-                            # Backward compatibility
+                            # Backward compatibility (para timeline y otros)
                             'dian_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['DIAN_INICIO']]),
                             'dian_fin': excel_date_to_python(row.iloc[COLUMN_MAP['DIAN_FIN']]),
                             'entrega_cliente_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_INICIO']]),
@@ -158,20 +125,18 @@ def parse_excel_file_consolidated(filepath):
                             'suspension_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_INICIO']]),
                             'suspension_fin': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION_FIN']]),
                         }
-                        data_by_month[month_key].append(ciclo)
-                        ciclos_total += 1
+                        ciclos.append(ciclo)
                     except Exception as e:
                         continue
                 
-                if ciclos_total > 0:
-                    print(f"   ✅ {ciclos_total} ciclos cargados")
-                    for month in sorted(data_by_month.keys()):
-                        print(f"     • {month}: {len(data_by_month[month])} ciclos")
+                if ciclos:
+                    data_by_month[sheet_name] = ciclos
+                    print(f"   ✅ {len(ciclos)} ciclos cargados")
                 else:
-                    print(f"   ⚠️  Sin ciclos detectados")
+                    print(f"   ⚠️  Sin ciclos en esta hoja")
             
             except Exception as e:
-                print(f"   ❌ Error: {str(e)}")
+                print(f"   ❌ Error en hoja {sheet_name}: {str(e)}")
                 continue
         
         return data_by_month
@@ -183,25 +148,27 @@ def parse_excel_file_consolidated(filepath):
 CACHED_DATA = {}
 
 def load_excel_from_file():
-    """Carga Excel desde data/"""
+    """Carga automáticamente Excel desde carpeta data/"""
     data_folder = 'data'
     
     if not os.path.exists(data_folder):
         print(f"⚠️  Carpeta '{data_folder}/' no existe")
         return False
     
+    # Buscar archivos .xls o .xlsx
     excel_files = glob.glob(f'{data_folder}/*.xls*')
     
     if not excel_files:
         print(f"⚠️  No hay archivos Excel en '{data_folder}/'")
         return False
     
+    # Tomar el primer archivo
     excel_path = excel_files[0]
     filename = os.path.basename(excel_path)
     print(f"\n📂 Cargando: {filename}")
     
     try:
-        data = parse_excel_file_consolidated(excel_path)
+        data = parse_excel_file(excel_path)
         CACHED_DATA.clear()
         CACHED_DATA.update(data)
         
@@ -222,7 +189,7 @@ def load_excel_from_file():
 
 # Cargar al iniciar
 print("="*60)
-print("🚀 DASHBOARD CICLOS - MODO CONSOLIDADO")
+print("🚀 DASHBOARD CICLOS - MODO AUTOMÁTICO")
 print("="*60)
 load_excel_from_file()
 
