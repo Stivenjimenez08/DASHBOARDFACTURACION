@@ -36,6 +36,11 @@ function formatDateDisplay(dateStr) {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('monthSelect').addEventListener('change', handleMonthChange);
     
+    // Listener para el botón home
+    document.getElementById('homeBtn').addEventListener('click', () => {
+        switchPage('1');
+    });
+    
     // El listener para cicloSelect se agrega dinámicamente en handleMonthChange
     
     document.querySelectorAll('.toggle-btn').forEach(btn => {
@@ -373,6 +378,7 @@ function displayMonthTable(ciclos) {
             <td>${ciclo.municipio}</td>
             <td>${ciclo.analista}</td>
             <td><strong>${ciclo.dias_facturados || '-'}</strong></td>
+            <td>${formatDateDisplay(ciclo.generacion_libro)}</td>
             <td>${formatDateDisplay(ciclo.consumo_fin)}</td>
             <td>${formatDateDisplay(ciclo.analisis_consumos)}</td>
             <td>${formatDateDisplay(ciclo.liquidacion)}</td>
