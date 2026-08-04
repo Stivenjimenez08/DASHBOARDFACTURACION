@@ -1,922 +1,213 @@
-/* ============================================================================
-   ESTILOS GLOBALES
-   ============================================================================ */
-
-:root {
-    --primary: #0095a2;        /* Azul turquesa (EDEQ) */
-    --primary-dark: #008891;   /* Verde oscuro (EDEQ) */
-    --secondary: #00b891;      /* Verde claro (EDEQ) */
-    --warning: #cb6107;        /* Naranja (EDEQ) */
-    --danger: #F44336;         /* Rojo */
-    --dark: #0095a2;           /* Azul turquesa oscuro */
-    --light: #f5f5f5;
-    --border: #ddd;
-    --text: #333;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html, body {
-    height: 100%;
-}
-
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: #f8f8f8;
-    color: var(--text);
-    line-height: 1.6;
-}
-
-/* ============================================================================
-   CONTAINER
-   ============================================================================ */
-
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0;
-}
-
-/* ============================================================================
-   HEADER
-   ============================================================================ */
-
-.header {
-    background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 20%, #0095a2 60%, #008891 100%);
-    color: white;
-    padding: 30px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.logo-section {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.logo-img {
-    height: 60px;
-    width: auto;
-}
-
-.header-text {
-    display: flex;
-    flex-direction: column;
-}
-
-.logo-section i {
-    font-size: 2.5em;
-    margin-right: 15px;
-}
-
-.logo-section h1 {
-    font-size: 1.8em;
-    margin-bottom: 3px;
-    color: #0095a2;
-}
-
-.logo-section p {
-    font-size: 0.9em;
-    opacity: 0.8;
-    color: #666;
-}
-
-.home-btn {
-    background: none;
-    border: none;
-    color: #0095a2;
-    font-size: 2.5em;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.home-btn:hover {
-    background: rgba(0, 149, 162, 0.1);
-    transform: scale(1.1);
-}
-
-.home-btn:active {
-    transform: scale(0.95);
-}
-
-.upload-section {
-    text-align: right;
-}
-
-/* ============================================================================
-   CONTROLS SECTION
-   ============================================================================ */
-
-.controls-section {
-    background: white;
-    padding: 25px 30px;
-    margin: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 80px;
-    flex-wrap: nowrap;  /* ← Obligar a estar en 1 línea */
-}
-
-.selectors {
-    display: flex;
-    gap: 30px;
-    flex: 0 1 auto;
-    min-width: 350px;
-    flex-shrink: 1;
-    align-items: flex-end;  /* ← Alinear al final (donde está el select) */
-}
-
-.selector-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    flex: 0 1 auto;
-    min-width: 220px;
-    margin-bottom: 0;  /* ← Remover margin-bottom */
-}
-
-.selector-group label {
-    font-weight: 600;
-    font-size: 0.9em;
-    color: var(--text);
-    height: 20px;  /* ← Altura consistente */
-    display: flex;
-    align-items: center;
-}
-
-.selector-group select {
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 0.95em;
-    background: white;
-    color: var(--text);
-    cursor: pointer;
-    transition: border-color 0.2s;
-    height: 40px;  /* ← Altura consistente */
-}
-
-.selector-group select:hover {
-    border-color: var(--primary);
-}
-
-.selector-group select:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-}
-
-.buttons-container {
-    display: flex;
-    gap: 15px;
-    flex-wrap: nowrap;  /* ← Obligar a estar en 1 línea */
-    margin-left: auto;
-    white-space: nowrap;
-    flex-shrink: 0;     /* ← No encogerse */
-}
-
-.toggle-btn {
-    padding: 10px 20px;
-    border: 2px solid var(--primary);
-    background: white;
-    color: var(--primary);
-    border-radius: 6px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.95em;
-}
-
-.toggle-btn:hover {
-    background: var(--light);
-}
-
-.toggle-btn.active {
-    background: var(--primary);
-    color: white;
-}
-
-/* ============================================================================
-   PAGE CONTAINER
-   ============================================================================ */
-
-.page {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.page.active {
-    display: block;
-    opacity: 1;
-}
-
-.page-content {
-    padding: 20px;
-}
-
-/* ============================================================================
-   TITLES & SECTIONS
-   ============================================================================ */
-
-.section-title {
-    font-size: 1.3em;
-    font-weight: 700;
-    color: var(--dark);
-    margin: 30px 0 20px;
-    padding-bottom: 10px;
-    border-bottom: 3px solid var(--primary);
-}
-
-/* ============================================================================
-   TIMELINE
-   ============================================================================ */
-
-.timeline-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 30px 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    margin-bottom: 30px;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.timeline-step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-    min-width: 120px;
-}
-
-.timeline-step i {
-    font-size: 2em;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-}
-
-.timeline-step p {
-    font-weight: 600;
-    font-size: 0.9em;
-    text-align: center;
-}
-
-.timeline-step small {
-    font-size: 0.8em;
-    color: #666;
-    text-align: center;
-}
-
-.timeline-arrow {
-    flex: 0.5;
-    height: 2px;
-    background: linear-gradient(90deg, var(--primary), transparent);
-    min-width: 30px;
-}
-
-.timeline-placeholder {
-    text-align: center;
-    color: #999;
-    padding: 40px;
-}
-
-/* ============================================================================
-   TABLES
-   ============================================================================ */
-
-.table-container {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    overflow-x: auto;
-    margin-bottom: 20px;
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9em;
-}
-
-.data-table thead {
-    background: var(--dark);
-    color: white;
-    font-weight: 600;
-}
-
-.data-table th {
-    padding: 12px;
-    text-align: center;
-    white-space: nowrap;  /* ← No colapsar headers */
-    min-width: 100px;     /* ← Ancho mínimo para cada header */
-}
-
-.data-table td {
-    padding: 12px;
-    border-bottom: 1px solid var(--light);
-    text-align: center;
-}
-
-/* Columna Municipio - reducida y con colapso */
-.data-table td:nth-child(2),
-.data-table th:nth-child(2) {
-    width: 200px;
-    min-width: 200px;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;  /* ← Esta SÍ puede colapsar */
-}
-
-/* Todas las otras columnas - NO colapsar */
-.data-table th:nth-child(3),
-.data-table th:nth-child(4),
-.data-table th:nth-child(5),
-.data-table th:nth-child(6),
-.data-table th:nth-child(7),
-.data-table th:nth-child(8),
-.data-table th:nth-child(9),
-.data-table th:nth-child(10),
-.data-table td:nth-child(3),
-.data-table td:nth-child(4),
-.data-table td:nth-child(5),
-.data-table td:nth-child(6),
-.data-table td:nth-child(7),
-.data-table td:nth-child(8),
-.data-table td:nth-child(9),
-.data-table td:nth-child(10) {
-    white-space: nowrap;
-    min-width: 110px;
-}
-
-.data-table tbody tr:hover {
-    background: var(--light);
-}
-
-/* Ciclos especiales - sombreado diferenciado */
-.data-table tbody tr.ciclo-especial {
-    background-color: #D5EAED !important;  /* Verde limón muy claro */
-    font-weight: 500 !important;
-    border-left: 4px solid #ABC7CC;
-}
-
-.data-table tbody tr.ciclo-especial:hover {
-    background-color: #C8DEE3!important;  /* Verde limón claro al pasar mouse */
-}
-
-.data-table td.empty {
-    text-align: center;
-    color: #999;
-}
-
-.detail-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.detail-table td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-}
-
-.detail-table td:first-child {
-    font-weight: 600;
-    color: var(--primary);
-    width: 30%;
-}
-
-/* ============================================================================
-   INFO CARDS
-   ============================================================================ */
-
-.info-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.info-card {
-    display: flex;
-    gap: 15px;
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid var(--primary);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-}
-
-.info-card i {
-    font-size: 1.5em;
-    color: var(--primary);
-}
-
-.info-card .label {
-    font-size: 0.85em;
-    color: #666;
-    margin-bottom: 3px;
-}
-
-.info-card .value {
-    font-weight: 600;
-    font-size: 1em;
-}
-
-/* ============================================================================
-   CALENDAR STYLES
-   ============================================================================ */
-
-.calendar-container {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    margin-bottom: 30px;
-}
-
-.calendar-day {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    font-size: 0.85em;
-    font-weight: 600;
-    cursor: default;
-    border: 2px solid var(--border);
-}
-
-.calendar-day.in-range {
-    background: #E6E8E6;  /* Verde claro EDEQ */
-    color: black;
-    border-color: #008891;
-    box-shadow: 0 2px 6px rgba(0, 184, 145, 0.3);
-    font-weight: 700;
-    min-height: 80px;
-    aspect-ratio: auto;
-    padding: 6px;
-}
-
-.calendar-day.header {
-    background: #0095a2;  /* Azul turquesa EDEQ */
-    color: white;
-    border: none;
-    font-weight: 700;
-    font-size: 0.85em;
-}
-
-.calendar-day.empty {
-    background: transparent;
-    border: none;
-    cursor: default;
-    box-shadow: none;
-}
-
-/* ============================================================================
-   PÁGINA 3: CALENDARIO ORIGINAL
-   ============================================================================ */
-
-.calendar-filters {
-    margin-bottom: 20px;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-
-.calendar-filters label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-.calendar-filters select {
-    padding: 10px 15px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-size: 1em;
-    width: 100%;
-    max-width: 400px;
-    background: white;
-    cursor: pointer;
-}
-
-.calendar-view {
-    margin-bottom: 30px;
-    width: 100%;
-    overflow: auto;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-bottom: 30px;
-    padding: 15px;
-    background: #f9f9f9;
-    border-radius: 8px;
-}
-
-.calendar-header {
-    background: #0095a2;  /* Azul turquesa EDEQ */
-    color: white;
-    padding: 10px;
-    text-align: center;
-    font-weight: 700;
-    border-radius: 4px;
-    font-size: 0.85em;
-}
-
-.calendar-empty {
-    background: transparent;
-}
-
-.calendar-day-clickable {
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    border: 2px solid var(--border);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    font-size: 0.9em;
-}
-
-.calendar-day-clickable:hover {
-    background: #f0f0f0;
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.calendar-day-clickable.has-events {
-    background: #e8f5e9;
-    border-color: #4CAF50;
-    font-weight: 600;
-}
-
-.calendar-day-clickable.has-events:hover {
-    background: #c8e6c9;
-    border-color: #388e3c;
-}
-
-/* Día seleccionado en calendario */
-.calendar-day-clickable.selected {
-    background: #74BBC2;           /* Azul turquesa EDEQ */
-    color: white;
-    border: 3px solid #006f7f;     /* Borde más grueso y oscuro */
-    box-shadow: 0 0 12px rgba(0, 149, 162, 0.5);
-    font-weight: 700;
-    transform: scale(1.08);        /* Ligeramente más grande */
-}
-
-.calendar-day-clickable.selected:hover {
-    background: #007a8a;           /* Más oscuro al pasar mouse */
-    box-shadow: 0 0 16px rgba(0, 149, 162, 0.8);
-}
-
-.day-number {
-    font-weight: 700;
-    font-size: 1.1em;
-    color: #333;
-}
-
-.event-count {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #0095a2;  /* Azul turquesa EDEQ */
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7em;
-    font-weight: 700;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.day-details {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    border: 2px solid var(--border);
-    min-height: 400px;
-    max-height: 600px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    display: flex;              /* ← Usar flex para layout */
-    flex-direction: column;     /* ← Apilar verticalmente */
-}
-
-.day-details h3 {
-    margin-top: 0;
-    color: var(--dark);
-    border-bottom: 2px solid var(--primary);
-    padding-bottom: 10px;
-    flex-shrink: 0;            /* ← NO encogerse, queda fijo */
-}
-
-/* Layout 2 columnas para Página 3 */
-.calendario-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.calendario-column {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;  /* Permite que el contenido no desborde */
-}
-
-.calendario-column:first-child {
-    grid-column: 1;
-    border-right: 2px solid var(--border);
-    padding-right: 15px;
-}
-
-.calendario-column:last-child {
-    grid-column: 2;
-    padding-left: 15px;
-}
-
-.events-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 15px;
-    overflow-y: auto;          /* ← Scroll solo en las actividades */
-    flex: 1;                   /* ← Ocupa el espacio restante */
-    padding-right: 5px;        /* ← Espacio para la scrollbar */
-}
-
-.event-item {
-    padding: 15px;
-    border-left: 4px solid var(--primary);
-    background: #fafafa;
-    border-radius: 6px;
-    transition: all 0.2s;
-}
-
-.event-item:hover {
-    background: #f0f0f0;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.event-header {
-    margin-bottom: 8px;
-    font-size: 0.95em;
-    font-weight: 600;
-    color: var(--text);
-}
-
-.event-state {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    font-size: 0.9em;
-}
-
-.event-state i {
-    font-size: 1.1em;
-}
-
-.event-details {
-    color: #666;
-    font-size: 0.85em;
-    line-height: 1.5;
-}
-
-/* ============================================================================
-   DETAIL SECTION
-   ============================================================================ */
-
-.detail-section {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    padding: 20px;
-}
-
-.ciclo-detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    margin-top: 20px;
-}
-
-.ciclo-table-section {
-    display: flex;
-    flex-direction: column;
-}
-
-.ciclo-table-section .section-title {
-    margin-top: 0;
-}
-
-.ciclo-calendar-section {
-    display: flex;
-    flex-direction: column;
-}
-
-.ciclo-calendar-section .section-title {
-    margin-top: 0;
-}
-
-.detail-placeholder {
-    text-align: center;
-    color: #999;
-    padding: 60px 20px;
-}
-
-/* ============================================================================
-   RESPONSIVE
-   ============================================================================ */
-
-@media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        text-align: center;
-        gap: 15px;
-    }
-
-    .logo-section i {
-        font-size: 1.8em;
-    }
-
-    .logo-section h1 {
-        font-size: 1.5em;
-    }
-
-    .controls-section {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .selectors {
-        flex-direction: column;
-    }
-
-    .selector-group select {
-        width: 100%;
-    }
-
-    .buttons-container {
-        width: 100%;
-    }
-
-    .calendario-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    .calendario-column:first-child {
-        border-right: none;
-        padding-right: 0;
-    }
-
-    .calendario-column:last-child {
-        padding-left: 0;
-    }
-
-    .toggle-btn {
-        flex: 1;
-    }
-
-    .ciclo-detail-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .timeline-container {
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .timeline-arrow {
-        width: 2px;
-        height: 30px;
-        flex: none;
-    }
-
-    .data-table {
-        font-size: 0.8em;
-    }
-
-    .data-table th,
-    .data-table td {
-        padding: 8px;
-    }
-
-    .info-cards {
-        grid-template-columns: 1fr;
-    }
-
-    .calendar-grid {
-        gap: 4px;
-        padding: 10px;
-    }
-
-    .calendar-header {
-        font-size: 0.7em;
-        padding: 6px;
-    }
-
-    .day-number {
-        font-size: 0.9em;
-    }
-
-    .event-count {
-        width: 20px;
-        height: 20px;
-        font-size: 0.6em;
-    }
-
-    .calendar-filters select {
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .header {
-        padding: 15px 10px;
-    }
-
-    .controls-section {
-        padding: 15px 10px;
-        margin: 10px;
-    }
-
-    .page-content {
-        padding: 10px;
-    }
-
-    .section-title {
-        font-size: 1.1em;
-    }
-
-    .timeline-container {
-        padding: 15px 10px;
-    }
-
-    .timeline-step p {
-        font-size: 0.8em;
-    }
-
-    .info-cards {
-        gap: 10px;
-    }
-
-    .info-card {
-        padding: 10px;
-        gap: 10px;
-    }
-}
-
-/* ============================================================================
-   SELECTORES ESPECÍFICOS POR PÁGINA
-   ============================================================================ */
-
-/* Filtro de Mes más largo en Página 1 (Resumen Mes) */
-#page1 .selector-group:first-child {
-    min-width: 280px;
-}
-
-/* Filtro de Mes más largo en Página 3 (Calendario) */
-#page3 .selector-group:first-child {
-    min-width: 280px;
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CICLOS DE FACTURACIÓN - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="logo-section">
+                <button id="homeBtn" class="home-btn" title="Volver al resumen">
+                    <i class="fas fa-home"></i>
+                </button>
+                <img src="static/img/logo-edeq-color.png" alt="Logo EDEQ" class="logo-img">
+                <div class="header-text">
+                    <h1>AGENDA DE FACTURACIÓN</h1>
+                    <p>Equipo de Operación Comercial - Area de gestión comercial</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- SELECTORES Y BOTONES -->
+        <div class="controls-section">
+            <div class="selectors">
+                <div class="selector-group">
+                    <label for="monthSelect">Mes</label>
+                    <select id="monthSelect">
+                        <option value="">-- Seleccionar mes --</option>
+                    </select>
+                </div>
+
+                <div class="selector-group">
+                    <label for="cicloSelect">Ciclo</label>
+                    <select id="cicloSelect">
+                        <option value="">-- Seleccionar ciclo --</option>
+                    </select>
+                </div>
+
+                <div class="selector-group" id="activitySelectorGroup" style="display: none;">
+                    <label for="activitySelect">Actividad</label>
+                    <select id="activitySelect">
+                        <option value="">Todos</option>
+                        <option value="generacion_libro">Generación</option>
+                        <option value="lectura_actual">Lectura</option>
+                        <option value="analisis_consumos">Crítica</option>
+                        <option value="liquidacion">Liquidación</option>
+                        <option value="entrega_cliente">Entrega Factura</option>
+                        <option value="pago">Pago sin Recargo</option>
+                        <option value="suspension">Suspensión</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="buttons-container">
+                <button class="toggle-btn active" data-page="1">Resumen Mes</button>
+                <button class="toggle-btn" data-page="2">Detalle Ciclo</button>
+                <button class="toggle-btn" data-page="3">📅 Calendario</button>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PÁGINA 1: RESUMEN DEL MES -->
+        <!-- ============================================================ -->
+        <div id="page1" class="page active">
+            <div class="page-content">
+                
+                <!-- TABLA DE CICLOS -->
+                <h2 class="section-title">CICLOS FACTURADOS EN EL MES DE <span id="selectedMonthName" style="font-weight: bold; color: #0095a2;"></span></h2>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr style="background: #0095a2; color: white;">
+                                <th>Ciclo</th>
+                                <th>Municipio</th>
+                                <th>Responsable</th>
+                                <th>Días Facturados</th>
+                                <th>Generación</th>
+                                <th>Lectura ciclo</th>
+                                <th>Crítica</th>
+                                <th>Liquidación</th>
+                                <th>Entrega Factura</th>
+                                <th>Vencimiento</th>
+                                <th>Suspensión</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthTableBody">
+                            <tr>
+                                <td colspan="11" class="empty">Carga un archivo y selecciona un mes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="totalCiclos" style="margin-top: 15px; text-align: right;"></div>
+
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- PÁGINA 2: DETALLE DEL CICLO -->
+        <!-- ============================================================ -->
+        <div id="page2" class="page">
+            <div class="page-content">
+                <div id="cicloDetailContainer"></div>
+            </div>
+        </div>
+
+        <!-- TEMPLATE PARA DETALLE CICLO -->
+        <template id="cicloDetailTemplate">
+            <div class="detail-section">
+                <!-- INFORMACIÓN GENERAL -->
+                <h2 class="section-title">INFORMACIÓN GENERAL DEL CICLO</h2>
+                <div class="info-cards">
+                    <div class="info-card">
+                        <i class="fas fa-list-check"></i>
+                        <div>
+                            <div class="label">Ciclo</div>
+                            <div id="detail-ciclo" class="value">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <div class="label">Municipios</div>
+                            <div id="detail-municipio" class="value">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-user-tie"></i>
+                        <div>
+                            <div class="label">Responsable de Facturación</div>
+                            <div id="detail-analista" class="value">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-calendar-days"></i>
+                        <div>
+                            <div class="label">Días Facturados (Consumo)</div>
+                            <div id="detail-dias" class="value">-</div>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-hourglass-end"></i>
+                        <div>
+                            <div class="label">Período del Ciclo</div>
+                            <div id="detail-periodo" class="value">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LÍNEA DE TIEMPO DEL CICLO -->
+                <h2 class="section-title">LÍNEA DE TIEMPO DEL CICLO SELECCIONADO</h2>
+                <div id="cicloTimeline" class="timeline-container"></div>
+
+                <!-- DETALLE DEL CICLO Y CALENDARIO -->
+                <div class="ciclo-detail-grid">
+                    <div class="ciclo-table-section">
+                        <h2 class="section-title">DETALLE DEL CICLO</h2>
+                        <div class="table-container">
+                            <table class="detail-table">
+                                <tbody id="detailTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="ciclo-calendar-section">
+                        <h2 class="section-title">DÍAS FACTURADOS (CONSUMO)</h2>
+                        <div id="cicloCalendar" class="calendar-container"></div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- ============================================================ -->
+        <!-- PÁGINA 3: CALENDARIO (ORIGINAL) -->
+        <!-- ============================================================ -->
+        <div id="page3" class="page">
+            <div class="page-content">
+                <h2 class="section-title">📅 CALENDARIO DE ACTIVIDADES POR DÍA</h2>
+                <p style="color: #666; margin-bottom: 20px; font-size: 0.95em;">
+                    Selecciona un mes y haz clic en un día para ver los ciclos programados y su estado actual
+                </p>
+                
+                <!-- Layout 2 columnas: Calendario | Detalles -->
+                <div class="calendario-grid">
+                    <!-- Columna 1: CALENDARIO -->
+                    <div class="calendario-column">
+                        <!-- CALENDARIO INTERACTIVO -->
+                        <div id="calendarView" class="calendar-view"></div>
+                    </div>
+                    
+                    <!-- Columna 2: DETALLES -->
+                    <div class="calendario-column">
+                        <!-- DETALLES DEL DÍA SELECCIONADO -->
+                        <div id="dayDetailsContainer" class="day-details">
+                            <p style="color: #999; text-align: center; padding: 40px 20px;">
+                                <i class="fas fa-mouse"></i> Selecciona un día del calendario para ver los ciclos programados
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script src="static/js/main.js"></script>
+</body>
+</html>
