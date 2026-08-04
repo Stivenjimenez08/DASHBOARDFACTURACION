@@ -12,10 +12,12 @@
         <!-- HEADER -->
         <header class="header">
             <div class="logo-section">
-                <img src="static/img/logo-edeq-color.png" alt="Logo EDEQ" class="logo-img">
+                <button id="homeBtn" class="home-btn" title="Volver al resumen">
+                    <i class="fas fa-home"></i>
+                </button>
                 <div class="header-text">
-                    <h1>CICLOS DE FACTURACIÓN</h1>
-                    <p>Información operativa para programación de actividades</p>
+                    <h1>AGENDA DE FACTURACIÓN</h1>
+                    <p>Equipo de Operación Comercial - Area de gestión comercial</p>
                 </div>
             </div>
         </header>
@@ -75,17 +77,18 @@
                                 <th>Municipio</th>
                                 <th>Responsable</th>
                                 <th>Días Facturados</th>
+                                <th>Generación</th>
                                 <th>Lectura ciclo</th>
                                 <th>Crítica</th>
                                 <th>Liquidación</th>
                                 <th>Entrega Factura</th>
-                                <th>Pago Oportuno</th>
+                                <th>Vencimiento</th>
                                 <th>Suspensión</th>
                             </tr>
                         </thead>
                         <tbody id="monthTableBody">
                             <tr>
-                                <td colspan="9" class="empty">Carga un archivo y selecciona un mes</td>
+                                <td colspan="11" class="empty">Carga un archivo y selecciona un mes</td>
                             </tr>
                         </tbody>
                     </table>
