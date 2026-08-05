@@ -907,8 +907,33 @@ function isDateInRange(dateStr, startStr, endStr) {
     return date >= start && date <= end;
 }
 
-function getStateForDate(dateStr, ciclo) {
-    // Buscar qué actividad específica tiene este ciclo en este día
+function getStateForDate(dateStr, ciclo, filtroActividad = '') {
+    // Si hay un filtro de actividad, intentar usar ese primero
+    if (filtroActividad && filtroActividad !== '') {
+        if (dateStr === ciclo[filtroActividad]) {
+            // Devolver el estado basado en el campo filtrado
+            const estadosMap = {
+                'generacion_libro': { state: 'Generación del Libro', icon: 'fa-file-alt', color: '#99841D' },
+                'lectura_actual': { state: 'Lectura Medidores', icon: 'fa-eye', color: '#45B7D1' },
+                'lectura_anterior': { state: 'Lectura Medidores (Ant)', icon: 'fa-eye', color: '#45B7D1' },
+                'analisis_consumos': { state: 'Período Crítica', icon: 'fa-magnifying-glass-chart', color: '#FFA500' },
+                'verificados': { state: 'Verificados', icon: 'fa-check', color: '#7C991D' },
+                'ingreso_verificados': { state: 'Ingreso Verificados', icon: 'fa-arrow-right', color: '#6E851E' },
+                'liquidacion': { state: 'Liquidación', icon: 'fa-money-bill', color: '#34991D' },
+                'calidad': { state: 'Calidad Facturación', icon: 'fa-check-circle', color: '#00BCD4' },
+                'entrega_impresor': { state: 'Entrega al Impresor', icon: 'fa-truck', color: '#795548' },
+                'entrega_cliente': { state: 'Entrega al Cliente', icon: 'fa-envelope', color: '#2196F3' },
+                'pago_inicio': { state: 'Vencimiento', icon: 'fa-credit-card', color: '#9C27B0' },
+                'pago_recargo': { state: 'Pago con Recargo', icon: 'fa-credit-card', color: '#673AB7' },
+                'suspension_inicio': { state: 'Suspensión', icon: 'fa-ban', color: '#F44336' }
+            };
+            if (estadosMap[filtroActividad]) {
+                return estadosMap[filtroActividad];
+            }
+        }
+    }
+    
+    // Si no hay filtro o no coincide, buscar la actividad como antes
     if (dateStr === ciclo.generacion_libro) {
         return { state: 'Generación del Libro', icon: 'fa-file-alt', color: '#99841D' };
     }
@@ -991,8 +1016,8 @@ function showDayDetails(dateStr, ciclos) {
     
     // Ordenar por importancia del estado
     ciclosEnDia.sort((a, b) => {
-        const stateA = getStateForDate(dateStr, a).state;
-        const stateB = getStateForDate(dateStr, b).state;
+        const stateA = getStateForDate(dateStr, a, currentActivity).state;
+        const stateB = getStateForDate(dateStr, b, currentActivity).state;
         const prioridadA = estadoPrioridad[stateA] || 99;
         const prioridadB = estadoPrioridad[stateB] || 99;
         return prioridadA - prioridadB;
@@ -1008,7 +1033,7 @@ function showDayDetails(dateStr, ciclos) {
     } else {
         html += '<div class="events-list">';
         ciclosEnDia.forEach(ciclo => {
-            const stateInfo = getStateForDate(dateStr, ciclo);
+            const stateInfo = getStateForDate(dateStr, ciclo, currentActivity);
             const isEspecial = ciclosEspeciales.includes(parseInt(ciclo.ciclo));
             const styleClass = isEspecial ? 'event-item event-item-especial' : 'event-item';
             
