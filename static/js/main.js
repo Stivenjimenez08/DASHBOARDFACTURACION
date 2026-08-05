@@ -34,7 +34,13 @@ function formatDateDisplay(dateStr) {
 
 // Función para navegar a página 1 sin cambiar botones seleccionados
 function navigateToPage1() {
-    // Solo cambiar la página visible, sin tocar los botones toggle
+    // Activar el botón Resumen Mes
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector('.toggle-btn[data-page="1"]').classList.add('active');
+    
+    // Cambiar la página visible
     document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
     });
@@ -57,8 +63,8 @@ function navigateToPage1() {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('monthSelect').addEventListener('change', handleMonthChange);
     
-    // Listener para el botón home - navega a página 1 sin cambiar botones seleccionados
-    document.getElementById('homeBtn').addEventListener('click', (e) => {
+    // Listener para el botón logo - navega a página 1 y selecciona el botón Resumen Mes
+    document.getElementById('logoBtn').addEventListener('click', (e) => {
         e.preventDefault();
         navigateToPage1();
     });
