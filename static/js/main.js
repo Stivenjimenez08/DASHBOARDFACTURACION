@@ -841,12 +841,11 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
         const dateStr = formatDate(current);  // ← Usar formatDate en lugar de toISOString
         const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
         const hasEvents = ciclosEnDia.length > 0;
-        const isHoliday = isColombianHoliday(dateStr); // Usar función dinámica
 
         html += `
-            <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''} ${isHoliday ? 'holiday' : ''} ${dateStr === currentSelectedDay ? 'selected' : ''}" 
+            <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''} ${dateStr === currentSelectedDay ? 'selected' : ''}" 
                  data-date="${dateStr}"
-                 title="${hasEvents ? ciclosEnDia.length + ' ciclos' : 'Sin eventos'}${isHoliday ? ' (Festivo)' : ''}">
+                 title="${hasEvents ? ciclosEnDia.length + ' ciclos' : 'Sin eventos'}">
                 <div class="day-number">${current.getDate()}</div>
                 ${hasEvents ? `<div class="event-count">${ciclosEnDia.length}</div>` : ''}
             </div>
@@ -1055,97 +1054,6 @@ function showDayDetails(dateStr, ciclos) {
     }
 
     document.getElementById('dayDetailsContainer').innerHTML = html;
-}
-
-// Función para detectar si una fecha es festivo en Colombia
-function isColombianHoliday(dateStr) {
-    const date = parseLocalDate(dateStr);
-    const day = date.getDate();
-    const month = date.getMonth() + 1; // 1-12
-    const year = date.getFullYear();
-    
-    // Festivos fijos en Colombia
-    const festivosFijos = [
-        { mes: 1, dia: 1 },      // Año Nuevo
-        { mes: 5, dia: 1 },      // Día del Trabajo
-        { mes: 7, dia: 1 },      // San Pedro y San Pablo
-        { mes: 8, dia: 7 },      // Independencia
-        { mes: 8, dia: 15 },     // Asunción de María
-        { mes: 10, dia: 12 },    // Descubrimiento de América
-        { mes: 11, dia: 1 },     // Todos los Santos
-        { mes: 11, dia: 11 },    // Independencia de Cartagena
-        { mes: 12, dia: 8 },     // Inmaculada Concepción
-        { mes: 12, dia: 25 }     // Navidad
-    ];
-    
-    // Festivos que varían por año (Semana Santa, Corpus Christi, etc)
-    // Se calculan basándose en la Pascua
-    const festivosVariables = getEasterDependentHolidays(year);
-    
-    // Verificar festivos fijos
-    const isFestivo = festivosFijos.some(f => f.mes === month && f.dia === day);
-    
-    // Verificar festivos variables
-    const isFestivoVariable = festivosVariables.some(f => f.mes === month && f.dia === day);
-    
-    return isFestivo || isFestivoVariable;
-}
-
-// Función para calcular festivos que dependen de Pascua
-function getEasterDependentHolidays(year) {
-    // Cálculo simplificado de Pascua (Algoritmo de Gauss)
-    const a = year % 19;
-    const b = Math.floor(year / 100);
-    const c = year % 100;
-    const d = Math.floor(b / 4);
-    const e = b % 4;
-    const f = Math.floor((b + 8) / 25);
-    const g = Math.floor((b - f + 1) / 3);
-    const h = (19 * a + b - d - g + 15) % 30;
-    const i = Math.floor(c / 4);
-    const k = c % 4;
-    const l = (32 + 2 * e + 2 * i - h - k) % 7;
-    const m = Math.floor((a + 11 * h + 22 * l) / 451);
-    const month = Math.floor((h + l - 7 * m + 114) / 31);
-    const day = ((h + l - 7 * m + 114) % 31) + 1;
-    
-    // Basado en la fecha de Pascua
-    const easter = new Date(year, month - 1, day);
-    
-    // Festivos relacionados a Pascua
-    const holidays = [];
-    
-    // Jueves Santo (3 días antes)
-    const juevesSanto = new Date(easter);
-    juevesSanto.setDate(easter.getDate() - 3);
-    holidays.push({ mes: juevesSanto.getMonth() + 1, dia: juevesSanto.getDate() });
-    
-    // Viernes Santo (2 días antes)
-    const viernesSanto = new Date(easter);
-    viernesSanto.setDate(easter.getDate() - 2);
-    holidays.push({ mes: viernesSanto.getMonth() + 1, dia: viernesSanto.getDate() });
-    
-    // Lunes de Pascua (1 día después)
-    const lunesPascua = new Date(easter);
-    lunesPascua.setDate(easter.getDate() + 1);
-    holidays.push({ mes: lunesPascua.getMonth() + 1, dia: lunesPascua.getDate() });
-    
-    // Ascensión (39 días después de Pascua)
-    const ascension = new Date(easter);
-    ascension.setDate(easter.getDate() + 39);
-    holidays.push({ mes: ascension.getMonth() + 1, dia: ascension.getDate() });
-    
-    // Corpus Christi (60 días después de Pascua)
-    const corpusChristi = new Date(easter);
-    corpusChristi.setDate(easter.getDate() + 60);
-    holidays.push({ mes: corpusChristi.getMonth() + 1, dia: corpusChristi.getDate() });
-    
-    // Sagrado Corazón (68 días después de Pascua)
-    const sagradoCorazon = new Date(easter);
-    sagradoCorazon.setDate(easter.getDate() + 68);
-    holidays.push({ mes: sagradoCorazon.getMonth() + 1, dia: sagradoCorazon.getDate() });
-    
-    return holidays;
 }
 
 // INICIALIZACIÓN
