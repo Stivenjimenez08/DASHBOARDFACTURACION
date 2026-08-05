@@ -664,15 +664,14 @@ function buildCalendar(startDate, endDate, cicloData) {
     const activitiesMap = {
         'Generación': { color: '#99841D', label: 'Generación del Libro' },
         'Lectura': { color: '#45B7D1', label: 'Lectura Medidores' },
-        'Análisis': { color: '#FFA500', label: 'Análisis de Consumos' },
+        'Análisis': { color: '#FFA500', label: 'Crítica' },
         'Verificado': { color: '#7C991D', label: 'Verificados' },
         'Ingreso Verif': { color: '#6E851E', label: 'Ingreso Verificados' },
         'Liquidación': { color: '#34991D', label: 'Liquidación' },
         'Calidad': { color: '#00BCD4', label: 'Calidad Facturación' },
         'Entrega Impr': { color: '#795548', label: 'Entrega al Impresor' },
         'Entrega': { color: '#2196F3', label: 'Entrega al Cliente' },
-        'Pago': { color: '#9C27B0', label: 'Pago sin Recargo' },
-        'Pago Recargo': { color: '#673AB7', label: 'Pago con Recargo' },
+        'Pago': { color: '#9C27B0', label: 'Vencimiento' },
         'Suspensión': { color: '#F44336', label: 'Suspensión' }
     };
 
@@ -726,10 +725,6 @@ function buildCalendar(startDate, endDate, cicloData) {
             dayActivities.push({ key: 'Pago', ...activitiesMap['Pago'] });
             activitiesFound++;
         }
-        if (cicloData?.pago_recargo === dateStr) {
-            dayActivities.push({ key: 'Pago Recargo', ...activitiesMap['Pago Recargo'] });
-            activitiesFound++;
-        }
         if (cicloData?.suspension === dateStr) {
             dayActivities.push({ key: 'Suspensión', ...activitiesMap['Suspensión'] });
             activitiesFound++;
@@ -747,7 +742,7 @@ function buildCalendar(startDate, endDate, cicloData) {
 
         html += `
             <div class="calendar-day in-range">
-                <div style="font-weight: 700; font-size: 1.25em;">${current.getDate()}</div>
+                <div style="font-weight: 700; font-size: 1.4em;">${current.getDate()}</div>
                 <div style="display: flex; flex-direction: column; gap: 2px; width: 100%;">
                     ${badgesHtml}
                 </div>
