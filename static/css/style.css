@@ -484,14 +484,19 @@ body {
 }
 
 .calendar-day.in-range {
-    background: #E6E8E6;  /* Verde claro EDEQ */
+    background: #FAFAFA;
     color: black;
-    border-color: #008891;
-    box-shadow: 0 2px 6px rgba(0, 184, 145, 0.3);
+    border-color: #0095a2;
+    box-shadow: 0 2px 8px rgba(0, 149, 162, 0.15);
     font-weight: 700;
-    min-height: 80px;
+    min-height: 100px;
     aspect-ratio: auto;
-    padding: 6px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .calendar-day.header {
