@@ -641,8 +641,9 @@ body {
 }
 
 .calendar-day-clickable.holiday.has-events {
-    background: linear-gradient(135deg, #ddd8d5 0%, #e8dfd8 100%);
+    background: linear-gradient(135deg, #d5c9c6 0%, #e0d5d0 100%);
     border-color: #999;
+    opacity: 0.9;
 }
 
 .day-number {
