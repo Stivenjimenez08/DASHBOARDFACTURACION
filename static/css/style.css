@@ -89,26 +89,22 @@ body {
     color: #666;
 }
 
-.home-btn {
+.logo-btn {
     background: none;
     border: none;
-    color: #0095a2;
-    font-size: 2.5em;
     cursor: pointer;
-    padding: 10px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
+    padding: 0;
+    transition: transform 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.home-btn:hover {
-    background: rgba(0, 149, 162, 0.1);
-    transform: scale(1.1);
+.logo-btn:hover {
+    transform: scale(1.08);
 }
 
-.home-btn:active {
+.logo-btn:active {
     transform: scale(0.95);
 }
 
@@ -322,6 +318,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9em;
+    table-layout: fixed;
 }
 
 .data-table thead {
@@ -343,18 +340,28 @@ body {
     text-align: center;
 }
 
-/* Columna Municipio - reducida y con colapso */
+/* Ancho específico para cada columna con table-layout: fixed */
+.data-table th:nth-child(1),
+.data-table td:nth-child(1) {
+    width: 60px;
+}
+
+/* Columna Municipio - mínimo 200px */
 .data-table td:nth-child(2),
 .data-table th:nth-child(2) {
     width: 200px;
-    min-width: 200px;
     word-break: break-word;
     overflow-wrap: break-word;
-    white-space: normal;  /* ← Esta SÍ puede colapsar */
+    white-space: normal;
 }
 
-/* Todas las otras columnas - NO colapsar */
+/* Responsable - más ancho */
 .data-table th:nth-child(3),
+.data-table td:nth-child(3) {
+    width: 130px;
+}
+
+/* Columnas 4-11 - igual tamaño */
 .data-table th:nth-child(4),
 .data-table th:nth-child(5),
 .data-table th:nth-child(6),
@@ -362,16 +369,17 @@ body {
 .data-table th:nth-child(8),
 .data-table th:nth-child(9),
 .data-table th:nth-child(10),
-.data-table td:nth-child(3),
+.data-table th:nth-child(11),
 .data-table td:nth-child(4),
 .data-table td:nth-child(5),
 .data-table td:nth-child(6),
 .data-table td:nth-child(7),
 .data-table td:nth-child(8),
 .data-table td:nth-child(9),
-.data-table td:nth-child(10) {
+.data-table td:nth-child(10),
+.data-table td:nth-child(11) {
+    width: 95px;
     white-space: nowrap;
-    min-width: 110px;
 }
 
 .data-table tbody tr:hover {
