@@ -509,10 +509,10 @@ function displayCicloDetail() {
     // Timeline del ciclo
     const timelineHtml = buildCicloTimeline(cicloData);
     clone.querySelector('#cicloTimeline').innerHTML = timelineHtml;
-
-    // Tabla de detalles
-    const detailTableHtml = buildDetailTable(cicloData);
-    clone.querySelector('#detailTable').innerHTML = detailTableHtml;
+    
+    // Actualizar títulos dinámicamente
+    clone.querySelector('#cicloTimelineTitle').textContent = `LÍNEA DE TIEMPO DEL CICLO ${cicloData.ciclo}`;
+    clone.querySelector('#cicloCalendarTitle').textContent = `CALENDARIO CICLO ${cicloData.ciclo}`;
 
     // Calendario - generar rango completo del mes
     // Usar lectura_actual como referencia (siempre está en el mes del ciclo)
@@ -543,9 +543,9 @@ function buildCicloTimeline(cicloData) {
             color: '#99841D'
         },
         {
-            name: 'Consumo',
+            name: 'Lectura',
             icon: 'fa-leaf',
-            start: cicloData.consumo_inicio,
+            start: null,
             end: cicloData.consumo_fin,
             color: '#4CAF50'
         },
@@ -571,7 +571,7 @@ function buildCicloTimeline(cicloData) {
             color: '#2196F3'
         },
         {
-            name: 'Pago sin Recargo',
+            name: 'Vencimiento',
             icon: 'fa-credit-card',
             start: cicloData.pago_inicio,
             end: cicloData.pago_inicio,
@@ -592,7 +592,7 @@ function buildCicloTimeline(cicloData) {
             <div class="timeline-step">
                 <i class="fas ${step.icon}" style="background: ${step.color}"></i>
                 <p>${step.name}</p>
-                <small>${formatDateRange(step.start, step.end)}</small>
+                <small class="timeline-date">${formatDateRange(step.start, step.end)}</small>
             </div>
         `;
         if (idx < steps.length - 1) {
