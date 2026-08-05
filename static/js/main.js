@@ -739,7 +739,7 @@ function buildCalendar(startDate, endDate, cicloData) {
         let badgesHtml = '';
         dayActivities.forEach(activity => {
             badgesHtml += `
-                <span class="activity-badge" style="background: ${activity.color}; color: white; font-size: 0.65em; padding: 3px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;" title="${activity.label}">
+                <span class="activity-badge" style="background: ${activity.color}; color: white; font-size: 0.8em; padding: 4px 7px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;" title="${activity.label}">
                     ${activity.label}
                 </span>
             `;
@@ -747,7 +747,7 @@ function buildCalendar(startDate, endDate, cicloData) {
 
         html += `
             <div class="calendar-day in-range">
-                <div style="font-weight: 700; font-size: 1.1em;">${current.getDate()}</div>
+                <div style="font-weight: 700; font-size: 1.25em;">${current.getDate()}</div>
                 <div style="display: flex; flex-direction: column; gap: 2px; width: 100%;">
                     ${badgesHtml}
                 </div>
