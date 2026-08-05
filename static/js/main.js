@@ -1147,5 +1147,33 @@ function getEasterDependentHolidays(year) {
     
     return holidays;
 }
+
+// INICIALIZACIÓN
+document.addEventListener('DOMContentLoaded', () => {
     console.log('Dashboard iniciado. Cargando datos...');
+    
+    const monthSelect = document.getElementById('monthSelect');
+    const cicloSelect = document.getElementById('cicloSelect');
+    const activitySelect = document.getElementById('activitySelect');
+    
+    monthSelect.addEventListener('change', handleMonthChange);
+    cicloSelect.addEventListener('change', handleCicloChange);
+    activitySelect.addEventListener('change', () => {
+        currentActivity = activitySelect.value;
+        displayCalendarMonth(currentMonth);
+    });
+    
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const pageNum = this.dataset.page;
+            switchPage(pageNum);
+        });
+    });
+    
+    document.getElementById('logoBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        navigateToPage1();
+    });
+    
+    loadMonths();
 });
