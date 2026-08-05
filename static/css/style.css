@@ -505,6 +505,10 @@ body {
     border: none;
     font-weight: 700;
     font-size: 0.65em;
+    aspect-ratio: auto;
+    min-height: auto;
+    height: 45px;
+    padding: 8px;
 }
 
 .calendar-day.empty {
