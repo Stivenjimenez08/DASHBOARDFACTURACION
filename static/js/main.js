@@ -255,7 +255,7 @@ function updatePage1Timeline() {
             color: '#2196F3'
         },
         {
-            name: 'Pago sin Recargo',
+            name: 'Vencimiento',
             icon: 'fa-calendar',
             start: cicloData.pago_inicio,
             end: cicloData.pago_inicio,
@@ -350,7 +350,7 @@ function displayMonthTimeline(ciclos) {
         { name: 'Consumo', icon: 'fa-leaf', color: '#4CAF50' },
         { name: 'Transmisión DIAN', icon: 'fa-file-text', color: '#FF9800' },
         { name: 'Entrega Factura', icon: 'fa-envelope', color: '#2196F3' },
-        { name: 'Pago sin Recargo', icon: 'fa-calendar', color: '#9C27B0' },
+        { name: 'Vencimiento', icon: 'fa-calendar', color: '#9C27B0' },
         { name: 'Suspensión', icon: 'fa-ban', color: '#F44336' }
     ];
 
@@ -425,7 +425,7 @@ function getDateRangeForMonth(ciclos, stepName) {
         'Consumo': ['consumo_inicio', 'consumo_fin'],
         'Transmisión DIAN': ['dian_inicio', 'dian_fin'],
         'Entrega Factura': ['entrega_cliente_inicio', 'entrega_cliente_fin'],
-        'Pago sin Recargo': ['pago_inicio', 'pago_fin'],
+        'Vencimiento': ['pago_inicio', 'pago_fin'],
         'Suspensión': ['suspension_inicio', 'suspension_fin']
     };
 
@@ -620,7 +620,7 @@ function buildDetailTable(cicloData) {
         ['Días Facturados', cicloData.dias_facturados || '-'],
         ['Liquidación', formatDateDisplay(cicloData.liquidacion)],
         ['Entrega Factura', formatDateDisplay(cicloData.entrega_cliente_inicio)],
-        ['Pago sin Recargo', formatDateDisplay(cicloData.pago_inicio)],
+        ['Vencimiento', formatDateDisplay(cicloData.pago_inicio)],
         ['Suspensión', formatDateDisplay(cicloData.suspension_inicio)]
     ];
 
@@ -841,12 +841,14 @@ function generateInteractiveCalendar(minDate, maxDate, ciclos) {
         const dateStr = formatDate(current);  // ← Usar formatDate en lugar de toISOString
         const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
         const hasEvents = ciclosEnDia.length > 0;
+        const dayOfMonth = current.getDate();
+        const isHoliday = dayOfMonth === 7 || dayOfMonth === 17; // Días especiales
 
         html += `
-            <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''} ${dateStr === currentSelectedDay ? 'selected' : ''}" 
+            <div class="calendar-day-clickable ${hasEvents ? 'has-events' : ''} ${isHoliday ? 'holiday' : ''} ${dateStr === currentSelectedDay ? 'selected' : ''}" 
                  data-date="${dateStr}"
-                 title="${hasEvents ? ciclosEnDia.length + ' ciclos' : 'Sin eventos'}">
-                <div class="day-number">${current.getDate()}</div>
+                 title="${hasEvents ? ciclosEnDia.length + ' ciclos' : 'Sin eventos'}${isHoliday ? ' (Día especial)' : ''}">
+                <div class="day-number">${dayOfMonth}</div>
                 ${hasEvents ? `<div class="event-count">${ciclosEnDia.length}</div>` : ''}
             </div>
         `;
@@ -871,9 +873,9 @@ function getCiclosForDate(dateStr, ciclos) {
                dateStr === ciclo.calidad ||
                dateStr === ciclo.entrega_impresor ||
                dateStr === ciclo.entrega_cliente ||
-               dateStr === ciclo.pago ||
+               dateStr === ciclo.pago_inicio ||
                dateStr === ciclo.pago_recargo ||
-               dateStr === ciclo.suspension;
+               dateStr === ciclo.suspension_inicio;
     });
     
     // Filtrar por actividad seleccionada (si no es "Todos")
@@ -937,13 +939,13 @@ function getStateForDate(dateStr, ciclo) {
     if (dateStr === ciclo.entrega_cliente) {
         return { state: 'Entrega al Cliente', icon: 'fa-envelope', color: '#2196F3' };
     }
-    if (dateStr === ciclo.pago) {
-        return { state: 'Pago sin Recargo', icon: 'fa-credit-card', color: '#9C27B0' };
+    if (dateStr === ciclo.pago_inicio) {
+        return { state: 'Vencimiento', icon: 'fa-credit-card', color: '#9C27B0' };
     }
     if (dateStr === ciclo.pago_recargo) {
         return { state: 'Pago con Recargo', icon: 'fa-credit-card', color: '#673AB7' };
     }
-    if (dateStr === ciclo.suspension) {
+    if (dateStr === ciclo.suspension_inicio) {
         return { state: 'Suspensión', icon: 'fa-ban', color: '#F44336' };
     }
     return { state: 'Desconocido', icon: 'fa-question', color: '#999' };
@@ -963,11 +965,43 @@ function showDayDetails(dateStr, ciclos) {
         selectedDayEl.classList.add('selected');
     }
     
-    const ciclosEnDia = getCiclosForDate(dateStr, ciclos);
+    // Ciclos especiales que deben resaltarse
+    const ciclosEspeciales = [94, 87, 91, 75, 76, 92, 93, 89, 81, 79, 95, 77, 58];
+    
+    // Orden de importancia de estados (de mayor a menor)
+    const estadoPrioridad = {
+        'Generación del Libro': 1,
+        'Lectura Medidores': 2,
+        'Lectura Medidores (Ant)': 2,
+        'Período Crítica': 3,
+        'Análisis de Consumos': 3,
+        'Verificados': 4,
+        'Ingreso Verificados': 5,
+        'Liquidación': 6,
+        'Calidad Facturación': 7,
+        'Entrega al Impresor': 8,
+        'Entrega al Cliente': 9,
+        'Vencimiento': 10,
+        'Pago con Recargo': 11,
+        'Suspensión': 12,
+        'Desconocido': 13
+    };
+    
+    let ciclosEnDia = getCiclosForDate(dateStr, ciclos);
+    
+    // Ordenar por importancia del estado
+    ciclosEnDia.sort((a, b) => {
+        const stateA = getStateForDate(dateStr, a).state;
+        const stateB = getStateForDate(dateStr, b).state;
+        const prioridadA = estadoPrioridad[stateA] || 99;
+        const prioridadB = estadoPrioridad[stateB] || 99;
+        return prioridadA - prioridadB;
+    });
+    
     const date = parseLocalDate(dateStr);  // ← Usar parseLocalDate en lugar de new Date
     const dayName = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][date.getDay()];
     
-    let html = `<h3>${dayName}, ${date.getDate()} - ${ciclosEnDia.length} ciclos en este día</h3>`;
+    let html = `<h3>${dayName}, ${date.getDate()} - ${ciclosEnDia.length} actividades en este día</h3>`;
     
     if (ciclosEnDia.length === 0) {
         html += '<p style="color: #999;">Sin ciclos programados</p>';
@@ -975,8 +1009,11 @@ function showDayDetails(dateStr, ciclos) {
         html += '<div class="events-list">';
         ciclosEnDia.forEach(ciclo => {
             const stateInfo = getStateForDate(dateStr, ciclo);
+            const isEspecial = ciclosEspeciales.includes(parseInt(ciclo.ciclo));
+            const styleClass = isEspecial ? 'event-item event-item-especial' : 'event-item';
+            
             html += `
-                <div class="event-item">
+                <div class="${styleClass}">
                     <div class="event-header">
                         <strong>Ciclo ${ciclo.ciclo}</strong> - ${ciclo.municipio}
                     </div>
