@@ -547,7 +547,8 @@ function buildCicloTimeline(cicloData) {
             icon: 'fa-leaf',
             start: null,
             end: cicloData.consumo_fin,
-            color: '#4CAF50'
+            color: '#4CAF50',
+            formatType: 'onlyDate'  // Indicador especial
         },
         {
             name: 'Período Crítica',
@@ -588,11 +589,16 @@ function buildCicloTimeline(cicloData) {
 
     let html = '';
     steps.forEach((step, idx) => {
+        let dateText = formatDateRange(step.start, step.end);
+        // Si es Lectura, solo mostrar la fecha sin "hasta"
+        if (step.formatType === 'onlyDate' && step.end) {
+            dateText = formatDateDisplay(step.end);
+        }
         html += `
             <div class="timeline-step">
                 <i class="fas ${step.icon}" style="background: ${step.color}"></i>
                 <p>${step.name}</p>
-                <small class="timeline-date">${formatDateRange(step.start, step.end)}</small>
+                <small class="timeline-date">${dateText}</small>
             </div>
         `;
         if (idx < steps.length - 1) {
@@ -733,16 +739,18 @@ function buildCalendar(startDate, endDate, cicloData) {
         let badgesHtml = '';
         dayActivities.forEach(activity => {
             badgesHtml += `
-                <div class="activity-badge" style="background: ${activity.color}; color: white; font-size: 0.6em; padding: 2px 4px; margin-top: 2px; border-radius: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${activity.label}">
+                <span class="activity-badge" style="background: ${activity.color}; color: white; font-size: 0.65em; padding: 3px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600;" title="${activity.label}">
                     ${activity.label}
-                </div>
+                </span>
             `;
         });
 
         html += `
-            <div class="calendar-day in-range" style="position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; align-items: center;">
-                <div style="font-weight: 700; margin-bottom: 2px;">${current.getDate()}</div>
-                ${badgesHtml}
+            <div class="calendar-day in-range">
+                <div style="font-weight: 700; font-size: 1.1em;">${current.getDate()}</div>
+                <div style="display: flex; flex-direction: column; gap: 2px; width: 100%;">
+                    ${badgesHtml}
+                </div>
             </div>
         `;
         current.setDate(current.getDate() + 1);
