@@ -735,6 +735,22 @@ body {
     font-size: 0.95em;
     font-weight: 600;
     color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.event-period-badge {
+    background: #E3F2FD;
+    color: #1565C0;
+    font-size: 0.72em;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+    text-transform: capitalize;
 }
 
 .event-state {
