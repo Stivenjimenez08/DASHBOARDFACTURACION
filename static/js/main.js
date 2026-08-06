@@ -780,9 +780,9 @@ function displayCalendarMonth(month) {
     const nextMonth = currentIdx >= 0 && currentIdx < monthsOrder.length - 1 ? monthsOrder[currentIdx + 1] : null;
 
     const rawCiclos = [
-        ...(prevMonth ? (allData[prevMonth] || []) : []),
-        ...(allData[month] || []),
-        ...(nextMonth ? (allData[nextMonth] || []) : [])
+        ...(prevMonth ? (allData[prevMonth] || []).map(c => ({ ...c, _sourceMonth: prevMonth })) : []),
+        ...(allData[month] || []).map(c => ({ ...c, _sourceMonth: month })),
+        ...(nextMonth ? (allData[nextMonth] || []).map(c => ({ ...c, _sourceMonth: nextMonth })) : [])
     ];
 
     // Deduplicar por instancia única de ciclo (mismo ciclo/municipio/periodo de consumo)
@@ -1062,6 +1062,7 @@ function showDayDetails(dateStr, ciclos) {
                 <div class="${styleClass}">
                     <div class="event-header">
                         <strong>Ciclo ${ciclo.ciclo}</strong> - ${ciclo.municipio}
+                        <span class="event-period-badge">${ciclo._sourceMonth || ciclo.periodo || ''}</span>
                     </div>
                     <div class="event-state">
                         <i class="fas ${stateInfo.icon}" style="color: ${stateInfo.color}"></i>
