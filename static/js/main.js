@@ -1,5 +1,6 @@
 // Variables globales
 let allData = {};
+let monthsOrder = [];  // ← Orden de los meses tal como vienen del servidor
 let currentMonth = null;
 let currentCiclo = null;
 let currentActivity = '';  // ← Variable para actividad seleccionada
@@ -91,6 +92,8 @@ async function loadMonths() {
 
         const select = document.getElementById('monthSelect');
         select.innerHTML = '<option value="">-- Seleccionar mes --</option>';
+
+        monthsOrder = data.months;  // ← Guardar orden de meses tal como vienen del servidor
 
         data.months.forEach(month => {
             const option = document.createElement('option');
@@ -769,8 +772,28 @@ function setupCalendarPage() {
 // handleCalendarMonthChange ya no es necesaria - se usa handleMonthChange() en su lugar
 
 function displayCalendarMonth(month) {
-    const ciclos = allData[month] || [];
-    
+    // Combinar ciclos del mes anterior, actual y siguiente
+    // (algunas actividades de un ciclo, como vencimiento o suspensión,
+    // pueden caer en fechas de otro mes calendario)
+    const currentIdx = monthsOrder.indexOf(month);
+    const prevMonth = currentIdx > 0 ? monthsOrder[currentIdx - 1] : null;
+    const nextMonth = currentIdx >= 0 && currentIdx < monthsOrder.length - 1 ? monthsOrder[currentIdx + 1] : null;
+
+    const rawCiclos = [
+        ...(prevMonth ? (allData[prevMonth] || []) : []),
+        ...(allData[month] || []),
+        ...(nextMonth ? (allData[nextMonth] || []) : [])
+    ];
+
+    // Deduplicar por instancia única de ciclo (mismo ciclo/municipio/periodo de consumo)
+    const seen = new Set();
+    const ciclos = rawCiclos.filter(c => {
+        const key = `${c.ciclo}-${c.municipio}-${c.consumo_inicio}-${c.consumo_fin}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+
     if (ciclos.length === 0) {
         document.getElementById('calendarView').innerHTML = '<p style="color: #999;">Sin actividades en este mes</p>';
         return;
