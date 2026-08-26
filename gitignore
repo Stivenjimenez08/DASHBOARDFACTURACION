@@ -1,0 +1,16 @@
+# Variables de entorno (nunca subir credenciales o config local)
+.env
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Editor / OS
+.vscode/
+.DS_Store
+
+# Excel temporal de Office al tener el archivo abierto
+~$*.xlsx
+~$*.xls

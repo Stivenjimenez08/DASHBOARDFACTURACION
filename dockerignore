@@ -1,0 +1,16 @@
+# No incluir configuración local en la imagen (en Cloud Run las variables
+# de entorno se definen en el servicio, no vía archivo .env)
+.env
+.env.example
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Editor / OS / control de versiones
+.vscode/
+.DS_Store
+.git/
+.gitignore
