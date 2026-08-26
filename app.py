@@ -3,8 +3,17 @@ import pandas as pd
 import os
 import glob
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+
+# Configuración vía variables de entorno (con valores por defecto para desarrollo local)
+DATA_FOLDER = os.environ.get('DATA_FOLDER', 'data')
+HOST = os.environ.get('HOST', '0.0.0.0')
+PORT = int(os.environ.get('PORT', 5000))
+DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
 
 COLUMN_MAP = {
     'CICLO': 1, 'ZONA': 2, 'ANALISTA': 3, 'MUNICIPIO': 4, 'PERIODO': 5,
@@ -144,18 +153,16 @@ def parse_excel_file(filepath):
 CACHED_DATA = {}
 
 def load_excel_from_file():
-    """Carga automáticamente Excel desde carpeta data/"""
-    data_folder = 'data'
-    
-    if not os.path.exists(data_folder):
-        print(f"⚠️  Carpeta '{data_folder}/' no existe")
+    """Carga automáticamente Excel desde la carpeta configurada en DATA_FOLDER"""
+    if not os.path.exists(DATA_FOLDER):
+        print(f"⚠️  Carpeta '{DATA_FOLDER}/' no existe")
         return False
     
     # Buscar archivos .xls o .xlsx
-    excel_files = glob.glob(f'{data_folder}/*.xls*')
+    excel_files = glob.glob(f'{DATA_FOLDER}/*.xls*')
     
     if not excel_files:
-        print(f"⚠️  No hay archivos Excel en '{data_folder}/'")
+        print(f"⚠️  No hay archivos Excel en '{DATA_FOLDER}/'")
         return False
     
     # Tomar el primer archivo
@@ -215,4 +222,4 @@ def status():
     return jsonify({'status': 'ok' if months else 'sin_datos', 'meses': months, 'total_ciclos': total})
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    app.run(debug=DEBUG, host=HOST, port=PORT)
