@@ -5,7 +5,6 @@ import glob
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
 
 COLUMN_MAP = {
     'CICLO': 1, 'ZONA': 2, 'ANALISTA': 3, 'MUNICIPIO': 4, 'PERIODO': 5,
@@ -26,7 +25,6 @@ COLUMN_MAP = {
     'PAGO_RECARGO': 28,
     'SUSPENSION': 30,
     # Mantener para backward compatibility (timeline)
-    'DIAN_INICIO': 24, 'DIAN_FIN': 26,
     'ENTREGA_CLIENTE_INICIO': 24, 'ENTREGA_CLIENTE_FIN': 26,
     'PAGO_INICIO': 26, 'PAGO_FIN': 27,
     'SUSPENSION_INICIO': 30, 'SUSPENSION_FIN': 31,
@@ -116,8 +114,6 @@ def parse_excel_file(filepath):
                             'pago_recargo': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_RECARGO']]),
                             'suspension': excel_date_to_python(row.iloc[COLUMN_MAP['SUSPENSION']]),
                             # Backward compatibility (para timeline y otros)
-                            'dian_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['DIAN_INICIO']]),
-                            'dian_fin': excel_date_to_python(row.iloc[COLUMN_MAP['DIAN_FIN']]),
                             'entrega_cliente_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_INICIO']]),
                             'entrega_cliente_fin': excel_date_to_python(row.iloc[COLUMN_MAP['ENTREGA_CLIENTE_FIN']]),
                             'pago_inicio': excel_date_to_python(row.iloc[COLUMN_MAP['PAGO_INICIO']]),
@@ -211,30 +207,6 @@ def get_month_data(month):
         return jsonify({'error': 'No encontrado'}), 404
     ciclos = CACHED_DATA[month]
     return jsonify({'month': month, 'ciclos': ciclos, 'total': len(ciclos)})
-
-@app.route('/api/ciclo/<month>/<int:ciclo>')
-def get_ciclo_detail(month, ciclo):
-    if month not in CACHED_DATA:
-        return jsonify({'error': 'No encontrado'}), 404
-    ciclo_data = next((c for c in CACHED_DATA[month] if c['ciclo'] == ciclo), None)
-    if not ciclo_data:
-        return jsonify({'error': 'No encontrado'}), 404
-    return jsonify(ciclo_data)
-
-@app.route('/api/timeline/<month>/<int:ciclo>')
-def get_timeline(month, ciclo):
-    result = get_ciclo_detail(month, ciclo)
-    if result.status_code == 404:
-        return result
-    data = result.get_json()
-    timeline = [
-        {'name': 'Consumo', 'icon': 'leaf', 'start': data['consumo_inicio'], 'end': data['consumo_fin'], 'color': '#4CAF50'},
-        {'name': 'Transmisión DIAN', 'icon': 'file-text', 'start': data['dian_inicio'], 'end': data['dian_fin'], 'color': '#FF9800'},
-        {'name': 'Entrega Factura', 'icon': 'envelope', 'start': data['entrega_cliente_inicio'], 'end': data['entrega_cliente_fin'], 'color': '#2196F3'},
-        {'name': 'Pago sin Recargo', 'icon': 'calendar', 'start': data['pago_inicio'], 'end': data['pago_fin'], 'color': '#9C27B0'},
-        {'name': 'Suspensión', 'icon': 'ban', 'start': data['suspension_inicio'], 'end': data['suspension_fin'], 'color': '#F44336'}
-    ]
-    return jsonify({'ciclo': ciclo, 'timeline': timeline})
 
 @app.route('/api/status')
 def status():
