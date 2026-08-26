@@ -227,73 +227,6 @@ function handleCicloChange() {
     displayCicloDetail();
 }
 
-function updatePage1Timeline() {
-    if (!currentMonth || !currentCiclo) return;
-
-    const ciclos = allData[currentMonth] || [];
-    const cicloData = ciclos.find(c => String(c.ciclo) === String(currentCiclo));
-
-    if (!cicloData) return;
-
-    const steps = [
-        {
-            name: 'Consumo',
-            icon: 'fa-leaf',
-            start: cicloData.consumo_inicio,
-            end: cicloData.consumo_fin,
-            color: '#4CAF50'
-        },
-        {
-            name: 'Transmisión DIAN',
-            icon: 'fa-file-text',
-            start: cicloData.dian_inicio,
-            end: cicloData.dian_inicio,
-            color: '#FF9800'
-        },
-        {
-            name: 'Entrega Factura',
-            icon: 'fa-envelope',
-            start: cicloData.entrega_cliente_inicio,
-            end: cicloData.entrega_cliente_inicio,
-            color: '#2196F3'
-        },
-        {
-            name: 'Vencimiento',
-            icon: 'fa-calendar',
-            start: cicloData.pago_inicio,
-            end: cicloData.pago_inicio,
-            color: '#9C27B0'
-        },
-        {
-            name: 'Suspensión',
-            icon: 'fa-ban',
-            start: cicloData.suspension_inicio,
-            end: cicloData.suspension_fin,
-            color: '#F44336'
-        }
-    ];
-
-    let html = '';
-    steps.forEach((step, idx) => {
-        const dateText = formatDateRange(step.start, step.end);
-        html += `
-            <div class="timeline-step">
-                <i class="fas ${step.icon}" style="background: ${step.color}"></i>
-                <p>${step.name}</p>
-                <small>${dateText}</small>
-            </div>
-        `;
-        if (idx < steps.length - 1) {
-            html += '<div class="timeline-arrow"></div>';
-        }
-    });
-
-    const timelineEl = document.getElementById('monthTimeline');
-    if (timelineEl) {
-        timelineEl.innerHTML = html;
-    }
-}
-
 function switchPage(pageNum) {
     // Toggle buttons
     document.querySelectorAll('.toggle-btn').forEach(btn => {
@@ -347,36 +280,6 @@ function updateMonthNameDisplay(month) {
     }
 }
 
-function displayMonthTimeline(ciclos) {
-    // Mostrar hitos principales del mes
-    const steps = [
-        { name: 'Consumo', icon: 'fa-leaf', color: '#4CAF50' },
-        { name: 'Transmisión DIAN', icon: 'fa-file-text', color: '#FF9800' },
-        { name: 'Entrega Factura', icon: 'fa-envelope', color: '#2196F3' },
-        { name: 'Vencimiento', icon: 'fa-calendar', color: '#9C27B0' },
-        { name: 'Suspensión', icon: 'fa-ban', color: '#F44336' }
-    ];
-
-    let html = '';
-    steps.forEach((step, idx) => {
-        html += `
-            <div class="timeline-step">
-                <i class="fas ${step.icon}" style="background: ${step.color}"></i>
-                <p>${step.name}</p>
-                <small>${getDateRangeForMonth(ciclos, step.name)}</small>
-            </div>
-        `;
-        if (idx < steps.length - 1) {
-            html += '<div class="timeline-arrow"></div>';
-        }
-    });
-
-    const timelineEl = document.getElementById('monthTimeline');
-    if (timelineEl) {
-        timelineEl.innerHTML = html;
-    }
-}
-
 function displayMonthTable(ciclos) {
     const tbody = document.getElementById('monthTableBody');
     tbody.innerHTML = '';
@@ -423,46 +326,7 @@ function displayMonthTable(ciclos) {
     document.getElementById('totalCiclos').innerHTML = `<strong>Total ciclos en el mes: ${uniqueCiclos.length}</strong>`;
 }
 
-function getDateRangeForMonth(ciclos, stepName) {
-    const dateFields = {
-        'Consumo': ['consumo_inicio', 'consumo_fin'],
-        'Transmisión DIAN': ['dian_inicio', 'dian_fin'],
-        'Entrega Factura': ['entrega_cliente_inicio', 'entrega_cliente_fin'],
-        'Vencimiento': ['pago_inicio', 'pago_fin'],
-        'Suspensión': ['suspension_inicio', 'suspension_fin']
-    };
-
-    const [startField, endField] = dateFields[stepName] || ['', ''];
-    const startDates = ciclos
-        .map(c => c[startField])
-        .filter(d => d)
-        .sort();
-
-    if (startDates.length === 0) return '-';
-
-    // Solo Consumo muestra rango, el resto solo fecha inicial
-    if (stepName === 'Consumo') {
-        const endDates = ciclos
-            .map(c => c[endField])
-            .filter(d => d)
-            .sort();
-        if (endDates.length > 0) {
-            return `${startDates[0]} a ${endDates[endDates.length - 1]}`;
-        }
-    }
-    // DIAN, Entrega, Pago, Suspensión: solo fecha inicial
-    return startDates[0];
-}
-
 function formatDateRange(start, end) {
-    if (!start && !end) return '-';
-    if (!start) return `hasta ${formatDateDisplay(end)}`;
-    if (!end) return `desde ${formatDateDisplay(start)}`;
-    if (start === end) return formatDateDisplay(start);
-    return `${formatDateDisplay(start)} a ${formatDateDisplay(end)}`;
-}
-
-function formatCondensedDate(start, end) {
     if (!start && !end) return '-';
     if (!start) return `hasta ${formatDateDisplay(end)}`;
     if (!end) return `desde ${formatDateDisplay(start)}`;
@@ -475,7 +339,7 @@ function clearPage1() {
     if (timelineEl) {
         timelineEl.innerHTML = '<div class="timeline-placeholder">Selecciona un mes para ver la línea de tiempo</div>';
     }
-    document.getElementById('monthTableBody').innerHTML = '<tr><td colspan="9" class="empty">Carga un archivo y selecciona un mes</td></tr>';
+    document.getElementById('monthTableBody').innerHTML = '<tr><td colspan="11" class="empty">Carga un archivo y selecciona un mes</td></tr>';
     document.getElementById('totalCiclos').innerHTML = '';
 }
 
@@ -610,24 +474,6 @@ function buildCicloTimeline(cicloData) {
     });
 
     return html;
-}
-
-function buildDetailTable(cicloData) {
-    const rows = [
-        ['Ciclo', cicloData.ciclo],
-        ['Municipio', cicloData.municipio],
-        ['Responsable', cicloData.analista],
-        ['Período Facturación', cicloData.periodo],
-        ['Inicio de Consumo', formatDateDisplay(cicloData.consumo_inicio)],
-        ['Fin de Consumo', formatDateDisplay(cicloData.consumo_fin)],
-        ['Días Facturados', cicloData.dias_facturados || '-'],
-        ['Liquidación', formatDateDisplay(cicloData.liquidacion)],
-        ['Entrega Factura', formatDateDisplay(cicloData.entrega_cliente_inicio)],
-        ['Vencimiento', formatDateDisplay(cicloData.pago_inicio)],
-        ['Suspensión', formatDateDisplay(cicloData.suspension_inicio)]
-    ];
-
-    return rows.map(([key, val]) => `<tr><td>${key}</td><td>${val}</td></tr>`).join('');
 }
 
 function buildCalendar(startDate, endDate, cicloData) {
