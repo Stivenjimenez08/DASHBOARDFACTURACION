@@ -408,22 +408,6 @@ body {
     color: #999;
 }
 
-.detail-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.detail-table td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-}
-
-.detail-table td:first-child {
-    font-weight: 600;
-    color: var(--primary);
-    width: 30%;
-}
-
 /* ============================================================================
    INFO CARDS
    ============================================================================ */
@@ -782,22 +766,6 @@ body {
     padding: 20px;
 }
 
-.ciclo-detail-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    margin-top: 20px;
-}
-
-.ciclo-table-section {
-    display: flex;
-    flex-direction: column;
-}
-
-.ciclo-table-section .section-title {
-    margin-top: 0;
-}
-
 .ciclo-calendar-section {
     display: flex;
     flex-direction: column;
@@ -865,11 +833,6 @@ body {
 
     .toggle-btn {
         flex: 1;
-    }
-
-    .ciclo-detail-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
     }
 
     .timeline-container {
