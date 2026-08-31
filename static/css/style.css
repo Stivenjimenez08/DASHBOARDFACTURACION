@@ -14,6 +14,68 @@
     --text: #333;
 }
 
+/* Modo oscuro - auto-detecta preferencia del SO */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary: #00c9de;    /* Azul turquesa más brillante para dark mode */
+        --primary-dark: #00b0c4;
+        --secondary: #00d9a3;
+        --warning: #ff9800;    /* Naranja más brillante */
+        --danger: #ff5252;     /* Rojo más brillante */
+        --dark: #00c9de;
+        --light: #2a2a2e;      /* Gris oscuro para cards/containers */
+        --border: #444;        /* Gris claro para bordes */
+        --text: #e0e0e0;       /* Gris claro para texto */
+    }
+    
+    /* Fondo oscuro */
+    html, body {
+        background-color: #121212;
+        color: var(--text);
+    }
+    
+    /* Cards y containers */
+    .table-container,
+    .detail-section,
+    .card,
+    .info-card,
+    .event-item,
+    .event-item-especial {
+        background-color: #1e1e1e;
+        border-color: var(--border);
+    }
+    
+    /* Headers */
+    .header {
+        background-color: #0a0a0a;
+    }
+    
+    /* Inputs y selects */
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+        background-color: #2a2a2e;
+        color: var(--text);
+        border-color: var(--border);
+    }
+    
+    /* Tabla headers */
+    .data-table thead {
+        background-color: #1a1a1e;
+    }
+    
+    /* Tablas - filas alternadas */
+    .data-table tbody tr:nth-child(even) {
+        background-color: #1e1e1e;
+    }
+    
+    /* Mensajes de ayuda, placeholders */
+    input::placeholder {
+        color: #888;
+    }
+}
+
 * {
     margin: 0;
     padding: 0;
