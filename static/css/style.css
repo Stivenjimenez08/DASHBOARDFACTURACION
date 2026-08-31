@@ -65,7 +65,7 @@
         color: var(--text);
     }
     
-    /* Inputs, selects, textareas */
+    /* Inputs y selects - texto oscuro para mejor legibilidad */
     input[type="text"],
     input[type="number"],
     select,
@@ -73,35 +73,29 @@
     .selector-group select,
     .selector-group input {
         background-color: #2a2a2e;
-        color: var(--text);
+        color: #000;
         border-color: var(--border);
     }
     
     input::placeholder,
     select::placeholder {
-        color: #888;
+        color: #555;
     }
     
-    /* Tabla data */
-    .data-table {
-        background-color: #1e1e1e;
-        color: var(--text);
+    .selector-group label {
+        color: #000;
     }
     
-    .data-table thead {
-        background-color: #1a1a1e;
-        color: white;
+    /* Valores de select cuando está mostrado */
+    select option {
+        background-color: #2a2a2e;
+        color: #000;
     }
     
-    .data-table th {
-        background-color: #1a1a1e;
-        color: white;
-        border-color: var(--border);
-    }
-    
+    /* Tabla data - mejor contraste */
     .data-table td {
         border-color: var(--border);
-        color: var(--text);
+        color: #f0f0f0;
     }
     
     .data-table tbody tr {
@@ -112,34 +106,61 @@
         background-color: #242428;
     }
     
-    .data-table tbody tr:hover {
-        background-color: #2a2a2e;
+    /* Ciclos especiales - texto blanco para mejor contraste */
+    .event-item.event-item-especial {
+        background-color: #1a3a3e !important;
+        border-left: 4px solid var(--primary) !important;
+        color: #ffffff;
     }
     
-    /* Timeline (Página 2) */
+    .event-item-especial {
+        background-color: #1a3a3e;
+        border-left-color: var(--primary);
+        color: #ffffff;
+    }
+    
+    .event-item-especial:hover {
+        background-color: #204550;
+        border-left-color: var(--primary);
+        color: #ffffff;
+    }
+    
+    /* Info cards - texto más blanco */
+    .info-card {
+        background-color: #1e1e1e;
+        border-left-color: var(--primary);
+        color: #ffffff;
+    }
+    
+    .info-card-label {
+        color: #aaa;
+    }
+    
+    .info-card-value {
+        color: #ffffff;
+    }
+    
+    /* Timeline - texto más blanco */
     .timeline-container {
         background-color: #1e1e1e;
+        color: #ffffff;
     }
     
     .timeline-step {
-        color: var(--text);
-    }
-    
-    .section-title {
-        color: var(--primary);
-        border-bottom-color: var(--primary);
+        color: #ffffff;
     }
     
     /* Calendarios */
     .calendar-day-clickable {
         background-color: #2a2a2e;
         border-color: var(--border);
-        color: var(--text);
+        color: #ffffff;
     }
     
     .calendar-day-clickable:hover {
         background-color: #333337;
         border-color: var(--primary);
+        color: #ffffff;
     }
     
     .calendar-day-clickable.has-events {
@@ -152,33 +173,61 @@
         color: #121212;
     }
     
-    /* Day details panel (Página 3) */
-    #dayDetailsContainer {
+    /* Day details */
+    .day-details {
         background-color: #1e1e1e;
+        color: #ffffff;
     }
     
-    .day-details-header {
+    .day-details h3 {
         color: var(--primary);
-        border-bottom-color: var(--primary);
     }
     
     /* Event items */
+    .event-item {
+        color: #ffffff;
+    }
+    
     .event-header {
-        color: var(--text);
+        color: #ffffff;
     }
     
     .event-state {
-        color: var(--text);
+        color: #ffffff;
     }
     
     .event-details {
-        color: #b0b0b0;
+        color: #aaa;
     }
     
     .event-period-badge {
         background-color: #1a3a3e;
         color: var(--primary);
         border-color: var(--primary);
+    }
+    
+    /* Headings y títulos */
+    h1, h2, h3, h4, h5, h6 {
+        color: #ffffff;
+    }
+    
+    .section-title {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+    
+    /* Texto general */
+    p, span, div {
+        color: #f0f0f0;
+    }
+    
+    /* Links */
+    a {
+        color: var(--primary);
+    }
+    
+    a:hover {
+        color: #00e0ff;
     }
     
     /* Botones */
