@@ -17,62 +17,215 @@
 /* Modo oscuro - auto-detecta preferencia del SO */
 @media (prefers-color-scheme: dark) {
     :root {
-        --primary: #00c9de;    /* Azul turquesa más brillante para dark mode */
+        --primary: #00c9de;
         --primary-dark: #00b0c4;
         --secondary: #00d9a3;
-        --warning: #ff9800;    /* Naranja más brillante */
-        --danger: #ff5252;     /* Rojo más brillante */
+        --warning: #ff9800;
+        --danger: #ff5252;
         --dark: #00c9de;
-        --light: #2a2a2e;      /* Gris oscuro para cards/containers */
-        --border: #444;        /* Gris claro para bordes */
-        --text: #e0e0e0;       /* Gris claro para texto */
+        --light: #2a2a2e;
+        --border: #444;
+        --text: #e0e0e0;
     }
     
-    /* Fondo oscuro */
+    /* Fondos oscuros */
     html, body {
         background-color: #121212;
         color: var(--text);
     }
     
-    /* Cards y containers */
+    .container {
+        background-color: #121212;
+    }
+    
+    /* Página 1 - Resumen */
+    .page {
+        background-color: #121212;
+    }
+    
+    /* Tabla y containers */
     .table-container,
     .detail-section,
     .card,
     .info-card,
     .event-item,
-    .event-item-especial {
+    .event-item-especial,
+    .page-section,
+    .calendar-container {
         background-color: #1e1e1e;
         border-color: var(--border);
     }
     
-    /* Headers */
+    /* Headers principales */
     .header {
         background-color: #0a0a0a;
     }
     
-    /* Inputs y selects */
+    .page-title {
+        color: var(--text);
+    }
+    
+    /* Inputs, selects, textareas */
     input[type="text"],
     input[type="number"],
     select,
-    textarea {
+    textarea,
+    .selector-group select,
+    .selector-group input {
         background-color: #2a2a2e;
         color: var(--text);
         border-color: var(--border);
     }
     
-    /* Tabla headers */
-    .data-table thead {
-        background-color: #1a1a1e;
+    input::placeholder,
+    select::placeholder {
+        color: #888;
     }
     
-    /* Tablas - filas alternadas */
-    .data-table tbody tr:nth-child(even) {
+    /* Tabla data */
+    .data-table {
+        background-color: #1e1e1e;
+        color: var(--text);
+    }
+    
+    .data-table thead {
+        background-color: #1a1a1e;
+        color: white;
+    }
+    
+    .data-table th {
+        background-color: #1a1a1e;
+        color: white;
+        border-color: var(--border);
+    }
+    
+    .data-table td {
+        border-color: var(--border);
+        color: var(--text);
+    }
+    
+    .data-table tbody tr {
         background-color: #1e1e1e;
     }
     
-    /* Mensajes de ayuda, placeholders */
-    input::placeholder {
-        color: #888;
+    .data-table tbody tr:nth-child(even) {
+        background-color: #242428;
+    }
+    
+    .data-table tbody tr:hover {
+        background-color: #2a2a2e;
+    }
+    
+    /* Timeline (Página 2) */
+    .timeline-container {
+        background-color: #1e1e1e;
+    }
+    
+    .timeline-step {
+        color: var(--text);
+    }
+    
+    .section-title {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+    
+    /* Calendarios */
+    .calendar-day-clickable {
+        background-color: #2a2a2e;
+        border-color: var(--border);
+        color: var(--text);
+    }
+    
+    .calendar-day-clickable:hover {
+        background-color: #333337;
+        border-color: var(--primary);
+    }
+    
+    .calendar-day-clickable.has-events {
+        background-color: #00c9de;
+        color: #121212;
+    }
+    
+    .calendar-day-clickable.selected {
+        background-color: var(--primary);
+        color: #121212;
+    }
+    
+    /* Day details panel (Página 3) */
+    #dayDetailsContainer {
+        background-color: #1e1e1e;
+    }
+    
+    .day-details-header {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+    
+    /* Event items */
+    .event-header {
+        color: var(--text);
+    }
+    
+    .event-state {
+        color: var(--text);
+    }
+    
+    .event-details {
+        color: #b0b0b0;
+    }
+    
+    .event-period-badge {
+        background-color: #1a3a3e;
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    /* Botones */
+    .toggle-btn,
+    button {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+    
+    .toggle-btn:hover,
+    button:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    .toggle-btn.outline {
+        background-color: transparent;
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .toggle-btn.outline:hover {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    /* Selectores y labels */
+    label {
+        color: var(--text);
+    }
+    
+    .selector-group {
+        background-color: #1e1e1e;
+        border-color: var(--border);
+    }
+    
+    /* Scrollbar styling (opcional, para algunos navegadores) */
+    ::-webkit-scrollbar {
+        background-color: #1e1e1e;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background-color: #1e1e1e;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background-color: #444;
     }
 }
 
