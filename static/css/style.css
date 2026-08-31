@@ -215,7 +215,150 @@
         border-color: var(--border);
     }
     
-    /* Scrollbar styling (opcional, para algunos navegadores) */
+    /* Selector groups y filtros */
+    .selectors {
+        background-color: #1e1e1e;
+    }
+    
+    .selector-group {
+        background-color: transparent;
+        color: var(--text);
+    }
+    
+    .selector-group label {
+        color: var(--text);
+    }
+    
+    .selector-group select,
+    .selector-group input {
+        background-color: #2a2a2e;
+        color: var(--text);
+        border-color: var(--border);
+    }
+    
+    .selector-group select:hover,
+    .selector-group input:hover {
+        border-color: var(--primary);
+    }
+    
+    .selector-group select:focus,
+    .selector-group input:focus {
+        border-color: var(--primary);
+        background-color: #2a2a2e;
+        color: var(--text);
+    }
+    
+    /* Day details panel */
+    .day-details {
+        background-color: #1e1e1e;
+    }
+    
+    .day-details h3 {
+        color: var(--primary);
+    }
+    
+    /* Page containers */
+    .pages-container {
+        background-color: #121212;
+    }
+    
+    /* Info cards (Página 2) */
+    .info-card {
+        background-color: #1e1e1e;
+        border-left-color: var(--primary);
+    }
+    
+    .info-card-label {
+        color: #888;
+    }
+    
+    .info-card-value {
+        color: var(--text);
+    }
+    
+    /* Ciclos especiales - mejor presentación en dark mode */
+    .event-item.event-item-especial {
+        background-color: #1a3a3e !important;
+        border-left: 4px solid var(--primary) !important;
+    }
+    
+    .event-item-especial {
+        background-color: #1a3a3e;
+        border-left-color: var(--primary);
+    }
+    
+    .event-item-especial:hover {
+        background-color: #204550;
+        border-left-color: var(--primary);
+    }
+    
+    /* Main content wrapper */
+    .main-content,
+    .content-wrapper {
+        background-color: #121212;
+    }
+    
+    /* Page sections */
+    #page1, #page2, #page3 {
+        background-color: #121212;
+    }
+    
+    /* Iconos y separadores */
+    .section-divider {
+        border-color: var(--border);
+    }
+    
+    /* Help text y descripciones */
+    .help-text,
+    .description {
+        color: #888;
+    }
+    
+    /* Badges y pills */
+    .badge {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    /* Timeline steps */
+    .timeline-step {
+        color: var(--text);
+    }
+    
+    .timeline-step i {
+        color: inherit;
+    }
+    
+    /* Month/Cycle headers */
+    #monthName,
+    #cicloName {
+        color: var(--text);
+    }
+    
+    /* Override para todos los elementos con background: white */
+    .controls-section,
+    .calendar-filters,
+    .day-filters,
+    .month-controls,
+    .info-section,
+    .container,
+    .page,
+    #page1,
+    #page2,
+    #page3,
+    .pages-container {
+        background-color: #121212 !important;
+    }
+    
+    .table-container,
+    .detail-section,
+    .calendar-container,
+    .day-details,
+    .detail-section {
+        background-color: #1e1e1e !important;
+    }
+    
+    /* Scrollbar styling */
     ::-webkit-scrollbar {
         background-color: #1e1e1e;
     }
@@ -226,6 +369,10 @@
     
     ::-webkit-scrollbar-thumb {
         background-color: #444;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
     }
 }
 
